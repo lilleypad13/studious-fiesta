@@ -21,7 +21,6 @@ public class InfluenceManager : MonoBehaviour
     {
         foreach (Influence influencer in influenceObjects)
         {
-            Debug.Log("Influencer " + influencer.name + " position is: " + transform.TransformPoint(influencer.transform.position));
             //Node influencerOrigin = aGridRuntime.NodeFromWorldPoint(influencer.transform.position);
             Node influencerOrigin = aGridRuntime.TestNodeFromWorldPoint(transform.TransformPoint(influencer.transform.position));
 
