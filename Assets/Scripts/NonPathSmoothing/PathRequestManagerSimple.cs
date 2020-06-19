@@ -47,6 +47,7 @@ public class PathRequestManagerSimple : MonoBehaviour
      */
     public void FinishedProcessingPath(Vector3[] path, bool success)
     {
+        DataRecorder.Instance.AddCompletedPathRecord();
         currentPathRequest.callback(path, success);
         isProcessingPath = false;
         TryProcessNext();

@@ -140,4 +140,13 @@ public class CSVReader: MonoBehaviour
 
         node.Connectivity = fullData[arrayXIndex, arrayYIndex, 3];
     }
+
+    /*
+     * Solely provides a reference on a monobehaviour class to allow a button to access the static instance of DataRecorder which 
+     * is not inherited from monobehaviour.
+     */
+    public void GenerateOutputDataWithRecorder()
+    {
+        DataRecorder.Instance.OutputPathData();
+    }
 }

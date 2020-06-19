@@ -60,6 +60,9 @@ public class AgentSpawnManager : MonoBehaviour
         agentAI.Window = windowAffinity;
         agentAI.Connectivity = connectivityAffinity;
 
+        DataRecorder.Instance.GenerateNewPathData();
+        DataRecorder.Instance.SetCurrentPathSpawn(spawnPoint);
+
         // Tell agent to determine path after setting parameters
         agentAI.AgentRequestPath();
     }

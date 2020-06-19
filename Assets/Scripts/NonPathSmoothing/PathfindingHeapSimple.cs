@@ -132,6 +132,7 @@ public class PathfindingHeapSimple : MonoBehaviour
         yield return null;
         if (pathSuccess)
         {
+            DataRecorder.Instance.SetCurrentPathAgent(agent);
             waypoints = RetracePath(startNode, targetNode);
         }
         requestManager.FinishedProcessingPath(waypoints, pathSuccess);
@@ -162,6 +163,8 @@ public class PathfindingHeapSimple : MonoBehaviour
             currentNode = currentNode.parent;
         }
 
+        Node[] pathArray = path.ToArray();
+        DataRecorder.Instance.SetCurrentPathPath(pathArray);
         //Vector3[] waypoints = SimplifyPath(path);
         List<Vector3> waypointsList = new List<Vector3>();
         for (int i = 0; i < path.Count; i++)
