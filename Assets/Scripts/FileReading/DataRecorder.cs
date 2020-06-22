@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class DataRecorder
+public class DataRecorder : MonoBehaviour
 {
     private static DataRecorder instance;
     private DataRecorder()
@@ -30,7 +30,7 @@ public class DataRecorder
     private static List<PathData> pathRecords = new List<PathData>();
     private static PathData currentPath;
 
-    [SerializeField] private static string filePath = "Assets/Resources/PathData_00.txt";
+    [SerializeField] private string filePath = "Assets/Resources/PathData_00.txt";
 
     /*
      * Add a pathData element to the records
