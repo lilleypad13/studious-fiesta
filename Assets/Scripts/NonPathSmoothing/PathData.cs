@@ -9,6 +9,13 @@ public class PathData
     private Node[] nodePath;
     private Transform spawnPoint;
 
+    private string spawnPointName;
+
+    // Initial segment of the string that lists all the nodes within a path
+    private string pathString = "Node Path: ";
+    private string agentAffinities = "";
+
+    // Methods for Agent Data
     public void SetAgentData(UnitSimple agent)
     {
         agentData = agent;
@@ -19,6 +26,17 @@ public class PathData
         return agentData;
     }
 
+    /*
+     * Takes a UnitSimple object and uses its data to fill the agentAffinities string 
+     * with information on that UnitSimple object's affinities as strings
+     */
+    public void SetAgentAffinitiesString(UnitSimple agent)
+    {
+        agentAffinities = "Window Affinity: ," + agent.Window.ToString() + "\n" +
+            "Connectivity Affinity: ," + agent.Connectivity.ToString() + "\n";
+    }
+
+    // Methods for Node Paths
     public void SetNodePath(Node[] path)
     {
         nodePath = path;
@@ -29,6 +47,20 @@ public class PathData
         return nodePath;
     }
 
+    /*
+     * Takes a single path of nodes and converts it into a long string of 
+     * all the indivdual node's coordinates within that path.
+     */
+    public void SetNodePathString(Node[] path)
+    {
+        foreach (Node node in path)
+        {
+            // Comma added in front to keep data properly in line
+            pathString += "," + node.NodeCoordinates + "\n";
+        }
+    }
+
+    // Methods for Spawn Points
     public void SetSpawnPoint(Transform location)
     {
         spawnPoint = location;
@@ -37,6 +69,26 @@ public class PathData
     public Transform GetSpawnPoint()
     {
         return spawnPoint;
+    }
+
+    /*
+     * Takes a spawn point transform and returns the name of its gameobject as the spawn point's 
+     * name as a string.
+     */
+    public void SetSpawnPointName(Transform spawnPoint)
+    {
+        spawnPointName = "Spawned At: ," + spawnPoint.name + "\n";
+    }
+
+    public string GetFullStringData()
+    {
+        string fullStringData = "";
+
+        fullStringData += spawnPointName +
+            agentAffinities + 
+            pathString;
+
+        return fullStringData;
     }
 
 }
