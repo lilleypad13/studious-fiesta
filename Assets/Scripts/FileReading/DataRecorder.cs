@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class DataRecorder
 {
@@ -28,6 +29,8 @@ public class DataRecorder
 
     private static List<PathData> pathRecords = new List<PathData>();
     private static PathData currentPath;
+
+    [SerializeField] private static string filePath = "Assets/Resources/PathData_00.txt";
 
     /*
      * Add a pathData element to the records
@@ -64,38 +67,57 @@ public class DataRecorder
 
     public void SetCurrentPathAgent(UnitSimple agent)
     {
-        currentPath.SetAgentData(agent);
+        //currentPath.SetAgentData(agent);
+        currentPath.SetAgentAffinitiesString(agent);
     }
 
     public void SetCurrentPathPath(Node[] path)
     {
-        currentPath.SetNodePath(path);
+        //currentPath.SetNodePath(path);
+        currentPath.SetNodePathString(path);
     }
 
     public void SetCurrentPathSpawn(Transform spawnPoint)
     {
-        currentPath.SetSpawnPoint(spawnPoint);
+        //currentPath.SetSpawnPoint(spawnPoint);
+        currentPath.SetSpawnPointName(spawnPoint);
     }
 
     public void OutputPathData()
     {
+        string pathInformation = "";
         int identifier = 0;
 
         foreach (PathData path in pathRecords)
         {
-            string pathInformation = "";
-            foreach (Node node in path.GetNodePath())
-            {
-                pathInformation += node.NodeCoordinates + "\n";
-            }
 
-            Debug.Log("Agent ID: " + identifier + "\n" +
-                "Spawned At: " + path.GetSpawnPoint().name + "\n" +
-                "Agent's Window Affinity: " + path.GetAgentData().Window + "\n" +
-                "Agent's Connectivity Affinity: " + path.GetAgentData().Connectivity + "\n" +
-                "Path List: " + pathInformation);
+            pathInformation += "Agent ID: ," + identifier + "\n" +
+                path.GetFullStringData();
+
+            //foreach (Node node in path.GetNodePath())
+            //{
+            //    pathInformation += node.NodeCoordinates + "\n";
+            //}
+
+            //Debug.Log("Agent ID: " + identifier + "\n" +
+            //    "Spawned At: " + path.GetSpawnPoint().name + "\n" +
+            //    "Agent's Window Affinity: " + path.GetAgentData().Window + "\n" +
+            //    "Agent's Connectivity Affinity: " + path.GetAgentData().Connectivity + "\n" +
+            //    "Path List: " + pathInformation);
+
+            Debug.Log(pathInformation);
 
             identifier++;
         }
+
+        ExportDataToCSV(pathInformation);
+    }
+
+    public void ExportDataToCSV(string pathInformation)
+    {
+        StreamWriter file = new StreamWriter(filePath, true);
+
+        file.Write(pathInformation);
+        file.Close();
     }
 }
