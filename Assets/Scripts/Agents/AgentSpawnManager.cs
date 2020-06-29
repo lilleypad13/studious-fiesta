@@ -70,7 +70,6 @@ public class AgentSpawnManager : MonoBehaviour
     public void SpawnAgent(int index)
     {
         GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoints[index].position, spawnPoints[index].rotation);
-        //agent.GetComponent<UnitSimple>().target = target;
 
         // Set this specific instantiated agent's parameters
         UnitSimple agentAI = agent.GetComponent<UnitSimple>();
