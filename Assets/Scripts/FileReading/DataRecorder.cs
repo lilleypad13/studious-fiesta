@@ -32,6 +32,8 @@ public class DataRecorder : MonoBehaviour
 
     [SerializeField] private string filePath = "Assets/Resources/PathData_00.txt";
 
+    public DropdownPathHistory dropdownPathHistory;
+
     /*
      * Add a pathData element to the records
      */
@@ -49,11 +51,20 @@ public class DataRecorder : MonoBehaviour
     }
 
     /*
+     * Allows access to a particular PathData within pathRecords by index.
+     */
+    public PathData GetPathRecord(int index)
+    {
+        return pathRecords[index];
+    }
+
+    /*
      * Adds the finished currentPath to the pathRecords after filling all the data in a path
      */
     public void AddCompletedPathRecord()
     {
         pathRecords.Add(currentPath);
+        dropdownPathHistory.AddNewPathToDropdown();
     }
 
     /*
@@ -73,7 +84,7 @@ public class DataRecorder : MonoBehaviour
 
     public void SetCurrentPathPath(Node[] path)
     {
-        //currentPath.SetNodePath(path);
+        currentPath.SetNodePath(path);
         currentPath.SetNodePathString(path);
     }
 
@@ -83,6 +94,10 @@ public class DataRecorder : MonoBehaviour
         currentPath.SetSpawnPointName(spawnPoint);
     }
 
+    /*
+     * Last step of organizing the string formats of all the path history data before 
+     * sending it off to be exported in a text file of some kind.
+     */
     public void OutputPathData()
     {
         string pathInformation = "";
@@ -113,6 +128,10 @@ public class DataRecorder : MonoBehaviour
         ExportDataToCSV(pathInformation);
     }
 
+    /*
+     * Responsible for outputting all the path history information to a text file format
+     * useable outside of Unity.
+     */
     public void ExportDataToCSV(string pathInformation)
     {
         StreamWriter file = new StreamWriter(filePath, true);
