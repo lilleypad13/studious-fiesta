@@ -10,10 +10,9 @@ public class PathData
     private Transform spawnPoint;
 
     private string spawnPointName;
-
-    // Initial segment of the string that lists all the nodes within a path
-    private string pathString = "Node Path: ";
     private string agentAffinities = "";
+    private string pathArchitecturalType;
+    private string pathString = "Node Path: "; // Initial segment of the string that lists all the nodes within a path
 
     // Methods for Agent Data
     public void SetAgentData(UnitSimple agent)
@@ -78,6 +77,19 @@ public class PathData
     public void SetSpawnPointName(Transform spawnPoint)
     {
         spawnPointName = "Spawned At: ," + spawnPoint.name + "\n";
+    }
+
+    /*
+     * Used to keep track of what architectural element type was used in this path
+     */
+    public void SetPathArchitecturalType(string pathType)
+    {
+        pathArchitecturalType = pathType;
+    }
+
+    public string GetPathArchitecturalType()
+    {
+        return pathArchitecturalType;
     }
 
     public string GetFullStringData()
