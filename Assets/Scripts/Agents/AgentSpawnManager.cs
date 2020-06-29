@@ -67,6 +67,24 @@ public class AgentSpawnManager : MonoBehaviour
         agentAI.AgentRequestPath();
     }
 
+    public void SpawnAgent(int index)
+    {
+        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoints[index].position, spawnPoints[index].rotation);
+        //agent.GetComponent<UnitSimple>().target = target;
+
+        // Set this specific instantiated agent's parameters
+        UnitSimple agentAI = agent.GetComponent<UnitSimple>();
+        agentAI.target = target;
+        agentAI.Window = windowAffinity;
+        agentAI.Connectivity = connectivityAffinity;
+
+        DataRecorder.Instance.GenerateNewPathData();
+        DataRecorder.Instance.SetCurrentPathSpawn(spawnPoints[index]);
+
+        // Tell agent to determine path after setting parameters
+        agentAI.AgentRequestPath();
+    }
+
     // All SpawnAtPoint# methods for button testing purposes
     public void SpawnAtPoint1()
     {
