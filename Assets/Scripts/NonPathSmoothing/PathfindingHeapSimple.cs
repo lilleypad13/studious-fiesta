@@ -133,6 +133,7 @@ public class PathfindingHeapSimple : MonoBehaviour
         if (pathSuccess)
         {
             DataRecorder.Instance.SetCurrentPathAgent(agent);
+            DataRecorder.Instance.SetCurrentArchitecturalType(typeUsedForPathing.ToString());
             waypoints = RetracePath(startNode, targetNode);
         }
         requestManager.FinishedProcessingPath(waypoints, pathSuccess);

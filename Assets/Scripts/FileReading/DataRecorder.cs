@@ -78,7 +78,7 @@ public class DataRecorder : MonoBehaviour
 
     public void SetCurrentPathAgent(UnitSimple agent)
     {
-        //currentPath.SetAgentData(agent);
+        currentPath.SetAgentData(agent);
         currentPath.SetAgentAffinitiesString(agent);
     }
 
@@ -92,6 +92,11 @@ public class DataRecorder : MonoBehaviour
     {
         //currentPath.SetSpawnPoint(spawnPoint);
         currentPath.SetSpawnPointName(spawnPoint);
+    }
+
+    public void SetCurrentArchitecturalType(string architecturalType)
+    {
+        currentPath.SetPathArchitecturalType(architecturalType);
     }
 
     /*
