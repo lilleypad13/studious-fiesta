@@ -13,12 +13,21 @@ public class PathHistoryVisualizer : MonoBehaviour
 
     private void Awake()
     {
-        //dataRecorder = GetComponent<DataRecorder>();
         dataRecorder = DataRecorder.Instance;
         lineRenderer = GetComponent<LineRenderer>();
+    }
 
-        Debug.Log("PathHistoryVisualizer got DataRecorder reference: " + dataRecorder.gameObject.name);
-        Debug.Log("PathHistoryVisuzlier got Linerenderer reference: " + lineRenderer.name);
+    private void Start()
+    {
+        AssignTextValues(null);
+    }
+
+    /*
+     * Allows outside sources to deactivate the line renderer
+     */
+    public void DeactivatePathVisual()
+    {
+        lineRenderer.enabled = false;
     }
 
     /*
@@ -48,6 +57,7 @@ public class PathHistoryVisualizer : MonoBehaviour
         lineRenderer.positionCount = pathPositionsArray.Length;
         lineRenderer.SetPositions(pathPositionsArray);
 
+        lineRenderer.enabled = true;
         AssignTextValues(pathData);
     }
 
@@ -58,10 +68,22 @@ public class PathHistoryVisualizer : MonoBehaviour
      */
     private void AssignTextValues(PathData pathData)
     {
-        pathTypeText.text = "Path Type: " + pathData.GetPathArchitecturalType();
+        if(pathData == null)
+        {
+            pathTypeText.text = "Path Type: None";
 
-        string windowData = "Window Affinity: " + pathData.GetAgentData().Window + "\n";
-        string connectivityData = "Connectivity Affinity: " + pathData.GetAgentData().Connectivity;
-        affinityValuesText.text = windowData + connectivityData;
+            string windowData = "Window Affinity: None" + "\n";
+            string connectivityData = "Connectivity Affinity: None";
+            affinityValuesText.text = windowData + connectivityData;
+        }
+        else
+        {
+            pathTypeText.text = "Path Type: " + pathData.GetPathArchitecturalType();
+
+            string windowData = "Window Affinity: " + pathData.GetAgentData().Window + "\n";
+            string connectivityData = "Connectivity Affinity: " + pathData.GetAgentData().Connectivity;
+            affinityValuesText.text = windowData + connectivityData;
+        }
+            
     }
 }

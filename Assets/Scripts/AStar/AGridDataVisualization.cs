@@ -13,7 +13,7 @@ public enum DataVisual
 public class AGridDataVisualization : MonoBehaviour
 {
     private AGrid aGrid;
-    [SerializeField]private DataVisual dataToVisualize;
+    [SerializeField]private DataVisual dataToVisualize = DataVisual.walkable;
     public Text dataVisualizedText;
 
     private void Awake()
