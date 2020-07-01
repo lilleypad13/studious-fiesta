@@ -8,14 +8,17 @@ public class AgentSpawnManager : MonoBehaviour
     #region Variables
     [Header("Spawn Parameters")]
     public GameObject agentPrefab; // Types of agents to spawn
-    public Transform[] spawnPoints; // Location where agents will spawn from
+    private List<Transform> spawnPoints; // Location where agents will spawn from
+    public Transform spawnPointContainer; // Just the single spawnManageer parent object holding all the spawn points as children
     public Transform target; // Target passed on to agents spawned from this manager
 
     // Agent Affinities
     [Header("Affinities for Spawned Agents")]
     [Range(0, 100)]
+    [Tooltip("In Game UI Also")]
     public int windowAffinity = 0;
     [Range(0, 100)]
+    [Tooltip("In Game UI Also")]
     public int connectivityAffinity = 0;
 
     // Accessories
@@ -26,13 +29,15 @@ public class AgentSpawnManager : MonoBehaviour
 
 
     #region Unity Methods
-    private void Update()
-    {
-        agentWindowAffinityText.text = "Current Agent Window Affinity: " + windowAffinity.ToString();
-        agentConnectivityAffinityText.text = "Current Agent Connectivity Affinity: " + connectivityAffinity.ToString();
 
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //    SpawnAgent();
+    private void Awake()
+    {
+        spawnPoints = new List<Transform>();
+
+        foreach (Transform child in spawnPointContainer)
+        {
+            spawnPoints.Add(child);
+        }
     }
 
     private void SpawnAgent()
@@ -84,20 +89,54 @@ public class AgentSpawnManager : MonoBehaviour
         agentAI.AgentRequestPath();
     }
 
+    // SpawnAtPoint# setup this way to quickly work with buttons
     // All SpawnAtPoint# methods for button testing purposes
     public void SpawnAtPoint1()
     {
-        SpawnAgent(spawnPoints[0]);
+        if (CheckListLength(1))
+            SpawnAgent(spawnPoints[0]);
+        else
+            Debug.Log("There are not enough spawn points to use this command.");
     }
 
     public void SpawnAtPoint2()
     {
-        SpawnAgent(spawnPoints[1]);
+        if(CheckListLength(2))
+            SpawnAgent(spawnPoints[1]);
+        else
+            Debug.Log("There are not enough spawn points to use this command.");
     }
 
     public void SpawnAtPoint3()
     {
-        SpawnAgent(spawnPoints[2]);
+        if(CheckListLength(3))
+            SpawnAgent(spawnPoints[2]);
+        else
+            Debug.Log("There are not enough spawn points to use this command.");
+    }
+
+    public void SpawnAtPoint4()
+    {
+        if (CheckListLength(4))
+            SpawnAgent(spawnPoints[3]);
+        else
+            Debug.Log("There are not enough spawn points to use this command.");
+    }
+
+    public void SpawnAtPoint5()
+    {
+        if (CheckListLength(5))
+            SpawnAgent(spawnPoints[4]);
+        else
+            Debug.Log("There are not enough spawn points to use this command.");
+    }
+
+    /*
+     * Checks if a number of spawnPoints exist before trying to activate button to spawn an agent from this point
+     */
+    private bool CheckListLength(int index)
+    {
+        return spawnPoints.Count >= index;
     }
 
 
