@@ -78,7 +78,10 @@ public class MathArchCost : MonoBehaviour
 
     public int normalizeConnectivity(int connectivity)
     {
-        int normalizedValue = (int)((float)connectivity / maxConnectivity * _MAX_ARCHVALUE);
+        int normalizedValue = 0;
+        int connectivityRange = maxConnectivity - minConnectivity;
+
+        normalizedValue = (int)((float)(connectivity - minConnectivity) / connectivityRange * _MAX_ARCHVALUE);
 
         return normalizedValue;
     }
