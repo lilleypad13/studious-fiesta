@@ -13,8 +13,8 @@ public enum ArchitecturePathingData
 
 public class PathfindingHeapSimple : MonoBehaviour
 {
+    [Tooltip("In Game UI Also")]
     [SerializeField] private ArchitecturePathingData typeUsedForPathing;
-    public Text pathingTypeText;
 
     private PathRequestManagerSimple requestManager;
     private AGridRuntime aGridRuntime;
@@ -29,11 +29,6 @@ public class PathfindingHeapSimple : MonoBehaviour
         requestManager = GetComponent<PathRequestManagerSimple>();
         //aGrid = GetComponent<AGrid>();
         aGridRuntime = GetComponent<AGridRuntime>();
-    }
-
-    private void Update()
-    {
-        pathingTypeText.text = "Pathing Type: " + typeUsedForPathing.ToString();
     }
 
     public void StartFindPath(Vector3 startPosition, Vector3 targetPosition, UnitSimple agent)
@@ -212,5 +207,13 @@ public class PathfindingHeapSimple : MonoBehaviour
             return 14 * distanceY + 10 * (distanceX - distanceY);
         else
             return 14 * distanceX + 10 * (distanceY - distanceX);
+    }
+
+    /*
+     * Allows setting of architecture type used for pathing by the enum's index
+     */
+    public void SetArchitecturalType(int index)
+    {
+        typeUsedForPathing = (ArchitecturePathingData)index;
     }
 }
