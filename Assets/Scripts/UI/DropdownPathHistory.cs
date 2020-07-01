@@ -16,21 +16,10 @@ public class DropdownPathHistory : MonoBehaviour
     {
         dropdown = transform.GetComponent<Dropdown>();
 
-        pathCounter = 0;
+        pathCounter = 1;
         dropdown.options.Clear();
 
-        //List<string> items = new List<string>();
-        //items.Add("Item 1");
-        //items.Add("Items 2");
-
-        //// Fill dropdown with items
-        //// This populates the dropdown with the strings found in items
-        //foreach (string item in items)
-        //{
-        //    dropdown.options.Add(new Dropdown.OptionData() { text = item });
-        //}
-
-        //DropdownItemSelected(dropdown);
+        dropdown.options.Add(new Dropdown.OptionData() { text = "None" });
 
         // Adds the method DropdownItemSelected with this parameter to the onValueChanged delegate
         // Makes it so that when onValueChanged Unity event is invoked with this dropdown, 
@@ -43,14 +32,14 @@ public class DropdownPathHistory : MonoBehaviour
      */
     private void DropdownItemSelected(Dropdown dropdown)
     {
-        // ADD VISUALIZATION INITIATION HERE
-        // Using the dropdown index, recall path data for the equivalent index in the path data history
+        pathVisualizer.DeactivatePathVisual(); // Turns off linerenderer for path visualization that comes back on if an actual new path is selected
 
         int index = dropdown.value;
-        Debug.Log("Dropdown index is: " + index);
-
         textBox.text = dropdown.options[index].text;
-        pathVisualizer.VisualizePath(index);
+
+        index -= 1; // -1 to index because to account for extra dropdown "None" option
+        if (index >= 0) // Ensures no path is created for intial dropdown "None" option, while also preventing out of bounds checks
+            pathVisualizer.VisualizePath(index);
     }
 
     /*
