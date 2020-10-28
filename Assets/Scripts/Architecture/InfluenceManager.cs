@@ -5,8 +5,8 @@ using UnityEngine;
 public class InfluenceManager : MonoBehaviour
 {
     #region Variables
-    public Influence[] influenceObjects;
-    public AGridRuntime aGridRuntime;
+    private Influence[] influenceObjects;
+    [SerializeField]private AGridRuntime aGridRuntime;
 
     #endregion
 
@@ -28,5 +28,12 @@ public class InfluenceManager : MonoBehaviour
         }
     }
 
+    /*
+     * Search the entire scene for all the Influence objects and collect them in influenceObjects
+     */
+    public void FindInfluenceObjects()
+    {
+        influenceObjects = FindObjectsOfType<Influence>();
+    }
     #endregion
 }

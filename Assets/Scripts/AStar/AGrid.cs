@@ -68,6 +68,7 @@ public class AGrid : MonoBehaviour
         if(isReadingDataFromFile)
             CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
 
+        influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
         CreateGrid();
     }
 
