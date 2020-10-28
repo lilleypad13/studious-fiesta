@@ -17,7 +17,9 @@ public class Window : Influence
             for (int z = -zRange; z < zRange; z++)
             {
                 if(WithinNodeGridBounds(grid, influenceOrigin.gridX + x, influenceOrigin.gridY + z))
+                {
                     grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += window;
+                }
             }
         }
     }

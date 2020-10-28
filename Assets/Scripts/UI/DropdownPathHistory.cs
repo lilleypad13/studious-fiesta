@@ -7,7 +7,7 @@ public class DropdownPathHistory : MonoBehaviour
 {
     public Text textBox;
 
-    public PathHistoryVisualizer pathVisualizer;
+    [SerializeField]private PathHistoryVisualizer pathVisualizer;
 
     private Dropdown dropdown;
     private int pathCounter;

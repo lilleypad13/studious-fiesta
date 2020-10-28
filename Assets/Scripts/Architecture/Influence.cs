@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Influence : MonoBehaviour
 {
     #region Variables
-    //public int influence = 0;
 
     // influence range is how many 
     public int xInfluence = 5;
@@ -56,6 +55,15 @@ public abstract class Influence : MonoBehaviour
         return isWithinBounds;
     }
 
+    /*
+     * Debug to show which nodes an influence object is impacting on the grid.
+     * influenceName can be manually put in to show which type of influence is being applied or the name of the object
+     * applying influence.
+     */
+    public void DebugShowInfluencedNodes(string influenceName, int x, int z)
+    {
+        Debug.Log($"Applied {influenceName} to {x} , {z}.");
+    }
 
     #endregion
 }
