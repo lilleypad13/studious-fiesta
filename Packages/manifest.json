@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.solidalloy.type.references": "file:D:/_Steven/Documents/_SCHOOL/_PROJECTS/ArchAI/Packages/ClassTypeReference-for-Unity-master/ClassTypeReference-for-Unity-master",
-    "com.solidalloy.util": "file:D:/_Steven/Documents/_SCHOOL/_PROJECTS/ArchAI/Packages/SolidUtilities-master/SolidUtilities-master",
+    "com.solidalloy.type.references": "file:../Packages/SolidUtilities/ClassTypeReference-for-Unity-master",
+    "com.solidalloy.util": "file:../Packages/SolidUtilities/SolidUtilities-master",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.ext.nunit": "1.0.0",
     "com.unity.ide.rider": "1.1.0",

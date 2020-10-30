@@ -1,0 +1,28 @@
+{
+  "name": "com.solidalloy.type.references",
+  "version": "2.5.1",
+  "displayName": "Type References",
+  "description": "Property Drawer that allows class selection from drop-down.",
+  "dependencies": {
+    "com.solidalloy.util": "1.7.1"
+  },
+  "keywords": [
+    "dropdown",
+    "class",
+    "type",
+    "drop-down",
+    "reference",
+    "system.type"
+  ],
+  "author": {
+    "name": "SolidAlloy",
+    "url": "https://github.com/SolidAlloy/"
+  },
+  "samples": [
+    {
+      "displayName": "Usage Examples",
+      "description": "A scene that shows how to use different attributes and how they look in the Inspector.",
+      "path": "Samples~/Usage Examples"
+    }
+  ]
+}
