@@ -6614,7 +6614,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcfec3972ba1bb84a9ab3a4dd94aee99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 0}
+  model: {fileID: 1795946721}
+  componentApplicators:
+  - searchTerm: System Panel Glazed [355710]
+    influenceComponentToApply:
+      GuidAssignmentFailed: 0
+      GUID: d5d3f3a029e59f440b932d75b58030d2
+      _typeNameAndAssembly: Door, Assembly-CSharp
+  - searchTerm: System Panel Glazed [356004]
+    influenceComponentToApply:
+      GuidAssignmentFailed: 0
+      GUID: 8e7321063279f5f41bc147f8e51bc730
+      _typeNameAndAssembly: Window, Assembly-CSharp
+  layerApplicators:
+  - searchTerm: Basic Wall Generic - 5" [354885]
+    layerToApply:
+      serializedVersion: 2
+      m_Bits: 256
+  - searchTerm: Basic Wall Generic - 5" [354913]
+    layerToApply:
+      serializedVersion: 2
+      m_Bits: 1024
 --- !u!1 &1768875760
 GameObject:
   m_ObjectHideFlags: 0
@@ -6757,6 +6777,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebc8ab103fa1799478627e56418b6efc, type: 3}
+--- !u!1 &1795946721 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: ebc8ab103fa1799478627e56418b6efc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1795946720}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1797754769 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1887390801214914132, guid: ebc8ab103fa1799478627e56418b6efc,
