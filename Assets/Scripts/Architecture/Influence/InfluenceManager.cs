@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InfluenceManager : MonoBehaviour
+public class InfluenceManager : Initializer
 {
     #region Variables
     private Influence[] influenceObjects;
@@ -34,6 +34,11 @@ public class InfluenceManager : MonoBehaviour
     public void FindInfluenceObjects()
     {
         influenceObjects = FindObjectsOfType<Influence>();
+    }
+
+    public override void Initialization()
+    {
+        FindInfluenceObjects();
     }
     #endregion
 }

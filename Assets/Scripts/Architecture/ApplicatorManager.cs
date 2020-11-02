@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ApplicatorManager : MonoBehaviour
+public class ApplicatorManager : Initializer
 {
     [SerializeField] private GameObject model;
     [SerializeField] private ComponentApplicator[] componentApplicators;
@@ -15,18 +15,13 @@ public class ApplicatorManager : MonoBehaviour
     // Need a new object type that will hold information on applicators
     // private Applicator[] appList;
 
-    private void Awake()
-    {
-        GetChildrenGameObjects();
-        DebugNamesOfChildren();
+    //private void Awake()
+    //{
+    //    GetChildrenGameObjects();
+    //    DebugNamesOfChildren();
 
-        UseApplicators();
-        //Type[] listOfInfluenceObjects = System.AppDomain.CurrentDomain.GetAllDerivedTypes(typeof(Influence));
-        //ReflectionHelpers.DebugListOfTypes(listOfInfluenceObjects, "Influence");
-
-        //Type[] listOfApplicators = System.AppDomain.CurrentDomain.GetAllDerivedTypes(typeof(Applicator));
-        //ReflectionHelpers.DebugListOfTypes(listOfApplicators, "Applicators");
-    }
+    //    UseApplicators();
+    //}
 
     /*
      * Sets allModelChildren list to all of the children gameobjects in the main model gameobject
@@ -84,6 +79,14 @@ public class ApplicatorManager : MonoBehaviour
             }
         }
         */
+    }
+
+    public override void Initialization()
+    {
+        GetChildrenGameObjects();
+        DebugNamesOfChildren();
+
+        UseApplicators();
     }
 
     #region DebugMethods

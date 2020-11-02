@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AGrid : MonoBehaviour
+public class AGrid : Initializer
 {
     [Header("Node and Grid Dimensions")]
     public Vector2 gridWorldSize; // area in world coordinates that grid will cover
@@ -46,30 +46,6 @@ public class AGrid : MonoBehaviour
     {
         public LayerMask terrainMask;
         public int terrainPenalty;
-    }
-
-    // Determines how many nodes can be fit into the grid based on the overall grid size 
-    // and the size of the individual nodes
-    private void Awake()
-    {
-        aGridRuntime = GetComponent<AGridRuntime>();
-        influenceManager = GetComponent<InfluenceManager>();
-        dataVisualizer = GetComponent<AGridDataVisualization>();
-
-        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
-        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-
-        foreach (TerrainType region in walkableRegions)
-        {
-            walkableMask.value |= region.terrainMask.value;
-            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
-        }
-
-        if(isReadingDataFromFile)
-            CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
-
-        influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
-        CreateGrid();
     }
 
     // Returns the overall area of the grid given its dimensions
@@ -161,6 +137,8 @@ public class AGrid : MonoBehaviour
         aGridRuntime.SetGrid(nodeGrid);
     }
 
+    
+
     /*
      * Blends penalty values throughout the map together so there are less discrete sections for areas with different 
      * penalty values.
@@ -237,11 +215,35 @@ public class AGrid : MonoBehaviour
         }
     }
 
-    #region Debugging and Data Visualization
+    public override void Initialization()
+    {
+        aGridRuntime = GetComponent<AGridRuntime>();
+        influenceManager = GetComponent<InfluenceManager>();
+        dataVisualizer = GetComponent<AGridDataVisualization>();
 
-    /*
-     * For debugging grid; Lists all the architectural information of every node in the grid
-     */
+        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+
+        foreach (TerrainType region in walkableRegions)
+        {
+            walkableMask.value |= region.terrainMask.value;
+            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
+        }
+
+        if (isReadingDataFromFile)
+            CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
+
+        influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
+        CreateGrid();
+    }
+
+    #region Debugging and Data Visualization
+    private void DebugCheckObjectRaycastHitAtLocation(Vector3 worldPoint, RaycastHit hit)
+    {
+        if (hit.collider.gameObject.layer != 0)
+            Debug.Log($"Raycast at {worldPoint} hit {hit.collider.name}");
+    }
+
     public void ListArchitecturalParametersOfGrid()
     {
         for (int x = 0; x < gridSizeX; x++)
