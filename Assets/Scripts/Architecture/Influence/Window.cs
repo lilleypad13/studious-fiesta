@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Window : Influence
 {
-    public int window = 0;
-
     /*
      * Applies influence value within a rectangular area.
      * Checks if nodes exist within range.
@@ -18,7 +16,7 @@ public class Window : Influence
             {
                 if(WithinNodeGridBounds(grid, influenceOrigin.gridX + x, influenceOrigin.gridY + z))
                 {
-                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += window;
+                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += InfluenceAmount;
                 }
             }
         }
