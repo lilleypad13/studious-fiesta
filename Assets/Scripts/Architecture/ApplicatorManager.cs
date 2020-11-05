@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TypeReferences;
 using UnityEngine;
 
 public class ApplicatorManager : Initializer
 {
     [SerializeField] private GameObject model;
-    [SerializeField] private ComponentApplicator[] componentApplicators;
+    [SerializeField] private InfluenceApplicator[] componentApplicators;
     [SerializeField] private LayerApplicator[] layerApplicators;
     
-
     private List<GameObject> allModelChildren = new List<GameObject>();
 
-    // Need a new object type that will hold information on applicators
-    // private Applicator[] appList;
+    public override void Initialization()
+    {
+        GetChildrenGameObjects();
+        DebugNamesOfChildren();
 
-    //private void Awake()
-    //{
-    //    GetChildrenGameObjects();
-    //    DebugNamesOfChildren();
-
-    //    UseApplicators();
-    //}
+        UseApplicators();
+    }
 
     /*
      * Sets allModelChildren list to all of the children gameobjects in the main model gameobject
@@ -42,52 +39,81 @@ public class ApplicatorManager : Initializer
      */
     private void UseApplicators()
     {
-        foreach (ComponentApplicator componentApplicator in componentApplicators)
-        {
-            foreach (GameObject child in allModelChildren)
-            {
-                if (child.name == componentApplicator.SearchTerm)
-                    child.AddComponent(componentApplicator.InfluenceComponentToApply);
-            }
-        }
+        ApplyComponentsToDesignatedObjects();
+        ApplyLayersToDesignatedObjects();
+    }
+
+    private void ApplyLayersToDesignatedObjects()
+    {
+        List<GameObject> childrenWithNamesContainingSearchTerm = new List<GameObject>();
 
         foreach (LayerApplicator layerApplicator in layerApplicators)
         {
-            foreach (GameObject child in allModelChildren)
+            string searchTerm = layerApplicator.SearchTerm;
+
+            childrenWithNamesContainingSearchTerm = FindChildrenWithNameContain(searchTerm);
+
+            if (childrenWithNamesContainingSearchTerm.Count != 0)
             {
-                if (child.name == layerApplicator.SearchTerm)
+                foreach (GameObject child in childrenWithNamesContainingSearchTerm)
                 {
-                    Debug.Log("The layer value is: " + layerApplicator.LayerToApply.value);
                     child.layer = Mathf.RoundToInt(Mathf.Log(layerApplicator.LayerToApply.value, 2));
                 }
-            }
-        }
 
-        // Psuedocode for how this method will be used
-        /*
-        foreach (Applicator app in appList)
-        {
-            foreach (Gameobject child in allModelChildren)
-            {
-                if(child.name.Contains(app.searchTerm)
-                {
-                    if(app.compOrLayer == component)
-                        child.AddComponent(app.componentType)
-                    else
-                        child.layer = app.layerInt;
-                }
+                DebugListOfObjects(childrenWithNamesContainingSearchTerm);
             }
+            else
+                Debug.Log($"{this.name} did not find any children objects containing the term {searchTerm}.");
         }
-        */
     }
 
-    public override void Initialization()
+    private void ApplyComponentsToDesignatedObjects()
     {
-        GetChildrenGameObjects();
-        DebugNamesOfChildren();
+        List<GameObject> childrenWithNamesContainingSearchTerm = new List<GameObject>();
 
-        UseApplicators();
+        foreach (InfluenceApplicator applicator in componentApplicators)
+        {
+            string searchTerm = applicator.SearchTerm;
+            Type componentToAdd = applicator.InfluenceComponentToApply.Type;
+
+            childrenWithNamesContainingSearchTerm = FindChildrenWithNameContain(searchTerm);
+
+            if (childrenWithNamesContainingSearchTerm.Count != 0)
+            {
+                foreach (GameObject child in childrenWithNamesContainingSearchTerm)
+                {
+                    TypeReference componentAdding = applicator.InfluenceComponentToApply;
+                    if (child.GetComponent<Influence>() == null)
+                    {
+                        child.AddComponent(componentAdding);
+                        child.GetComponent<Influence>().InfluenceAmount = applicator.InfluenceAmount;
+                    }
+                    else
+                        Debug.LogWarning($"{this.name} tried to add component {componentAdding.Type} to {child.name}, but it already has an Influence component.");
+                }
+
+                DebugListOfObjects(childrenWithNamesContainingSearchTerm);
+            }
+            else
+                Debug.Log($"{this.name} did not find any children objects containing the term {searchTerm}.");
+        }
     }
+
+    private List<GameObject> FindChildrenWithNameContain(string searchTerm)
+    {
+        List<GameObject> childList = new List<GameObject>();
+        string capitalizedSearchTerm = searchTerm.ToUpper();
+
+        foreach (GameObject child in allModelChildren)
+        {
+            if (child.name.ToUpper().Contains(capitalizedSearchTerm))
+                childList.Add(child);
+        }
+
+        return childList;
+    } 
+
+    
 
     #region DebugMethods
 
@@ -104,6 +130,18 @@ public class ApplicatorManager : Initializer
         }
 
         Debug.Log(listOfChildrenNames);
+    }
+
+    private void DebugListOfObjects(List<GameObject> list)
+    {
+        string debugMessage = "This list contains: \n";
+
+        foreach (GameObject item in list)
+        {
+            debugMessage += item.name + "\n";
+        }
+
+        Debug.Log(debugMessage);
     }
 
     #endregion
