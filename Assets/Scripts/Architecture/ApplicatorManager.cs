@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using TypeReferences;
 using UnityEngine;
 
+[RequireComponent(typeof(PrepareModelForNavigation))]
 public class ApplicatorManager : Initializer
 {
-    [SerializeField] private GameObject model;
     [SerializeField] private InfluenceApplicator[] componentApplicators;
     [SerializeField] private LayerApplicator[] layerApplicators;
     
@@ -14,21 +14,10 @@ public class ApplicatorManager : Initializer
 
     public override void Initialization()
     {
-        GetChildrenGameObjects();
+        allModelChildren = GetComponent<PrepareModelForNavigation>().ChildGatherer.AllObjectChildren;
         DebugNamesOfChildren();
 
         UseApplicators();
-    }
-
-    /*
-     * Sets allModelChildren list to all of the children gameobjects in the main model gameobject
-     */
-    private void GetChildrenGameObjects()
-    {
-        foreach (Transform child in model.transform)
-        {
-            allModelChildren.Add(child.gameObject);
-        }
     }
 
     /*
