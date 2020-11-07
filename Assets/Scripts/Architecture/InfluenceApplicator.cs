@@ -12,7 +12,7 @@ public class InfluenceApplicator : Applicator
     public TypeReference InfluenceComponentToApply
     {
         get => influenceComponentToApply;
-        set { influenceComponentToApply = value; }
+        set => influenceComponentToApply = value;
     }
 
     [SerializeField] private int influenceAmount;

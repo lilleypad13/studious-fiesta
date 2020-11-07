@@ -78,9 +78,6 @@ public class AGrid : Initializer
             for (int y = 0; y < gridSizeY; y++)
             {
                 // Determines the actual position of the node
-                //Vector3 worldPoint = worldBottomLeft +
-                //    Vector3.right * (x * nodeDiameter + nodeDiameter / 2.0f) +
-                //    Vector3.forward * (y * nodeDiameter + nodeDiameter / 2.0f);
                 Vector3 worldPoint = worldBottomLeft +
                     Vector3.right * ((x + 1) * nodeDiameter) +
                     Vector3.forward * ((y + 1) * nodeDiameter);

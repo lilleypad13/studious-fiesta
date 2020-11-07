@@ -27,14 +27,8 @@ public abstract class Influence : MonoBehaviour
         }
     }
 
-    public int xRange
-    {
-        get { return xInfluence / 2; }
-    }
-    public int zRange
-    {
-        get { return zInfluence / 2; }
-    }
+    public int xRange { get => xInfluence / 2; }
+    public int zRange { get => zInfluence / 2; }
 
     #endregion
 
