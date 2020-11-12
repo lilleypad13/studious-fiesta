@@ -21,8 +21,7 @@ public class InfluenceManager : Initializer
     {
         foreach (Influence influencer in influenceObjects)
         {
-            //Node influencerOrigin = aGridRuntime.NodeFromWorldPoint(influencer.transform.position);
-            Node influencerOrigin = aGridRuntime.TestNodeFromWorldPoint(transform.TransformPoint(influencer.transform.position));
+            Node influencerOrigin = aGridRuntime.TestNodeFromWorldPoint(influencer.InfluenceOriginPosition);
 
             influencer.ApplyInfluence(grid, influencerOrigin);
         }

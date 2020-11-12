@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Window : Influence
 {
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     /*
      * Applies influence value within a rectangular area.
      * Checks if nodes exist within range.

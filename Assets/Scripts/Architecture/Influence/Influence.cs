@@ -6,6 +6,9 @@ public abstract class Influence : MonoBehaviour
 {
     #region Variables
 
+    private Renderer renderer;
+    protected Renderer Renderer { get => renderer; set => renderer = value; }
+
     public int xInfluence = 5;
     public int zInfluence = 5;
 
@@ -15,9 +18,9 @@ public abstract class Influence : MonoBehaviour
         get => influenceAmount;
         set
         {
-            if (value >= MathArchCost.Instance.MIN_ARCHVALUE)
+            if (value > MathArchCost.Instance.MIN_ARCHVALUE)
             {
-                if (value <= MathArchCost.Instance.MAX_ARCHVALUE)
+                if (value < MathArchCost.Instance.MAX_ARCHVALUE)
                     influenceAmount = value;
                 else
                     influenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
@@ -30,21 +33,35 @@ public abstract class Influence : MonoBehaviour
     public int xRange { get => xInfluence / 2; }
     public int zRange { get => zInfluence / 2; }
 
+    private Vector3 influenceOriginPosition;
+    public Vector3 InfluenceOriginPosition { 
+        get => influenceOriginPosition;
+        set => influenceOriginPosition = value;
+    }
+
     #endregion
 
     #region Unity Methods
-    private void Awake()
+    protected virtual void Awake()
     {
         // Added for cases where value was set in the Inspector and should still be checked
-        if (influenceAmount <= MathArchCost.Instance.MAX_ARCHVALUE)
+        if (InfluenceAmount < MathArchCost.Instance.MAX_ARCHVALUE)
         {
-            if (influenceAmount >= MathArchCost.Instance.MIN_ARCHVALUE)
-                return;
-            else
-                influenceAmount = MathArchCost.Instance.MIN_ARCHVALUE;
+            if (InfluenceAmount < MathArchCost.Instance.MIN_ARCHVALUE)
+                InfluenceAmount = MathArchCost.Instance.MIN_ARCHVALUE;
         }
         else
-            influenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
+            InfluenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
+
+        Renderer = this.gameObject.GetComponent<Renderer>();
+        InfluenceOriginPosition = DetermineInfluenceOriginPosition();
+
+        Debug.Log($"{this.gameObject.name} has influence origin: {influenceOriginPosition}.");
+    }
+
+    protected Vector3 DetermineInfluenceOriginPosition()
+    {
+        return renderer.bounds.center;
     }
 
     /*
@@ -67,6 +84,7 @@ public abstract class Influence : MonoBehaviour
 
     private bool isOnPositiveGrid => xIndex >= 0 && zIndex >= 0;
     private bool isWithinGridBounds => xIndex < columns && zIndex < rows;
+
 
     public bool WithinNodeGridBounds(Node[,] grid, int _xIndex, int _zIndex)
     {
