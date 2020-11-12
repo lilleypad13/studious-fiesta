@@ -444,7 +444,7 @@ Transform:
   - {fileID: 705507995}
   - {fileID: 1768875761}
   - {fileID: 863661605}
-  - {fileID: 155288316}
+  - {fileID: 5006512734927858145}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -957,6 +957,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: DemoModel_102320_04_YZFlip
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1027,20 +1032,13 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: -8317441719152812166, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bb2c31d02a6d2044abcd76bf77774ea, type: 3}
---- !u!4 &155288316 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
-    type: 3}
-  m_PrefabInstance: {fileID: 155288315}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &155288317 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
-    type: 3}
-  m_PrefabInstance: {fileID: 155288315}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &173943529
 GameObject:
   m_ObjectHideFlags: 0
@@ -6705,6 +6703,12 @@ MonoBehaviour:
       GUID: 8e7321063279f5f41bc147f8e51bc730
       _typeNameAndAssembly: Window, Assembly-CSharp
     influenceAmount: 63
+  - searchTerm: flush
+    influenceComponentToApply:
+      GuidAssignmentFailed: 0
+      GUID: 8e7321063279f5f41bc147f8e51bc730
+      _typeNameAndAssembly: Window, Assembly-CSharp
+    influenceAmount: 26
   layerApplicators:
   - searchTerm: wall
     layerToApply:
@@ -6739,7 +6743,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8c118ab5bf0274cbb139a9bd70ef9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelToPrepare: {fileID: 155288317}
+  modelToPrepare: {fileID: 8296172669071449074}
 --- !u!1 &1768875760
 GameObject:
   m_ObjectHideFlags: 0
@@ -8309,3 +8313,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2139639049}
   m_CullTransparentMesh: 0
+--- !u!4 &5006512734927858145 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
+    type: 3}
+  m_PrefabInstance: {fileID: 155288315}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5289597165638520777 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3933774871337792206, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
+    type: 3}
+  m_PrefabInstance: {fileID: 155288315}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5289597165638520778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5289597165638520777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e7321063279f5f41bc147f8e51bc730, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xInfluence: 5
+  zInfluence: 5
+  influenceAmount: 88
+--- !u!1 &8296172669071449074 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 2bb2c31d02a6d2044abcd76bf77774ea,
+    type: 3}
+  m_PrefabInstance: {fileID: 155288315}
+  m_PrefabAsset: {fileID: 0}
