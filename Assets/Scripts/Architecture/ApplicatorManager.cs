@@ -48,8 +48,6 @@ public class ApplicatorManager : Initializer
                 {
                     child.layer = Mathf.RoundToInt(Mathf.Log(layerApplicator.LayerToApply.value, 2));
                 }
-
-                DebugListOfObjects(childrenWithNamesContainingSearchTerm);
             }
             else
                 Debug.Log($"{this.name} did not find any children objects containing the term {searchTerm}.");
@@ -80,8 +78,6 @@ public class ApplicatorManager : Initializer
                     else
                         Debug.LogWarning($"{this.name} tried to add component {componentAdding.Type} to {child.name}, but it already has an Influence component.");
                 }
-
-                DebugListOfObjects(childrenWithNamesContainingSearchTerm);
             }
             else
                 Debug.Log($"{this.name} did not find any children objects containing the term {searchTerm}.");
