@@ -5,7 +5,7 @@ using UnityEngine;
 public class AGrid : Initializer
 {
     [Header("Node and Grid Dimensions")]
-    public Vector2 gridWorldSize; // area in world coordinates that grid will cover
+    private Vector2 gridWorldSize; // area in world coordinates that grid will cover
     [Tooltip("EXPERIMENTAL: Normaly only works with value of 1")]
     public float nodeDiameter = 1.0f; // how much space each individual node covers
     public float unitHeight = 0.0f; // Used to adjust node positioning for agent height
@@ -15,44 +15,48 @@ public class AGrid : Initializer
     public bool isReadingDataFromFile = false;
     public bool useHalfNodeOffset = true;
 
-    [Header("Layer Determination")]
-    public LayerMask unwalkableMask;
-    public TerrainType[] walkableRegions;
-
     //[Header("Obstacle Parameters")]
     private int obstacleProximityPenalty = 10;
 
     [Header("Unity Editor Data Visualization")]
     public bool displayGridGizmos;
 
-    private LayerMask walkableMask;
-    private Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>();
-
     private Node[,] grid; //2D array of nodes
     public NodeGrid nodeGrid; // Helpful package of data about grid
-
-    //private float nodeDiamater;
     private int gridSizeX, gridSizeY;
-
-    private int penaltyMin = int.MaxValue;
-    private int penaltyMax = int.MinValue;
 
     private AGridRuntime aGridRuntime;
     private InfluenceManager influenceManager;
     private AGridDataVisualization dataVisualizer;
 
-    [System.Serializable]
-    public class TerrainType
-    {
-        public LayerMask terrainMask;
-        public int terrainPenalty;
-    }
-
-    // Returns the overall area of the grid given its dimensions
     public int MaxSize
     {
         get { return gridSizeX * gridSizeY; }
     }
+
+    public override void Initialization()
+    {
+        aGridRuntime = GetComponent<AGridRuntime>();
+        influenceManager = GetComponent<InfluenceManager>();
+        dataVisualizer = GetComponent<AGridDataVisualization>();
+
+        gridWorldSize.x = GlobalModelData.Instance.ModelBounds.size.x;
+        gridWorldSize.y = GlobalModelData.Instance.ModelBounds.size.z;
+        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+
+        Debug.Log($"Grid World Sizes are: x: {gridWorldSize.x}; z: {gridWorldSize.y}.");
+
+        //gridSizeX = Mathf.RoundToInt(GlobalModelData.Instance.ModelBounds.size.x / nodeDiameter);
+        //gridSizeY = Mathf.RoundToInt(GlobalModelData.Instance.ModelBounds.size.z / nodeDiameter);
+
+        if (isReadingDataFromFile)
+            CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
+
+        influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
+        CreateGrid();
+    }
+
 
     /*
      * Creates the overall grid of nodes to work with for the A* system
@@ -101,7 +105,6 @@ public class AGrid : Initializer
                         walkable = false;
                     else
                     {
-                        walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
                         worldPoint.y = hit.point.y + unitHeight / 2;
                     }
                 }
@@ -126,115 +129,25 @@ public class AGrid : Initializer
 
         influenceManager.ApplyInfluence(grid);
 
-        // Blur the penalty map to reduce "hard penalty boundaries"; Softens change in penalty between areas
-        //BlurPenaltyMap(3);
-
         // Used to pass on constructed node grid information to AGridRuntime to deal with run time events pertaining to grid
         nodeGrid = new NodeGrid(grid, gridWorldSize, gridSizeX, gridSizeY);
         aGridRuntime.SetGrid(nodeGrid);
     }
 
-    
+    #region Data Visualization
 
-    /*
-     * Blends penalty values throughout the map together so there are less discrete sections for areas with different 
-     * penalty values.
-     */
-    private void BlurPenaltyMap(int blurSize)
+    // Displays the nodes in a more visual way while also being able to convey information about the nodes
+    private void OnDrawGizmos()
     {
-        int kernelSize = blurSize * 2 + 1;
-        //int kernelExtents = (kernelSize - 1) / 2;
-        int kernelExtents = blurSize;
-
-        // Creates two new grids of equal size to the original grid to hold the updated blurred values.
-        // The horizontal pass uses values from the original grid to fill its own first, 
-        // then the vertical pass uses the values from the horizontal grid to fill itself after.
-        int[,] penaltiesHorizontalPass = new int[gridSizeX, gridSizeY];
-        int[,] penaltiesVerticalPass = new int[gridSizeX, gridSizeY];
-
-        // All of the Mathf.Clamp methods used are to effectively reproduce values at the boundaries of the grid 
-        // to keep anything from going out of the grid bounds upon calculation.
-        for (int y = 0; y < gridSizeY; y++)
+        if (Application.isPlaying && displayGridGizmos)
         {
-            // Fills the first element in the row based on the kernel size
-            for (int x = -kernelExtents; x <= kernelExtents; x++)
-            {
-                int sampleX = Mathf.Clamp(x, 0, kernelExtents);
-                penaltiesHorizontalPass[0, y] += grid[sampleX, y].movementPenalty;
-            }
-
-            // Fills the rest of the elements after the first
-            // As this process moves throughout the grid, it starts with the last value calculated in the grid and subtracts 
-            // the leftmost elements from that value (that were dropped from the kernel) and adds the new rightmost elements 
-            // (newly added to the kernel upon advancing) to obtain the value for the current grid location.
-            for (int x = 1; x < gridSizeX; x++)
-            {
-                int removeIndex = Mathf.Clamp(x - kernelExtents - 1, 0, gridSizeX);
-                int addIndex = Mathf.Clamp(x + kernelExtents, 0, gridSizeX - 1);
-
-                // Generates the next value by simply subtracting the value from the single element 
-                // removed from the kernel and adding the value from the newly added element
-                penaltiesHorizontalPass[x, y] = penaltiesHorizontalPass[x - 1, y] 
-                    - grid[removeIndex, y].movementPenalty
-                    + grid[addIndex, y].movementPenalty;
-            }
+            dataVisualizer.VisualizeNodeData(nodeDiameter / 2.0f, gridSizeX, gridSizeY, grid);
         }
 
-        // Same process, but reverse x and y for vertical process
-        for (int x = 0; x < gridSizeX; x++)
-        {
-            for (int y = -kernelExtents; y <= kernelExtents; y++)
-            {
-                int sampleY = Mathf.Clamp(y, 0, kernelExtents);
-                penaltiesVerticalPass[x, 0] += penaltiesHorizontalPass[x, sampleY];
-            }
-
-            int blurredPenalty = Mathf.RoundToInt((float)penaltiesVerticalPass[x, 0] / (kernelSize * kernelSize));
-            grid[x, 0].movementPenalty = blurredPenalty;
-
-            for (int y = 1; y < gridSizeY; y++)
-            {
-                int removeIndex = Mathf.Clamp(y - kernelExtents - 1, 0, gridSizeY);
-                int addIndex = Mathf.Clamp(y + kernelExtents, 0, gridSizeY - 1);
-
-                penaltiesVerticalPass[x, y] = penaltiesVerticalPass[x, y - 1]
-                    - penaltiesHorizontalPass[x, removeIndex]
-                    + penaltiesHorizontalPass[x, addIndex];
-                blurredPenalty = Mathf.RoundToInt((float)penaltiesVerticalPass[x, y] / (kernelSize * kernelSize));
-                grid[x, y].movementPenalty = blurredPenalty;
-
-                // Solely for visualization purposes
-                if(blurredPenalty > penaltyMax)
-                    penaltyMax = blurredPenalty;
-                if(blurredPenalty < penaltyMin)
-                    penaltyMin = blurredPenalty;
-            }
-        }
     }
+    #endregion
 
-    public override void Initialization()
-    {
-        aGridRuntime = GetComponent<AGridRuntime>();
-        influenceManager = GetComponent<InfluenceManager>();
-        dataVisualizer = GetComponent<AGridDataVisualization>();
-
-        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
-        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-
-        foreach (TerrainType region in walkableRegions)
-        {
-            walkableMask.value |= region.terrainMask.value;
-            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
-        }
-
-        if (isReadingDataFromFile)
-            CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
-
-        influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
-        CreateGrid();
-    }
-
-    #region Debugging and Data Visualization
+    #region Debugging
     private void DebugCheckObjectRaycastHitAtLocation(Vector3 worldPoint, RaycastHit hit)
     {
         if (hit.collider.gameObject.layer != 0)
@@ -251,16 +164,5 @@ public class AGrid : Initializer
             }
         }
     }
-
-    // Displays the nodes in a more visual way while also being able to convey information about the nodes
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying && displayGridGizmos)
-        {
-            dataVisualizer.VisualizeNodeData(nodeDiameter / 2.0f, gridSizeX, gridSizeY, grid);
-        }
-
-    }
-
     #endregion
 }
