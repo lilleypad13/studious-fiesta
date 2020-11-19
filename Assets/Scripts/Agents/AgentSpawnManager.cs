@@ -7,10 +7,18 @@ public class AgentSpawnManager : MonoBehaviour
 {
     #region Variables
     [Header("Spawn Parameters")]
-    public GameObject agentPrefab; // Types of agents to spawn
-    private List<Transform> spawnPoints; // Location where agents will spawn from
-    public Transform spawnPointContainer; // Just the single spawnManageer parent object holding all the spawn points as children
-    public Transform target; // Target passed on to agents spawned from this manager
+    [SerializeField] private GameObject agentPrefab; // Types of agents to spawn
+    private Transform spawnPoint; // Location where agents will spawn from
+    public Transform SpawnPoint
+    {
+        get => spawnPoint;
+        set
+        {
+            spawnPoint = value;
+            Debug.Log($"Spawn point was set to the location of {value.gameObject.name}.");
+        }
+    }
+    [SerializeField] private Transform target; // Target passed on to agents spawned from this manager
 
     // Agent Affinities
     [Header("Affinities for Spawned Agents")]
@@ -29,20 +37,9 @@ public class AgentSpawnManager : MonoBehaviour
 
 
     #region Unity Methods
-
-    private void Awake()
-    {
-        spawnPoints = new List<Transform>();
-
-        foreach (Transform child in spawnPointContainer)
-        {
-            spawnPoints.Add(child);
-        }
-    }
-
     private void SpawnAgent()
     {
-        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoints[0].position, spawnPoints[0].rotation);
+        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
 
         // Set this specific instantiated agent's parameters
         UnitSimple agentAI = agent.GetComponent<UnitSimple>();
@@ -57,7 +54,6 @@ public class AgentSpawnManager : MonoBehaviour
     private void SpawnAgent(Transform spawnPoint)
     {
         GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
-        //agent.GetComponent<UnitSimple>().target = target;
 
         // Set this specific instantiated agent's parameters
         UnitSimple agentAI = agent.GetComponent<UnitSimple>();
@@ -74,7 +70,7 @@ public class AgentSpawnManager : MonoBehaviour
 
     public void SpawnAgent(int index)
     {
-        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoints[index].position, spawnPoints[index].rotation);
+        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
 
         // Set this specific instantiated agent's parameters
         UnitSimple agentAI = agent.GetComponent<UnitSimple>();
@@ -83,62 +79,19 @@ public class AgentSpawnManager : MonoBehaviour
         agentAI.Connectivity = connectivityAffinity;
 
         DataRecorder.Instance.GenerateNewPathData();
-        DataRecorder.Instance.SetCurrentPathSpawn(spawnPoints[index]);
+        DataRecorder.Instance.SetCurrentPathSpawn(spawnPoint);
 
         // Tell agent to determine path after setting parameters
         agentAI.AgentRequestPath();
     }
 
-    // SpawnAtPoint# setup this way to quickly work with buttons
-    // All SpawnAtPoint# methods for button testing purposes
-    public void SpawnAtPoint1()
+    public void Spawn()
     {
-        if (CheckListLength(1))
-            SpawnAgent(spawnPoints[0]);
+        if(spawnPoint != null)
+            SpawnAgent(spawnPoint);
         else
-            Debug.Log("There are not enough spawn points to use this command.");
+            Debug.Log("There is no current spawn point.");
     }
-
-    public void SpawnAtPoint2()
-    {
-        if(CheckListLength(2))
-            SpawnAgent(spawnPoints[1]);
-        else
-            Debug.Log("There are not enough spawn points to use this command.");
-    }
-
-    public void SpawnAtPoint3()
-    {
-        if(CheckListLength(3))
-            SpawnAgent(spawnPoints[2]);
-        else
-            Debug.Log("There are not enough spawn points to use this command.");
-    }
-
-    public void SpawnAtPoint4()
-    {
-        if (CheckListLength(4))
-            SpawnAgent(spawnPoints[3]);
-        else
-            Debug.Log("There are not enough spawn points to use this command.");
-    }
-
-    public void SpawnAtPoint5()
-    {
-        if (CheckListLength(5))
-            SpawnAgent(spawnPoints[4]);
-        else
-            Debug.Log("There are not enough spawn points to use this command.");
-    }
-
-    /*
-     * Checks if a number of spawnPoints exist before trying to activate button to spawn an agent from this point
-     */
-    private bool CheckListLength(int index)
-    {
-        return spawnPoints.Count >= index;
-    }
-
 
     #endregion
 }
