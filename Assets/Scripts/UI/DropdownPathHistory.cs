@@ -7,7 +7,7 @@ public class DropdownPathHistory : MonoBehaviour
 {
     public Text textBox;
 
-    [SerializeField]private PathHistoryVisualizer pathVisualizer;
+    [SerializeField] private PathHistoryVisualizer pathVisualizer;
 
     private Dropdown dropdown;
     private int pathCounter;
@@ -37,7 +37,7 @@ public class DropdownPathHistory : MonoBehaviour
         int index = dropdown.value;
         textBox.text = dropdown.options[index].text;
 
-        index -= 1; // -1 to index because to account for extra dropdown "None" option
+        index -= 1; // -1 to index to account for extra dropdown "None" option
         if (index >= 0) // Ensures no path is created for intial dropdown "None" option, while also preventing out of bounds checks
             pathVisualizer.VisualizePath(index);
     }
