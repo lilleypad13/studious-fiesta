@@ -4,29 +4,34 @@ using UnityEngine;
 
 public class PrepareModelForNavigation : Initializer
 {
-    [SerializeField] GameObject modelToPrepare;
     private ChildObjectGatherer childGatherer = new ChildObjectGatherer();
-    public ChildObjectGatherer ChildGatherer { get => childGatherer; }
     private ColliderCreator colliderCreator = new ColliderCreator();
-    private GlobalModelData globalModelData;
 
-    Bounds entireModelBounds;
+    [SerializeField] private GameObject modelToPrepare;
+
+    private List<GameObject> objectsInEntireModel = new List<GameObject>();
+    private Bounds entireModelBounds;
 
     private void OnDrawGizmos()
     {
         ModelBoundsFinder.VisualizeBoundsBox(entireModelBounds);
     }
+
     public override void Initialization()
     {
-        globalModelData = GlobalModelData.Instance;
+        // Gathers all children objects within the entire model and creates a list of them
+        objectsInEntireModel = childGatherer.CreateListOfChildrenObjects(modelToPrepare);
 
-        childGatherer.CreateListOfChildrenObjects(modelToPrepare);
-        colliderCreator.CreateColliders(childGatherer.AllObjectChildren);
+        // Applies colliders to entire list of objects within the overall model
+        colliderCreator.CreateColliders(objectsInEntireModel);
 
-        entireModelBounds = ModelBoundsFinder.EncapsulateGroupOfModelRenderers(childGatherer.AllObjectChildren);
+        // Creation of model bounds
+        entireModelBounds = ModelBoundsFinder.EncapsulateGroupOfModelRenderers(objectsInEntireModel);
         Debug.Log(ModelBoundsFinder.ReportModelBounds(entireModelBounds));
-        ModelBoundsFinder.ReportListOfBounds(childGatherer.AllObjectChildren);
+        ModelBoundsFinder.ReportListOfBounds(objectsInEntireModel);
 
-        globalModelData.ModelBounds = entireModelBounds;
+        // Set global values for use by other classes
+        GlobalModelData.Instance.ObjectsInEntireModel = objectsInEntireModel;
+        GlobalModelData.Instance.ModelBounds = entireModelBounds;
     }
 }

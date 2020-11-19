@@ -26,4 +26,17 @@ public sealed class GlobalModelData
         get => modelBounds;
         set => modelBounds = value;
     }
+
+    private List<GameObject> objectsInEntireModel;
+    public List<GameObject> ObjectsInEntireModel
+    {
+        get => objectsInEntireModel;
+        set
+        {
+            if (objectsInEntireModel == null)
+                objectsInEntireModel = value;
+            else
+                Debug.LogWarning("An attempt at changing the list of objects in the entire model was made.");
+        }
+    }
 }

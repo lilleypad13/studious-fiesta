@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TypeReferences;
 using UnityEngine;
 
-[RequireComponent(typeof(PrepareModelForNavigation))]
 public class ApplicatorManager : Initializer
 {
     [SerializeField] private InfluenceApplicator[] componentApplicators;
@@ -14,7 +13,7 @@ public class ApplicatorManager : Initializer
 
     public override void Initialization()
     {
-        allModelChildren = GetComponent<PrepareModelForNavigation>().ChildGatherer.AllObjectChildren;
+        allModelChildren = GlobalModelData.Instance.ObjectsInEntireModel;
         DebugNamesOfChildren();
 
         UseApplicators();

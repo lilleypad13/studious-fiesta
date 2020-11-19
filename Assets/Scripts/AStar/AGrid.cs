@@ -11,7 +11,6 @@ public class AGrid : Initializer
     public float unitHeight = 0.0f; // Used to adjust node positioning for agent height
 
     [Header("Node Grid Options")]
-    public bool gridOriginAtBottomLeft = false;
     public bool isReadingDataFromFile = false;
     public bool useHalfNodeOffset = true;
 
@@ -47,9 +46,6 @@ public class AGrid : Initializer
 
         Debug.Log($"Grid World Sizes are: x: {gridWorldSize.x}; z: {gridWorldSize.y}.");
 
-        //gridSizeX = Mathf.RoundToInt(GlobalModelData.Instance.ModelBounds.size.x / nodeDiameter);
-        //gridSizeY = Mathf.RoundToInt(GlobalModelData.Instance.ModelBounds.size.z / nodeDiameter);
-
         if (isReadingDataFromFile)
             CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
 
@@ -70,12 +66,8 @@ public class AGrid : Initializer
         grid = new Node[gridSizeX, gridSizeY]; // Creates a 2D grid that gives the total number of nodes
 
         // This point represents the bottom left corner of the grid
-        // Designer bool can determine whether Unity's origin matches the center of the grid or the bottom left point of the grid
         Vector3 worldBottomLeft = new Vector3();
-        if (gridOriginAtBottomLeft)
-            worldBottomLeft = Vector3.zero;
-        else
-            worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+        worldBottomLeft = GlobalModelData.Instance.ModelBounds.min;
 
         for (int x = 0; x < gridSizeX; x++)
         {
