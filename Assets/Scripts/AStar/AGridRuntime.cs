@@ -90,7 +90,6 @@ public class AGridRuntime : MonoBehaviour
             }
         }
 
-        Debug.Log($"DEBUG: Grid coordinate: {xCounter}, {zCounter}.");
         return grid[xCounter, zCounter];
     }
 

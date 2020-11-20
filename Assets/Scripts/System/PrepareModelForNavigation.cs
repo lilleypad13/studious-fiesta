@@ -28,7 +28,6 @@ public class PrepareModelForNavigation : Initializer
         // Creation of model bounds
         entireModelBounds = ModelBoundsFinder.EncapsulateGroupOfModelRenderers(objectsInEntireModel);
         Debug.Log(ModelBoundsFinder.ReportModelBounds(entireModelBounds));
-        ModelBoundsFinder.ReportListOfBounds(objectsInEntireModel);
 
         // Set global values for use by other classes
         GlobalModelData.Instance.ObjectsInEntireModel = objectsInEntireModel;

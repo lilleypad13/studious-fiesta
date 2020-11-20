@@ -55,8 +55,6 @@ public abstract class Influence : MonoBehaviour
 
         Renderer = this.gameObject.GetComponent<Renderer>();
         InfluenceOriginPosition = DetermineInfluenceOriginPosition();
-
-        Debug.Log($"{this.gameObject.name} has influence origin: {influenceOriginPosition}.");
     }
 
     protected Vector3 DetermineInfluenceOriginPosition()

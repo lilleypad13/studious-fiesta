@@ -16,7 +16,6 @@ public class NodeGrid
     public int GridSizeY { get { return gridSizeY; } }
     private int gridSizeY;
 
-    // Constructor
     public NodeGrid(Node[,] _grid, Vector2 _gridWorldSize, int _gridSizeX, int _gridSizeY)
     {
         grid = _grid;
