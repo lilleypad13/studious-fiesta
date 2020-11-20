@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DropdownSpawnManager : DropdownManager
+public class DropdownTargetManager : DropdownManager
 {
     [SerializeField] private AgentSpawnManager spawnManager;
     [SerializeField] private Text textBox;
-    [SerializeField] private Material spawnHighlightMaterial;
+    [SerializeField] private Material targetHighlightMaterial;
 
     List<GameObject> spawnPoints = new List<GameObject>();
 
@@ -30,14 +30,15 @@ public class DropdownSpawnManager : DropdownManager
     protected override void DropdownItemSelected(Dropdown dropdown)
     {
         base.DropdownItemSelected(dropdown);
-        textBox.text = "Current Spawn Point: " + DropdownText(dropdown.value);
+        textBox.text = "Current Target: " + DropdownText(dropdown.value);
     }
 
 
     protected override void MethodToPerformOnSelection(int index)
     {
-        spawnManager.SpawnPoint = spawnPoints[index].transform;
-        if(currentModel != null)
+        spawnManager.Target = spawnPoints[index].transform;
+
+        if (currentModel != null)
         {
             currentModel.GetComponent<MeshRenderer>().material = originalMaterial;
         }
@@ -45,21 +46,6 @@ public class DropdownSpawnManager : DropdownManager
         MeshRenderer currentModelRenderer = currentModel.GetComponent<MeshRenderer>();
 
         originalMaterial = currentModelRenderer.material;
-        currentModelRenderer.material = spawnHighlightMaterial;
-        Debug.Log($"Spawn Highlight: \n Model: {currentModel.name} \n Original Material: {originalMaterial.name} \n Current Material: {currentModelRenderer.name}");
-    }
-
-    private void HighlightModel(GameObject model)
-    {
-        originalMaterial = model.GetComponent<Material>();
-        model.GetComponent<Renderer>().material = spawnHighlightMaterial;
-    }
-
-    private void DeselectPreviousModel(GameObject model)
-    {
-        if(originalMaterial != null)
-        {
-
-        }
+        currentModelRenderer.material = targetHighlightMaterial;
     }
 }

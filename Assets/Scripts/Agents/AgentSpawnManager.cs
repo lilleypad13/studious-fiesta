@@ -18,7 +18,21 @@ public class AgentSpawnManager : MonoBehaviour
             Debug.Log($"Spawn point was set to the location of {value.gameObject.name}.");
         }
     }
-    [SerializeField] private Transform target; // Target passed on to agents spawned from this manager
+    private Transform target; // Target passed on to agents spawned from this manager
+    public Transform Target
+    {
+        get
+        {
+            if (target != null)
+                return target;
+            else
+            {
+                Debug.LogWarning("No target has been set for spawned agents to move towards.");
+                return target;
+            }
+        }
+        set => target = value;
+    }
 
     // Agent Affinities
     [Header("Affinities for Spawned Agents")]
@@ -52,23 +66,6 @@ public class AgentSpawnManager : MonoBehaviour
     }
 
     private void SpawnAgent(Transform spawnPoint)
-    {
-        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
-
-        // Set this specific instantiated agent's parameters
-        UnitSimple agentAI = agent.GetComponent<UnitSimple>();
-        agentAI.target = target;
-        agentAI.Window = windowAffinity;
-        agentAI.Connectivity = connectivityAffinity;
-
-        DataRecorder.Instance.GenerateNewPathData();
-        DataRecorder.Instance.SetCurrentPathSpawn(spawnPoint);
-
-        // Tell agent to determine path after setting parameters
-        agentAI.AgentRequestPath();
-    }
-
-    public void SpawnAgent(int index)
     {
         GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
 
