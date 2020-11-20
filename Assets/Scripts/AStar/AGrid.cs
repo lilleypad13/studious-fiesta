@@ -51,6 +51,8 @@ public class AGrid : Initializer
 
         influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
         CreateGrid();
+
+        //DebugNodeGridData();
     }
 
 
@@ -109,8 +111,8 @@ public class AGrid : Initializer
                 // Create node and assign determined values
                 grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
 
-                if (isReadingDataFromFile)
-                    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
+                //if (isReadingDataFromFile)
+                //    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
             }
         }
 
@@ -155,6 +157,18 @@ public class AGrid : Initializer
                 grid[x, y].ArchitecturalOutput();
             }
         }
+    }
+
+    private void DebugNodeGridData()
+    {
+        string message = "Entire node grid data: \n";
+
+        foreach (Node node in grid)
+        {
+            message += $"Node Coordinates {node.gridX}, {node.gridY}; World Position: {node.worldPosition} \n";
+        }
+
+        Debug.Log(message);
     }
     #endregion
 }
