@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -6,15 +7,35 @@ using UnityEngine;
 
 public class DataWithPosition
 {
-    int xPosition;
-    int zPosition;
-    int dataValue;
+    private float xPosition;
+    public float XPosition { get => xPosition; }
+    private float zPosition;
+    public float ZPosition { get => zPosition; }
+    private int dataValue;
+    public int DataValue { get => dataValue; }
 
-    public DataWithPosition(int x, int z, int data)
+    public DataWithPosition(float x, float z, int data)
     {
         xPosition = x;
         zPosition = z;
         dataValue = data;
+    }
+
+    public DataWithPosition(string x, string z, string data)
+    {
+        float.TryParse(x, out xPosition);
+        float.TryParse(z, out zPosition);
+        int.TryParse(data, out dataValue);
+    }
+
+    public DataWithPosition(string x, string z, string data, float conversionFactor)
+    {
+        float.TryParse(x, out xPosition);
+        float.TryParse(z, out zPosition);
+        int.TryParse(data, out dataValue);
+
+        xPosition /= conversionFactor;
+        zPosition /= conversionFactor;
     }
 
 }
@@ -28,14 +49,16 @@ public class CSVReader : MonoBehaviour
 
     [Header("File Parameters")]
     [Tooltip("EXPERIMENTAL: Generally keep at 1 (unless weird data set).")]
-    [SerializeField] private int dataIncrement = 1; // Increment value between coordinates of each data point
-    // dataWidth could be automated by finding the largest x-value
+    [SerializeField] private float distanceBetweenDataPoints = 1.0f; // Increment value between coordinates of each data point
     [Tooltip("Value to assign empty coordinate locations not found in the file.")]
     [SerializeField] private int defaultValueWhenNotFound = 0;
 
+    private int[,] rectangularData;
+
     [SerializeField] private bool convertInchesToFeet = false;
 
-    // Data to hold for use within Unity
+    private int debugLogCounter = 0; // Tried to use with a debug .txt file creator
+
     private static CSVReader instance;
     private CSVReader()
     {
@@ -58,12 +81,19 @@ public class CSVReader : MonoBehaviour
         }
     }
 
-    //public int[,,] FullData
-    //{
-    //    get { return fullData; }
-    //}
-    //private int[,,] fullData;
     private List<DataWithPosition> fullData = new List<DataWithPosition>();
+
+    private string[] SplitTextAssetIntoRows(TextAsset asset) => asset.text.Split(new char[] { '\n' });
+
+    private string[] SplitRowIntoIndividualValues(string fullRow) => fullRow.Split(new char[] { ',' });
+    
+    private int FindDataDimension(float maxValue) => (int)(maxValue / distanceBetweenDataPoints);
+
+    private bool isWithinDimensionBounds(int index, int dimensionBound)
+    {
+        return index < dimensionBound;
+    }
+
 
     /*
      * Reads data from a text asset file and separates data into an organized array.
@@ -73,74 +103,88 @@ public class CSVReader : MonoBehaviour
         TextAsset gridData = Resources.Load<TextAsset>(rhinoInputCSVName);
         int dataCounter = 1; // Starts at 1 to account for header row
 
-        string[] data = gridData.text.Split(new char[] { '\n' }); // TODO: Check if this is giving +/- 1 extra piece of data
-        string[] row = data[0].Split(new char[] { ',' }); // Counts number of elements in first row to determine how many columns data has
-        int[] rowInt = new int[row.Length];
-        Debug.Log($"The number of rows in the data is: {data.Length} and the number of columns in the data is: {row.Length}.");
-        DebugListOutStringArray(data, "This is the data string array:");
+        string[] data = SplitTextAssetIntoRows(gridData);
+        string[] firstRow = SplitRowIntoIndividualValues(data[0]);
+        int[] rowInt = new int[firstRow.Length];
 
-        while (data[dataCounter] != string.Empty)
+        float maxX = FindMaximumValue(data, 1);
+        float maxZ = FindMaximumValue(data, 2);
+        Debug.Log($"File Reader found a max X of {maxX} and a max Z of {maxZ}.");
+
+        int totalCols = FindDataDimension(maxX);
+        int totalRows = FindDataDimension(maxZ);
+        Debug.Log($"The file reader data dimensions are width {totalCols} by height {totalRows}.");
+
+        rectangularData = new int[totalCols, totalRows];
+        int rowIndex = 0;
+        int colIndex = 0;
+
+        while (data[dataCounter] != string.Empty && 
+            isWithinDimensionBounds(rowIndex, totalRows) && 
+            isWithinDimensionBounds(colIndex, totalCols))
         {
             DataWithPosition currentData;
 
             string[] currentRow = data[dataCounter].Split(new char[] { ',' });
-            if(convertInchesToFeet)
-                currentData = new DataWithPosition(int.Parse(currentRow[1]) / 12, int.Parse(currentRow[2]) / 12, int.Parse(currentRow[3]) / 12);
+            if (convertInchesToFeet)
+                currentData = new DataWithPosition(currentRow[1], currentRow[2], currentRow[3], 12.0f);
             else
-                currentData = new DataWithPosition(int.Parse(currentRow[1]), int.Parse(currentRow[2]), int.Parse(currentRow[3]));
+                currentData = new DataWithPosition(currentRow[1], currentRow[2], currentRow[3]);
 
-            fullData.Add(currentData);
+            int xCoordinateNormalizedToIndex = (int)((currentData.XPosition - distanceBetweenDataPoints) / distanceBetweenDataPoints);
+            int zCoordinateNormalizedToIndex = (int)((currentData.ZPosition - distanceBetweenDataPoints) / distanceBetweenDataPoints);
 
-            dataCounter++;
+            bool matchingIndex = xCoordinateNormalizedToIndex == colIndex && zCoordinateNormalizedToIndex == rowIndex;
+            if (matchingIndex)
+            {
+                rectangularData[colIndex, rowIndex] = currentData.DataValue;
+                dataCounter++;
+            }
+            else
+                rectangularData[colIndex, rowIndex] = 0;
+
+            if (rowIndex < totalRows - 1)
+                rowIndex++;
+            else
+            {
+                rowIndex = 0;
+                colIndex++;
+            }
         }
 
-        Debug.Log($"The number of elements in fullData list is: {fullData.Count}.");
-
-        //for(int i = 0; i < dataWidth; i++)
-        //{
-        //    for (int j = 0; j < dataHeight; j++)
-        //    {
-        //        row = data[dataCounter].Split(new char[] { ',' });
-
-        //        // Converts row of string data from file into an int array
-        //        for (int k = 0; k < row.Length; k++)
-        //        {
-        //            int.TryParse(row[k], out rowInt[k]);
-        //        }
-
-        //        // Checks if current data row in file has coordinates which matchup with an array element 
-        //        // in the generated data array.
-        //        // If it matches, it assigns that entire row's data to that row in the data array and moves the process 
-        //        // forward to assign the next row of data from the file.
-        //        // If they do not match, it creates a new row of data with the coordinates not found in the 
-        //        // read file and assigns it a designated default "not found" value, and retains the same row 
-        //        // of data until it finds where to place it.
-        //        if(rowInt[1] == (i + 1) * dataIncrement && rowInt[2] == (j + 1) * dataIncrement)
-        //        {
-        //            for (int k = 0; k < row.Length; k++)
-        //            {
-        //                fullData[i, j, k] = rowInt[k];
-        //            }
-        //            dataCounter++;
-        //        }
-        //        else
-        //        {
-        //            rowInt[1] = i + 1;
-        //            rowInt[2] = j + 1;
-        //            rowInt[3] = defaultValueWhenNotFound;
-
-        //            for (int k = 0; k < row.Length; k++)
-        //            {
-        //                fullData[i, j, k] = rowInt[k];
-        //            }
-        //        }
-        //    }
-        //}
+        DebugListOut2DArray(rectangularData, "This is rect data: ");
     }
 
-    /*
-     * Displays organized data from a specific row within the file data
-     */
+
+    private float FindMaximumValue(string[] dataAsRows, int columnBeingChecked)
+    {
+        float maximumValue = 0.0f;
+        float valueToCheck = 0.0f;
+
+        string firstRow = dataAsRows[0];
+        string currentRow = firstRow;
+
+        string[] segmentedRow;
+        int rowIndex = 0;
+
+        while (!string.IsNullOrEmpty(currentRow))
+        {
+            segmentedRow = SplitRowIntoIndividualValues(currentRow);
+            float.TryParse(segmentedRow[columnBeingChecked], out valueToCheck);
+
+            if(valueToCheck != 0.0f)
+            {
+                if (valueToCheck > maximumValue)
+                    maximumValue = valueToCheck;
+            }
+
+            rowIndex++;
+            currentRow = dataAsRows[rowIndex];
+        }
+
+        return maximumValue;
+    }
+
     private void DisplayRowData(string[] row)
     {
         Debug.Log("Ref: " + row[0] + "\n" +
@@ -158,18 +202,18 @@ public class CSVReader : MonoBehaviour
     }
 
     /*
-     * Checks if passed in node coordinates match those of the current piece of data from that extracted from the .csv file.
-     * If they match, it properly assigns its data to the data of the node and advances the .csv file data to the next line.
-     * If they do not match, no data is assigned from the .csv file and it remains on the same line (waiting to find the matching 
-     * node to assign its data to).
+     * Checks if passed in node indices match those of a piece of data extracted from the .csv file.
      */
-    //public void CheckToAssignValue(Node node)
-    //{
-    //    int arrayXIndex = node.gridX;
-    //    int arrayYIndex = node.gridY;
+    public void CheckToAssignValue(Node node)
+    {
+        int arrayXIndex = node.gridX;
+        int arrayYIndex = node.gridY;
 
-    //    node.Connectivity = fullData[arrayXIndex, arrayYIndex, 3];
-    //}
+        if (arrayXIndex < rectangularData.GetLength(1) && arrayYIndex < rectangularData.GetLength(0))
+            node.Connectivity = rectangularData[arrayXIndex, arrayYIndex];
+        else
+            Debug.LogWarning($"Node[{arrayXIndex}, {arrayYIndex}]: File reader attempted to assign value to a node whose index is outside of the file's data bounds.");
+    }
 
     /*
      * Solely provides a reference on a monobehaviour class to allow a button to access the static instance of DataRecorder which 
@@ -195,13 +239,68 @@ public class CSVReader : MonoBehaviour
         ExportDataToDebugLog(message);
     }
 
+    private void DebugListOutStringArray(float[,] array, string debugMessageStart)
+    {
+        string message = debugMessageStart + "\n";
+
+        foreach (float item in array)
+        {
+            message += item + "\n";
+        }
+
+        Debug.Log(message);
+        //ExportDataToDebugLog(message);
+    }
+
+    private void DebugListOut2DArray(float[,] array, string debugMessageStart)
+    {
+        string message = debugMessageStart + "\n";
+
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            message += $"Row {i}: ";
+
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                message += $" {array[j,i]}";
+            }
+
+            message += "\n";
+        }
+
+        Debug.Log(message);
+        ExportDataToDebugLog(message);
+    }
+
+    private void DebugListOut2DArray(int[,] array, string debugMessageStart)
+    {
+        string message = debugMessageStart + "\n";
+
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            message += $"Row {i}: ";
+
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                message += $" {array[j, i]}";
+            }
+
+            message += "\n";
+        }
+
+        Debug.Log(message);
+        ExportDataToDebugLog(message);
+    }
+
     public void ExportDataToDebugLog(string debugMessage)
     {
-        string filePath = "Assets/Resources/DebugLog.txt";
+        string filePath = $"Assets/Resources/DebugLogDATATEST.txt";
         StreamWriter file = new StreamWriter(filePath, true);
 
         file.Write(debugMessage);
         file.Close();
+
+        debugLogCounter++;
     }
     #endregion
 }
