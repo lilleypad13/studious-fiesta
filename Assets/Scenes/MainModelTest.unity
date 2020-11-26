@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4489,7 +4489,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &994337516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4503,7 +4503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rhinoInputCSVName: DemoModel_VGACoordinates
-  dataIncrement: 1
+  distanceBetweenDataPoints: 1
   defaultValueWhenNotFound: 0
   convertInchesToFeet: 0
 --- !u!4 &994337517
@@ -9218,7 +9218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeDiameter: 1
   unitHeight: 2
-  isReadingDataFromFile: 0
+  isReadingDataFromFile: 1
   useHalfNodeOffset: 0
   displayGridGizmos: 1
 --- !u!114 &1962798126
