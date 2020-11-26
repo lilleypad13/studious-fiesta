@@ -111,8 +111,8 @@ public class AGrid : Initializer
                 // Create node and assign determined values
                 grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
 
-                //if (isReadingDataFromFile)
-                //    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
+                if (isReadingDataFromFile)
+                    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
             }
         }
 
