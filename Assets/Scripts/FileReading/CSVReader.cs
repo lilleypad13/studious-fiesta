@@ -42,6 +42,9 @@ public class DataWithPosition
 
 public class CSVReader : MonoBehaviour
 {
+    [SerializeField] private AGrid aGrid;
+    private ModifyDataForPathingNodes modifyData;
+
     // Data about the file being read
     [Header("File to Read")]
     [Tooltip("File name that can be copied from any file in the Resources folder.")]
@@ -94,12 +97,14 @@ public class CSVReader : MonoBehaviour
         return index < dimensionBound;
     }
 
-
     /*
      * Reads data from a text asset file and separates data into an organized array.
      */
     public void ReadInData()
     {
+        modifyData = ModifyDataForPathingNodes.Instance;
+        modifyData.DetermineCaseForCreatingDataArray(distanceBetweenDataPoints);
+
         TextAsset gridData = Resources.Load<TextAsset>(rhinoInputCSVName);
         int dataCounter = 1; // Starts at 1 to account for header row
 
@@ -152,6 +157,7 @@ public class CSVReader : MonoBehaviour
             }
         }
 
+        modifyData.CheckToModifyData(rectangularData);
         DebugListOut2DArray(rectangularData, "This is rect data: ");
     }
 
