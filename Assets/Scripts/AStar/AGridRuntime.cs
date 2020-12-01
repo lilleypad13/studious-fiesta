@@ -60,8 +60,8 @@ public class AGridRuntime : MonoBehaviour
         int xCounter = 0;
         int zCounter = 0;
 
-        int maxGridSizeCheckX = Mathf.FloorToInt(gridWorldSize.x) - 1;
-        int maxGridSizeCheckZ = Mathf.FloorToInt(gridWorldSize.y) - 1;
+        int maxGridSizeCheckX = gridSizeX;
+        int maxGridSizeCheckZ = gridSizeY;
         // Go through nodes starting with first node to find which node is closest on the x-axis
         while (!foundX && xCounter < maxGridSizeCheckX)
         {
@@ -90,7 +90,11 @@ public class AGridRuntime : MonoBehaviour
             }
         }
 
-        return grid[xCounter, zCounter];
+        int lastClosestXIndex = xCounter - 1;
+        int lastClosestZIndex = zCounter - 1;
+
+        Debug.Log($"Attempting to return node from world point: {worldPosition}");
+        return grid[lastClosestXIndex, lastClosestZIndex];
     }
 
     /*
