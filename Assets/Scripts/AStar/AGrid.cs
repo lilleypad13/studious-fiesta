@@ -7,7 +7,8 @@ public class AGrid : Initializer
     [Header("Node and Grid Dimensions")]
     private Vector2 gridWorldSize; // area in world coordinates that grid will cover
     [Tooltip("EXPERIMENTAL: Normaly only works with value of 1")]
-    public float nodeDiameter = 1.0f; // how much space each individual node covers
+    [SerializeField] private float nodeDiameter = 1.0f; // how much space each individual node covers
+    public float NodeDiameter { get => nodeDiameter; }
     public float unitHeight = 0.0f; // Used to adjust node positioning for agent height
 
     [Header("Node Grid Options")]
@@ -44,7 +45,8 @@ public class AGrid : Initializer
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
-        Debug.Log($"Grid World Sizes are: x: {gridWorldSize.x}; z: {gridWorldSize.y}.");
+        Debug.Log($"Grid World Sizes are: x: {gridWorldSize.x}; z: {gridWorldSize.y}. \n" +
+            $"Grid Index Sizes are: x: {gridSizeX}; z: {gridSizeY}.");
 
         if (isReadingDataFromFile)
             CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
@@ -111,8 +113,10 @@ public class AGrid : Initializer
                 // Create node and assign determined values
                 grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
 
+                //if (isReadingDataFromFile)
+                //    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
                 if (isReadingDataFromFile)
-                    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
+                    ModifyDataForPathingNodes.Instance.CheckToAssignValue(grid[x, y]);
             }
         }
 
