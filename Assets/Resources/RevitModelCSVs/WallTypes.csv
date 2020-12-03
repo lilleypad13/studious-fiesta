@@ -1,0 +1,27 @@
+Id,Keynote,TypeIfcGUID,Model,Manufacturer,TypeComments,URL,Description,StructuralMaterial,Roughness,Absorptance,Thermalmass,ThermalResistanceR,HeatTransferCoefficientU,AssemblyCode,FamilyName,TypeName,TypeMark,FireRating,Cost,Width
+219,,,,,,,,,3,0.7,,,,B2010,Basic Wall,"Generic - 6""",,,,0.1524
+220,,,,,,,,18946,3,0.7,5458.096958,2.637692308,0.379119277,C1010145,Basic Wall,"Interior - 5"" Partition (2-hr)",,,,0.127
+221,,,,,,,,18946,3,0.7,13640.38499,9.513764702,0.105110861,B2010158,Basic Wall,Exterior - Brick on Mtl. Stud,,,,0.352425
+249,,,,,,,,,3,0.7,,,,B2010,Basic Wall,"Generic - 8""",,,,0.2032
+250,,,,,,,,18942,3,0.7,54402.07224,5.569973185,0.179534078,B2010156,Basic Wall,Exterior - Brick on CMU,,,,0.4953
+251,,,,,,,,,3,0.7,,,,B2010,Basic Wall,"Generic - 12""",,,,0.3048
+252,,,,,,,,,3,0.7,,,,B2010,Basic Wall,"Generic - 5""",,,,0.127
+253,,,,,,,,18942,3,0.7,41477.10105,0.227134615,4.402675472,B2010,Basic Wall,"Generic - 12"" Masonry",,,,0.295275
+254,,,,,,,,18942,3,0.7,27205.41036,0.148980769,6.71227572,B2010,Basic Wall,"Generic - 8"" Masonry",,,,0.193675
+255,,,,,,,,18942,3,0.7,20069.56502,0.109903846,9.098862642,B2010,Basic Wall,"Generic - 6"" Masonry",,,,0.142875
+256,,,,,,,,18942,3,0.7,84738.96196,4.610598541,0.21689158,B2010144,Basic Wall,Exterior - CMU Insulated,,,,0.6731
+257,,,,,,,,18941,3,0.7,12289.51142,0.188148148,5.31496063,B2010,Basic Wall,"Generic - 4"" Brick",,,,0.1016
+258,,,,,,,,18946,3,0.7,3275.213374,1.709615385,0.584926884,C1010145,Basic Wall,"Interior - 3 1/8"" Partition (1-hr)",,,,0.079375
+261,,,,,,,,18946,3,0.7,2735.797268,3.731846154,0.267963887,C1010145,Basic Wall,"Interior - 4 7/8"" Partition (1-hr)",,,,0.123825
+262,,,,,,,,18946,3,0.7,5461.293753,3.780692308,0.264501821,C1010145,Basic Wall,"Interior - 6 1/8"" Partition (2-hr)",,,,0.155575
+263,,,,,,,,18946,3,0.7,4098.545511,3.756269231,0.266221599,C1010145,Basic Wall,"Interior - 5 1/2"" Partition (1-hr)",,,,0.1397
+264,,,,,,,,18946,3,0.7,2770.316389,11.64029892,0.085908447,B2010100,Basic Wall,Exterior - EIFS on Mtl. Stud,,,,0.31115
+21854,,,,,,,,,,,,,,B2020200,Curtain Wall,Curtain Wall 1,,,,
+29243,,,,,,,,18939,3,0.7,42789.58689,0.291395793,3.43175853,A1010200,Basic Wall,"Foundation - 12"" Concrete",,,,0.3048
+29244,,,,,,,,18939,3,0.7,42789.58689,0.291395793,3.43175853,,Basic Wall,"Retaining - 12"" Concrete",,,,0.3048
+43831,,,,,,,,,3,0.7,,,,B2010,Basic Wall,"Generic - 8"" - Filled",,,,0.2032
+45098,,,,,,,,18954,3,0.7,14427.43334,0.020385128,49.05536968,B2010,Basic Wall,"Soffit - 1/2"" GWB & Metal Stud",,,,0.0508
+47381,,,,,,,,18946,3,0.7,26574.10467,9.584591625,0.104334127,B2010,Basic Wall,Exterior - Brick and CMU on MTL. Stud,,,,0.352425
+56765,,,,,,,,,,,,,,B2020200,Curtain Wall,Storefront,,,,
+56766,,,,,,,,,,,,,,B2020200,Curtain Wall,Exterior Glazing,,,,
+83171,,,,,,,,18946,3,0.7,29708.42563,9.492236212,0.105349254,B2010158,Basic Wall,Exterior - CMU on Mtl. Stud,,,,0.454025
