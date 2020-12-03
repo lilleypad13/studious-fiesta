@@ -49,7 +49,7 @@ public class AGrid : Initializer
             $"Grid Index Sizes are: x: {gridSizeX}; z: {gridSizeY}.");
 
         if (isReadingDataFromFile)
-            CSVReader.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
+            CSVReaderRevitDataToAStarGrid.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
 
         influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
         CreateGrid();

@@ -10,7 +10,7 @@ public enum DataResolutionComparison
     LessDataThanPathing
 }
 
-[RequireComponent(typeof(CSVReader))]
+[RequireComponent(typeof(CSVReaderRevitDataToAStarGrid))]
 public class ModifyDataForPathingNodes : MonoBehaviour
 {
     private static ModifyDataForPathingNodes instance;
@@ -35,7 +35,7 @@ public class ModifyDataForPathingNodes : MonoBehaviour
         }
     }
 
-    private CSVReader csvReader;
+    private CSVReaderRevitDataToAStarGrid csvReader;
     [SerializeField]private AGrid aGrid;
 
     private float distanceRatio = 0.0f; // D
