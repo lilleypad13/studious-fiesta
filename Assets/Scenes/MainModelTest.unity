@@ -4484,6 +4484,7 @@ GameObject:
   - component: {fileID: 994337517}
   - component: {fileID: 994337516}
   - component: {fileID: 994337518}
+  - component: {fileID: 994337519}
   m_Layer: 0
   m_Name: FileReader
   m_TagString: Untagged
@@ -4500,7 +4501,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 994337515}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ed848db4726af24684e297b69edf13b, type: 3}
+  m_Script: {fileID: 11500000, guid: c7af967d6f6b4e04db7d1dcfacbd6e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   aGrid: {fileID: 1962798125}
@@ -4535,6 +4536,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aGrid: {fileID: 1962798125}
+--- !u!114 &994337519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994337515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e52efce3c251064e8c7c48a9d866476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameFolderRevitModelCSVs: RevitModelCSVs
+  sheetsToRead:
+  - sheetName: Walls
+    columnNames:
+    - Id
+    - Walkable
+  - sheetName: WallTypes
+    columnNames:
+    - Id
+    - TypeName
+  - sheetName: Doors
+    columnNames:
+    - Id
+    - DoorClosed
 --- !u!1 &996181899 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7462036651222271334, guid: ebc8ab103fa1799478627e56418b6efc,
