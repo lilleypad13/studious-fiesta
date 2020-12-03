@@ -93,7 +93,6 @@ public class AGridRuntime : MonoBehaviour
         int lastClosestXIndex = xCounter - 1;
         int lastClosestZIndex = zCounter - 1;
 
-        Debug.Log($"Attempting to return node from world point: {worldPosition}");
         return grid[lastClosestXIndex, lastClosestZIndex];
     }
 
