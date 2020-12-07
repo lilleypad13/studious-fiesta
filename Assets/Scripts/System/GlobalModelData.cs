@@ -39,4 +39,17 @@ public sealed class GlobalModelData
                 Debug.LogWarning("An attempt at changing the list of objects in the entire model was made.");
         }
     }
+
+    public GameObject SearchEntireModelForObjectWithNameContaining(string searchID)
+    {
+        Debug.Log($"Searching entire model for object containing ID: {searchID}");
+        foreach (GameObject item in GlobalModelData.Instance.ObjectsInEntireModel)
+        {
+            if (item.name.Contains(searchID))
+                return item;
+        }
+
+        Debug.LogWarning("Revit model data contained an ID number which was not found in the current model.");
+        return null;
+    }
 }
