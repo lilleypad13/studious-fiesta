@@ -4116,7 +4116,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameFolderRevitModelCSVs: RevitModelCSVs
   sheetsOfInterest:
-  - Doors
+  - sheetName: Doors
+    columnName: DoorClosed
+  - sheetName: Walls
+    columnName: Walkable
 --- !u!1 &1006272699
 GameObject:
   m_ObjectHideFlags: 0
@@ -7197,18 +7200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcfec3972ba1bb84a9ab3a4dd94aee99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentApplicators:
-  - searchTerm: panel
-    influenceComponentToApply:
-      GuidAssignmentFailed: 0
-      GUID: 8e7321063279f5f41bc147f8e51bc730
-      _typeNameAndAssembly: Window, Assembly-CSharp
-    influenceAmount: 55
-  layerApplicators:
-  - searchTerm: wall
-    layerToApply:
-      serializedVersion: 2
-      m_Bits: 256
+  componentApplicators: []
+  layerApplicators: []
 --- !u!114 &1761012922
 MonoBehaviour:
   m_ObjectHideFlags: 0
