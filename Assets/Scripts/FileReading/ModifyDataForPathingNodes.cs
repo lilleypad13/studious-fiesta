@@ -137,7 +137,7 @@ public class ModifyDataForPathingNodes : MonoBehaviour
             return rectangularData[xIndex, yIndex];
         else
         {
-            Debug.LogWarning($"Node[{xIndex}, {yIndex}]: File reader attempted to assign value to a node whose index is outside of the file's data bounds.");
+            debugNodesThatWereUnassigned += $"Node[{xIndex}, {yIndex}] \n";
             return 0;
         }
     }
@@ -169,7 +169,7 @@ public class ModifyDataForPathingNodes : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Node[{xIndex}, {yIndex}]: File reader attempted to assign value to a node whose index is outside of the file's data bounds.");
+            debugNodesThatWereUnassigned += $"Node[{xIndex}, {yIndex}] \n";
             average = 0;
         }
 
@@ -177,6 +177,14 @@ public class ModifyDataForPathingNodes : MonoBehaviour
     }
 
     #region Debugging
+
+    private string debugNodesThatWereUnassigned = "";
+
+    public void DebugListNodesThatWereUnassigned()
+    {
+        Debug.Log($"File reader attempted to assign value to these nodes whose indices were outside of the file's data bounds: \n" +
+            debugNodesThatWereUnassigned);
+    }
 
     private void DebugListOut2DArray(int[,] array, string debugMessageStart)
     {

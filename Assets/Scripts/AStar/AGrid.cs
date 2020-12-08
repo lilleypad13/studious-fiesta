@@ -113,12 +113,12 @@ public class AGrid : Initializer
                 // Create node and assign determined values
                 grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
 
-                //if (isReadingDataFromFile)
-                //    CSVReader.Instance.CheckToAssignValue(grid[x, y]); // Determines if value from CSV file should be applied to node
                 if (isReadingDataFromFile)
                     ModifyDataForPathingNodes.Instance.CheckToAssignValue(grid[x, y]);
             }
         }
+
+        ModifyDataForPathingNodes.Instance.DebugListNodesThatWereUnassigned();
 
         // Used to pass on constructed node grid information to AGridRuntime to deal with run time events pertaining to grid
         // TODO: MUST REMOVE DOUBLE GRID SETTING HERE; NEEDED CURRENTLY IN ORDER TO APPLY INFLUENCE
