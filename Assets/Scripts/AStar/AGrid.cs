@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(RaycastAGridDetermination))]
 public class AGrid : Initializer
 {
     [Header("Node and Grid Dimensions")]
@@ -28,6 +29,7 @@ public class AGrid : Initializer
     private AGridRuntime aGridRuntime;
     private InfluenceManager influenceManager;
     private AGridDataVisualization dataVisualizer;
+    private RaycastAGridDetermination raycastSystem;
 
     public int MaxSize
     {
@@ -39,6 +41,7 @@ public class AGrid : Initializer
         aGridRuntime = GetComponent<AGridRuntime>();
         influenceManager = GetComponent<InfluenceManager>();
         dataVisualizer = GetComponent<AGridDataVisualization>();
+        raycastSystem = GetComponent<RaycastAGridDetermination>();
 
         gridWorldSize.x = GlobalModelData.Instance.ModelBounds.size.x;
         gridWorldSize.y = GlobalModelData.Instance.ModelBounds.size.z;
@@ -92,20 +95,7 @@ public class AGrid : Initializer
                 int movementPenalty = 0;
 
                 // Raycast
-                Ray ray = new Ray(worldPoint + Vector3.up * 50, Vector3.down);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 100))
-                {
-                    if (hit.collider.gameObject.layer == 8)
-                        walkable = false;
-                    else
-                    {
-                        worldPoint.y = hit.point.y + unitHeight / 2;
-                    }
-                }
-                else
-                    walkable = false;
+                walkable = raycastSystem.DetermineWalkabilityWithRaycast(worldPoint);
 
                 if (!walkable)
                     movementPenalty += obstacleProximityPenalty;
