@@ -72,7 +72,7 @@ public class ApplicatorManager : Initializer
                     if (child.GetComponent<Influence>() == null)
                     {
                         child.AddComponent(componentAdding);
-                        child.GetComponent<Influence>().InfluenceAmount = applicator.InfluenceAmount;
+                        child.GetComponent<Influence>().ArchitectureInfluenceAmount = applicator.InfluenceAmount;
                     }
                     else
                         Debug.LogWarning($"{this.name} tried to add component {componentAdding.Type} to {child.name}, but it already has an Influence component.");

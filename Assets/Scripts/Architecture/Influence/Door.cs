@@ -17,7 +17,7 @@ public class Door : Influence
                 if(WithinNodeGridBounds(grid, influenceOrigin.gridX + x, influenceOrigin.gridY + z))
                 {
                     Debug.Log($"Trying to apply influence to grid node: {influenceOrigin.gridX + x}, {influenceOrigin.gridY + z}.");
-                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += InfluenceAmount;
+                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += ArchitectureInfluenceAmount;
                 }
             }
         }

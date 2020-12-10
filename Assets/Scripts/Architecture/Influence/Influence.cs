@@ -2,31 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Influence : MonoBehaviour
+public class Influence : MonoBehaviour
 {
     #region Variables
 
-    private Renderer renderer;
-    protected Renderer Renderer { get => renderer; set => renderer = value; }
+    private Renderer rend;
+    protected Renderer Rend { get => rend; set => rend = value; }
 
     public int xInfluence = 5;
     public int zInfluence = 5;
 
-    [SerializeField]private int influenceAmount;
-    public int InfluenceAmount
+    [SerializeField]private int architectureInfluenceAmount;
+    public int ArchitectureInfluenceAmount
     {
-        get => influenceAmount;
+        get => architectureInfluenceAmount;
         set
         {
             if (value > MathArchCost.Instance.MIN_ARCHVALUE)
             {
                 if (value < MathArchCost.Instance.MAX_ARCHVALUE)
-                    influenceAmount = value;
+                    architectureInfluenceAmount = value;
                 else
-                    influenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
+                    architectureInfluenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
             }
             else
-                influenceAmount = MathArchCost.Instance.MIN_ARCHVALUE;
+                architectureInfluenceAmount = MathArchCost.Instance.MIN_ARCHVALUE;
         }
     }
 
@@ -45,21 +45,21 @@ public abstract class Influence : MonoBehaviour
     protected virtual void Awake()
     {
         // Added for cases where value was set in the Inspector and should still be checked
-        if (InfluenceAmount < MathArchCost.Instance.MAX_ARCHVALUE)
+        if (ArchitectureInfluenceAmount < MathArchCost.Instance.MAX_ARCHVALUE)
         {
-            if (InfluenceAmount < MathArchCost.Instance.MIN_ARCHVALUE)
-                InfluenceAmount = MathArchCost.Instance.MIN_ARCHVALUE;
+            if (ArchitectureInfluenceAmount < MathArchCost.Instance.MIN_ARCHVALUE)
+                ArchitectureInfluenceAmount = MathArchCost.Instance.MIN_ARCHVALUE;
         }
         else
-            InfluenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
+            ArchitectureInfluenceAmount = MathArchCost.Instance.MAX_ARCHVALUE;
 
-        Renderer = this.gameObject.GetComponent<Renderer>();
+        Rend = this.gameObject.GetComponent<Renderer>();
         InfluenceOriginPosition = DetermineInfluenceOriginPosition();
     }
 
     protected Vector3 DetermineInfluenceOriginPosition()
     {
-        return renderer.bounds.center;
+        return rend.bounds.center;
     }
 
     /*
@@ -69,7 +69,19 @@ public abstract class Influence : MonoBehaviour
      * Node origin helps localize the node editing (so Influence class knows where to start influencing 
      * and where to spread out from)
      */
-    public abstract void ApplyInfluence(Node[,] grid, Node influenceOrigin);
+    public virtual void ApplyInfluence(Node[,] grid, Node influenceOrigin)
+    {
+        for (int x = -xRange; x < xRange; x++)
+        {
+            for (int z = -zRange; z < zRange; z++)
+            {
+                if (WithinNodeGridBounds(grid, influenceOrigin.gridX + x, influenceOrigin.gridY + z))
+                {
+                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += ArchitectureInfluenceAmount;
+                }
+            }
+        }
+    }
 
     /*
      * Consistently checks if a node is within the overall grid bounds before trying to get it 

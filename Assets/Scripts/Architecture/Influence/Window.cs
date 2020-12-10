@@ -21,7 +21,7 @@ public class Window : Influence
             {
                 if(WithinNodeGridBounds(grid, influenceOrigin.gridX + x, influenceOrigin.gridY + z))
                 {
-                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += InfluenceAmount;
+                    grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += ArchitectureInfluenceAmount;
                 }
             }
         }
