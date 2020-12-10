@@ -1,6 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
+
+public class ArchitecturalPathing
+{
+    private string name;
+    public string Name { get => name; }
+    private int architecturalValue;
+    public int ArchitecturalValue
+    {
+        get => architecturalValue;
+        set
+        {
+            if (value > MathArchCost.Instance.MAX_ARCHVALUE)
+                architecturalValue = MathArchCost.Instance.MAX_ARCHVALUE;
+            else
+                architecturalValue = value;
+        }
+    }
+
+    public ArchitecturalPathing(string _name, int _architecturalValue)
+    {
+        name = _name;
+
+        if (_architecturalValue > MathArchCost.Instance.MAX_ARCHVALUE)
+            architecturalValue = MathArchCost.Instance.MAX_ARCHVALUE;
+        else
+            architecturalValue = _architecturalValue;
+    }
+}
 
 public class Node: IHeapItem<Node>
 {
@@ -41,6 +70,8 @@ public class Node: IHeapItem<Node>
         }
     }
     private int connectivity = 0;
+
+    public Dictionary<string, ArchitecturalPathing> dictionaryOfArchitecturalPathingTypes = new Dictionary<string, ArchitecturalPathing>();
 
     // Debugging Variables
     public string NodeCoordinates { get { return gridX + " , " + gridY; } } // Helpful for identifying a specific node during debugging
