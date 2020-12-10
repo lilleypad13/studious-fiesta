@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public sealed class GlobalModelData
 {
     private static GlobalModelData instance = null;
@@ -38,6 +39,14 @@ public sealed class GlobalModelData
             else
                 Debug.LogWarning("An attempt at changing the list of objects in the entire model was made.");
         }
+    }
+
+    public static Dictionary<string, ArchitecturalElement> architecturalElementTypes = new Dictionary<string, ArchitecturalElement>();
+
+    public void CheckIfAlreadyInDictionary(string key)
+    {
+        if (!architecturalElementTypes.ContainsKey(key))
+            architecturalElementTypes.Add(key, new ArchitecturalElement(key));
     }
 
     public GameObject SearchEntireModelForObjectWithNameContaining(string searchID)
