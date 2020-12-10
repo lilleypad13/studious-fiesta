@@ -2,6 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Affinity
+{
+    private string name;
+    public string Name { get => name; }
+    private int affinityValue;
+    public int AffinityValue
+    {
+        get { return affinityValue; }
+        set
+        {
+            if (value > MathArchCost.Instance.MAX_AFFINITY)
+                affinityValue = MathArchCost.Instance.MAX_AFFINITY;
+            else
+                affinityValue = value;
+        }
+    }
+
+    public Affinity(string _name, int _affinityValue)
+    {
+        name = _name;
+        if (_affinityValue > MathArchCost.Instance.MAX_AFFINITY)
+            affinityValue = MathArchCost.Instance.MAX_AFFINITY;
+        else
+            affinityValue = _affinityValue;
+    }
+}
+
 public class UnitSimple : MonoBehaviour
 {
     public Transform target;
