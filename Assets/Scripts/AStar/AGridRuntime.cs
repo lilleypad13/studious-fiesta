@@ -26,27 +26,8 @@ public class AGridRuntime : MonoBehaviour
         get { return gridSizeX * gridSizeY; }
     }
 
-    /*
-     * Uses a vector3 position to determine which node encompasses that position.
-     * If out of bounds, will simply return the extremes of the outter edge of the grid.
-     */
+
     public Node NodeFromWorldPoint(Vector3 worldPosition)
-    {
-        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
-
-        // Clamped to prevent values from going out of bounds (will never be less than 0 or greater than 1)
-        percentX = Mathf.Clamp01(percentX);
-        percentY = Mathf.Clamp01(percentY);
-
-        // Uses percent values to determine index values for node in array
-        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
-
-        return grid[x, y];
-    }
-
-    public Node TestNodeFromWorldPoint(Vector3 worldPosition)
     {
         bool foundX = false;
         bool foundY = false;

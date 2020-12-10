@@ -27,7 +27,6 @@ public class PathfindingHeapSimple : MonoBehaviour
     private void Awake()
     {
         requestManager = GetComponent<PathRequestManagerSimple>();
-        //aGrid = GetComponent<AGrid>();
         aGridRuntime = GetComponent<AGridRuntime>();
     }
 
@@ -46,10 +45,8 @@ public class PathfindingHeapSimple : MonoBehaviour
         Vector3[] waypoints = new Vector3[0];
         bool pathSuccess = false;
 
-        //Node startNode = aGridRuntime.NodeFromWorldPoint(startPosition);
-        //Node targetNode = aGridRuntime.NodeFromWorldPoint(targetPosition);
-        Node startNode = aGridRuntime.TestNodeFromWorldPoint(startPosition);
-        Node targetNode = aGridRuntime.TestNodeFromWorldPoint(targetPosition);
+        Node startNode = aGridRuntime.NodeFromWorldPoint(startPosition);
+        Node targetNode = aGridRuntime.NodeFromWorldPoint(targetPosition);
 
         if (startNode.walkable && targetNode.walkable)
         {
@@ -103,11 +100,6 @@ public class PathfindingHeapSimple : MonoBehaviour
 
                     int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor)
                         + neighbor.movementPenalty + architecturalCost;
-
-                    //UnityEngine.Debug.Log("Agent window value = " + agent.Window + "\n" + 
-                    //    "Window Rate = " + windowRate + "\n" + 
-                    //    "Architectural Cost = " + architecturalCost + "\n" + 
-                    //    "Total Cost = " + newMovementCostToNeighbor);
 
                     if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                     {

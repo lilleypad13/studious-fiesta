@@ -114,17 +114,6 @@ public class DataRecorder : MonoBehaviour
             pathInformation += "Agent ID: ," + identifier + "\n" +
                 path.GetFullStringData();
 
-            //foreach (Node node in path.GetNodePath())
-            //{
-            //    pathInformation += node.NodeCoordinates + "\n";
-            //}
-
-            //Debug.Log("Agent ID: " + identifier + "\n" +
-            //    "Spawned At: " + path.GetSpawnPoint().name + "\n" +
-            //    "Agent's Window Affinity: " + path.GetAgentData().Window + "\n" +
-            //    "Agent's Connectivity Affinity: " + path.GetAgentData().Connectivity + "\n" +
-            //    "Path List: " + pathInformation);
-
             Debug.Log(pathInformation);
 
             identifier++;
