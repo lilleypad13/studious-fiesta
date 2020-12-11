@@ -61,4 +61,17 @@ public sealed class GlobalModelData
         Debug.LogWarning("Revit model data contained an ID number which was not found in the current model.");
         return null;
     }
+
+    public Vector3 GetPositionByBounds(GameObject objectWithPosition)
+    {
+        Renderer objectsRenderer = objectWithPosition.GetComponent<Renderer>();
+
+        if(objectsRenderer != null)
+            return objectsRenderer.bounds.center;
+        else
+        {
+            Debug.LogWarning("Tried to find the position of an object based on bounds that has no renderer component.");
+            return Vector3.zero;
+        }
+    }
 }
