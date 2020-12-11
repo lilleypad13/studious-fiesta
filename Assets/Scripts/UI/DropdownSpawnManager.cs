@@ -36,7 +36,7 @@ public class DropdownSpawnManager : DropdownManager
 
     protected override void MethodToPerformOnSelection(int index)
     {
-        spawnManager.SpawnPoint = spawnPoints[index].transform;
+        spawnManager.SpawnPosition = GlobalModelData.Instance.GetPositionByBounds(spawnPoints[index]);
         if(currentModel != null)
         {
             currentModel.GetComponent<MeshRenderer>().material = originalMaterial;

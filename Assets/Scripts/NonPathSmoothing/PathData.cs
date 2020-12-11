@@ -78,6 +78,10 @@ public class PathData
     {
         spawnPointName = "Spawned At: ," + spawnPoint.name + "\n";
     }
+    public void SetSpawnPointName(Vector3 spawnPosition)
+    {
+        spawnPointName = "Spawned At: ," + spawnPosition + "\n";
+    }
 
     /*
      * Used to keep track of what architectural element type was used in this path

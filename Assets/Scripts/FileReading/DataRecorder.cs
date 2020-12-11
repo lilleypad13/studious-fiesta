@@ -93,6 +93,11 @@ public class DataRecorder : MonoBehaviour
         //currentPath.SetSpawnPoint(spawnPoint);
         currentPath.SetSpawnPointName(spawnPoint);
     }
+    public void SetCurrentPathSpawn(Vector3 spawnPosition)
+    {
+        //currentPath.SetSpawnPoint(spawnPoint);
+        currentPath.SetSpawnPointName(spawnPosition);
+    }
 
     public void SetCurrentArchitecturalType(string architecturalType)
     {
