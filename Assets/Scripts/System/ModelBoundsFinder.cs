@@ -6,11 +6,13 @@ public static class ModelBoundsFinder
 {
     public static Bounds EncapsulateGroupOfModelRenderers(List<GameObject> groupOfModels)
     {
-        Bounds combinedBounds = groupOfModels[0].GetComponent<Renderer>().bounds;
+        Bounds combinedBounds = new Bounds();
 
         foreach (GameObject model in groupOfModels)
         {
-            combinedBounds.Encapsulate(model.GetComponent<Renderer>().bounds);
+            Renderer modelRend = model.GetComponent<Renderer>();
+            if(modelRend != null)
+                combinedBounds.Encapsulate(modelRend.bounds);
         }
 
         return combinedBounds;
