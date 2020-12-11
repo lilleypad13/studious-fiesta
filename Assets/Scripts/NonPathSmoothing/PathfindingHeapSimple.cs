@@ -27,7 +27,7 @@ public class PathfindingHeapSimple : MonoBehaviour
     private void Awake()
     {
         requestManager = GetComponent<PathRequestManagerSimple>();
-        aGridRuntime = GetComponent<AGridRuntime>();
+        aGridRuntime = AGridRuntime.Instance;
     }
 
     public void StartFindPath(Vector3 startPosition, Vector3 targetPosition, UnitSimple agent)

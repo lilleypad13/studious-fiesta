@@ -6,13 +6,11 @@ using System;
 
 public class PathfindingHeap : MonoBehaviour
 {
-    //AGrid aGrid;
     private AGridRuntime aGridRuntime;
 
     private void Awake()
     {
-        //aGrid = GetComponent<AGrid>();
-        aGridRuntime = GetComponent<AGridRuntime>();
+        aGridRuntime = AGridRuntime.Instance;
     }
 
     public void FindPath(PathRequest request, Action<PathResult> callback)

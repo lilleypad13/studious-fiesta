@@ -6,7 +6,6 @@ public class InfluenceManager : Initializer
 {
     #region Variables
     private Influence[] influenceObjects;
-    [SerializeField]private AGridRuntime aGridRuntime;
 
     #endregion
 
@@ -21,7 +20,7 @@ public class InfluenceManager : Initializer
     {
         foreach (Influence influencer in influenceObjects)
         {
-            Node influencerOrigin = aGridRuntime.NodeFromWorldPoint(influencer.InfluenceOriginPosition);
+            Node influencerOrigin = AGridRuntime.Instance.NodeFromWorldPoint(influencer.InfluenceOriginPosition);
 
             influencer.ApplyInfluence(grid, influencerOrigin);
         }

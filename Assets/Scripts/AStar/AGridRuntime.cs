@@ -2,12 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AGridRuntime : MonoBehaviour
+public class AGridRuntime
 {
     private Node[,] grid; //2D array of nodes
     private Vector2 gridWorldSize = new Vector2();
     private int gridSizeX;
     private int gridSizeY;
+
+    private static AGridRuntime instance = null;
+    private static readonly object padlock = new object();
+
+    public static AGridRuntime Instance
+    {
+        get
+        {
+            lock (padlock)
+            {
+                if (instance == null)
+                {
+                    Debug.LogWarning("Created new AGridRuntime.");
+                    instance = new AGridRuntime();
+                }
+            }
+            return instance;
+        }
+    }
 
     /*
      * Used to pass the grid data from AGrid to here
@@ -18,6 +37,12 @@ public class AGridRuntime : MonoBehaviour
         gridWorldSize = nodeGrid.GridWorldSize;
         gridSizeX = nodeGrid.GridSizeX;
         gridSizeY = nodeGrid.GridSizeY;
+
+        Debug.Log($"AGridRuntime set with parameters: \n" +
+            $"Grid: {grid}\n" +
+            $"Overall Size: {gridWorldSize}\n" +
+            $"Grid Size x: {gridSizeX}\n" +
+            $"Grid Size y: {gridSizeY}");
     }
 
     // Returns the overall area of the grid given its dimensions
@@ -43,6 +68,7 @@ public class AGridRuntime : MonoBehaviour
 
         int maxGridSizeCheckX = gridSizeX;
         int maxGridSizeCheckZ = gridSizeY;
+        Debug.Log($"NodeFromWorldPosition using max grid x: {gridSizeX} and max grid z: {gridSizeY}");
         // Go through nodes starting with first node to find which node is closest on the x-axis
         while (!foundX && xCounter < maxGridSizeCheckX)
         {
@@ -73,6 +99,8 @@ public class AGridRuntime : MonoBehaviour
 
         int lastClosestXIndex = xCounter - 1;
         int lastClosestZIndex = zCounter - 1;
+
+        Debug.Log($"NodeFromWorldPoint found node: {lastClosestXIndex}, {lastClosestZIndex}.");
 
         return grid[lastClosestXIndex, lastClosestZIndex];
     }

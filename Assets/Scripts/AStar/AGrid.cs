@@ -38,7 +38,7 @@ public class AGrid : Initializer
 
     public override void Initialization()
     {
-        aGridRuntime = GetComponent<AGridRuntime>();
+        aGridRuntime = AGridRuntime.Instance;
         influenceManager = GetComponent<InfluenceManager>();
         dataVisualizer = GetComponent<AGridDataVisualization>();
         raycastSystem = GetComponent<RaycastAGridDetermination>();

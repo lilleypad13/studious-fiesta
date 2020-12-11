@@ -6,13 +6,11 @@ using System.Diagnostics;
 public class Pathfinding : MonoBehaviour
 {
     public Transform seeker, target;
-    //AGrid aGrid;
     private AGridRuntime aGridRuntime;
 
     private void Awake()
     {
-        //aGrid = GetComponent<AGrid>();
-        aGridRuntime = GetComponent<AGridRuntime>();
+        aGridRuntime = AGridRuntime.Instance;
     }
 
     private void Update()
