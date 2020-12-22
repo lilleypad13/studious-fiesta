@@ -15,7 +15,7 @@ public class AgentSpawnManager : MonoBehaviour
         set
         {
             spawnPoint = value;
-            Debug.Log($"Spawn point was set to the location of {value.gameObject.name} at {value.position}.");
+            //Debug.Log($"Spawn point was set to the location of {value.gameObject.name} at {value.position}.");
         }
     }
 
@@ -26,7 +26,7 @@ public class AgentSpawnManager : MonoBehaviour
         set
         {
             spawnPosition = value;
-            Debug.Log($"Spawn point was set to the location of {value} at {value}.");
+            Debug.Log($"Spawn position was set to the location of {value} at {value}.");
         }
     }
 
@@ -43,7 +43,11 @@ public class AgentSpawnManager : MonoBehaviour
                 return target;
             }
         }
-        set => target = value;
+        set
+        {
+            target = value;
+            Debug.Log($"Target transform was set to the location of {value} at {value.position}.");
+        }
     }
 
     // Agent Affinities
@@ -110,6 +114,8 @@ public class AgentSpawnManager : MonoBehaviour
             agentAI.target = target;
             agentAI.Window = windowAffinity;
             agentAI.Connectivity = connectivityAffinity;
+
+            Debug.Log($"{agent.name} has target {target.name} at {target.position}.");
 
             DataRecorder.Instance.GenerateNewPathData();
             DataRecorder.Instance.SetCurrentPathSpawn(spawnPosition);

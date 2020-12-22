@@ -74,7 +74,9 @@ public class MathArchCost : MonoBehaviour
 
     // Individual Architectural Parameter Controllers
     [SerializeField]private int minConnectivity = 0;
+    public int MinConnectivity { get => minConnectivity; }
     [SerializeField]private int maxConnectivity = 3500;
+    public int MaxConnectivity { get => maxConnectivity; }
 
     public int normalizeConnectivity(int connectivity)
     {
