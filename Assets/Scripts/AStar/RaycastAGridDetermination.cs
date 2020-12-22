@@ -1,6 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
+
+public class RaycastChecker
+{
+    private bool isWalkable = false;
+    public bool IsWalkable { get => isWalkable; }
+    private Vector3 normal;
+    public Vector3 Normal { get => normal; }
+
+    public RaycastChecker(bool _isWalkable, Vector3 _normal)
+    {
+        isWalkable = _isWalkable;
+        normal = _normal;
+    }
+
+}
 
 public class RaycastAGridDetermination : MonoBehaviour
 {
@@ -41,6 +57,22 @@ public class RaycastAGridDetermination : MonoBehaviour
         //    movementPenalty += obstacleProximityPenalty;
 
         return walkable;
+    }
+
+    public float DetermineElevationWithRaycast(Vector3 worldPoint)
+    {
+        float elevation = 0.0f;
+
+        // Raycast
+        Ray ray = new Ray(worldPoint + Vector3.up * 50, Vector3.down);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100))
+        {
+            elevation = hit.point.y + unitHeight / 2;
+        }
+
+        return elevation;
     }
 
     // TODO-A: Needs to have better control of where it is performed

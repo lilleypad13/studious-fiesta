@@ -96,12 +96,16 @@ public class AGrid : Initializer
 
                 // Raycast
                 walkable = raycastSystem.DetermineWalkabilityWithRaycast(worldPoint);
+                //RaycastChecker check = raycastSystem.DetermineWalkabilityAndNormalWithRaycast(worldPoint);
+                //walkable = check.IsWalkable;
+                worldPoint.y = raycastSystem.DetermineElevationWithRaycast(worldPoint);
 
                 if (!walkable)
                     movementPenalty += obstacleProximityPenalty;
 
                 // Create node and assign determined values
                 grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
+                //Debug.Log($"Raycast Normal Check --- Node: {grid[x,y].gridX}, {grid[x,y].gridY}; Normal: {check.Normal}.");
 
                 if (isReadingDataFromFile)
                     ModifyDataForPathingNodes.Instance.CheckToAssignValue(grid[x, y]);

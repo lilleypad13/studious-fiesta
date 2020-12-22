@@ -68,7 +68,7 @@ public class AGridRuntime
 
         int maxGridSizeCheckX = gridSizeX;
         int maxGridSizeCheckZ = gridSizeY;
-        Debug.Log($"NodeFromWorldPosition using max grid x: {gridSizeX} and max grid z: {gridSizeY}");
+
         // Go through nodes starting with first node to find which node is closest on the x-axis
         while (!foundX && xCounter < maxGridSizeCheckX)
         {
