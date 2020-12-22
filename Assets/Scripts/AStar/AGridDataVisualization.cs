@@ -48,7 +48,7 @@ public class AGridDataVisualization : MonoBehaviour
                         break;
                     case DataVisual.connectivity:
                         nodePosition = grid[x, y].worldPosition;
-                        Gizmos.color = HeatMapColor(0, 3500, grid[x, y].Connectivity);
+                        Gizmos.color = HeatMapColor(MathArchCost.Instance.MinConnectivity, MathArchCost.Instance.MaxConnectivity, grid[x, y].Connectivity);
                         Gizmos.DrawCube(nodePosition, pointSize);
                         break;
                     default:
@@ -68,7 +68,7 @@ public class AGridDataVisualization : MonoBehaviour
         int range = max - min;
         float hue = architecturalValue / (float)range; // TODO: Find better coloring method
         if (architecturalValue == min)
-            heat = Color.black;
+            heat = Color.white;
         else
             heat = Color.HSVToRGB(hue, 1.0f, 1.0f);
 
