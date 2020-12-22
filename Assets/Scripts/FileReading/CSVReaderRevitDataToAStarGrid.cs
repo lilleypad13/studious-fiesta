@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Transactions;
 using UnityEngine;
 
 public class DataWithPosition
@@ -55,11 +57,20 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
     [SerializeField] private float distanceBetweenDataPoints = 1.0f; // Increment value between coordinates of each data point
     [Tooltip("Value to assign empty coordinate locations not found in the file.")]
     [SerializeField] private int defaultValueWhenNotFound = 0;
+    [SerializeField] private int xCoordinateColumnIndex = 1;
+    [SerializeField] private int yCoordinateColumnIndex = 2;
+    [SerializeField] private bool convertInchesToFeet = false;
+    [SerializeField] private bool isDataStartingAtOrigin = false;
+
+    [SerializeField] private bool flipDataReadingHorizontally = false;
+    [SerializeField] private bool flipDataReadingVertically = false;
+
+    private float minX = 0.0f;
+    private float maxX = 0.0f;
+    private float minZ = 0.0f;
+    private float maxZ = 0.0f;
 
     private int[,] rectangularData;
-
-    [SerializeField] private bool convertInchesToFeet = false;
-
     private int debugLogCounter = 0; // Tried to use with a debug .txt file creator
 
     private static CSVReaderRevitDataToAStarGrid instance;
@@ -84,13 +95,29 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         }
     }
 
-    private List<DataWithPosition> fullData = new List<DataWithPosition>();
-
+    // Expression-bodied Members
     private string[] SplitTextAssetIntoRows(TextAsset asset) => asset.text.Split(new char[] { '\n' });
 
     private string[] SplitRowIntoIndividualValues(string fullRow) => fullRow.Split(new char[] { ',' });
-    
-    private int FindDataDimension(float maxValue) => (int)(maxValue / distanceBetweenDataPoints);
+
+    // Data creation methods
+    private int FindDataDimension(float minValue, float maxValue)
+    {
+        int dataDimension = 0;
+
+        dataDimension = (int)(((maxValue - minValue) / distanceBetweenDataPoints) + 1);
+
+        return dataDimension;
+    }
+
+    private int NormalizeCoordinateToIndex(float coordinate, float minValue)
+    {
+        int normalizedIndex = 0;
+
+        normalizedIndex = (int)((Mathf.Abs(coordinate) - minValue) / distanceBetweenDataPoints);
+
+        return normalizedIndex;
+    }
 
     private bool isWithinDimensionBounds(int index, int dimensionBound)
     {
@@ -106,66 +133,116 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         modifyData.DetermineCaseForCreatingDataArray(distanceBetweenDataPoints);
 
         TextAsset gridData = Resources.Load<TextAsset>(rhinoInputCSVName);
-        int dataCounter = 1; // Starts at 1 to account for header row
+        int dataIndex = 1; // Starts at 1 to account for header row
 
         string[] data = SplitTextAssetIntoRows(gridData);
         string[] firstRow = SplitRowIntoIndividualValues(data[0]);
         int[] rowInt = new int[firstRow.Length];
 
-        float maxX = FindMaximumValue(data, 1);
-        float maxZ = FindMaximumValue(data, 2);
+        FindExtremeValues(data);
         Debug.Log($"File Reader found a max X of {maxX} and a max Z of {maxZ}.");
 
-        int totalCols = FindDataDimension(maxX);
-        int totalRows = FindDataDimension(maxZ);
+        int totalCols = FindDataDimension(minX, maxX);
+        int totalRows = FindDataDimension(minZ, maxZ);
         Debug.Log($"The file reader data dimensions are width {totalCols} by height {totalRows}.");
 
         rectangularData = new int[totalCols, totalRows];
-        int rowIndex = 0;
         int colIndex = 0;
+        int rowIndex = 0;
+        int assignedColIndex = 0;
+        int assignedRowIndex = 0;
+        DataWithPosition currentData = null;
+        int previousDataIndex = 0;
+        int valueToAssignToData = defaultValueWhenNotFound;
 
-        while (data[dataCounter] != string.Empty && 
+        string newDebugMessage = "";
+
+        while (data[dataIndex] != string.Empty && 
             isWithinDimensionBounds(rowIndex, totalRows) && 
             isWithinDimensionBounds(colIndex, totalCols))
         {
-            DataWithPosition currentData;
+            string[] currentRow = data[dataIndex].Split(new char[] { ',' });
+            int endOfRowIndex = currentRow.Length - 1;
 
-            string[] currentRow = data[dataCounter].Split(new char[] { ',' });
+            DataWithPosition previousData = null;
+            if (currentData != null)
+                previousData = currentData;
+
             if (convertInchesToFeet)
-                currentData = new DataWithPosition(currentRow[1], currentRow[2], currentRow[3], 12.0f);
+                currentData = new DataWithPosition(currentRow[xCoordinateColumnIndex], currentRow[yCoordinateColumnIndex], currentRow[endOfRowIndex], 12.0f);
             else
-                currentData = new DataWithPosition(currentRow[1], currentRow[2], currentRow[3]);
+                currentData = new DataWithPosition(currentRow[xCoordinateColumnIndex], currentRow[yCoordinateColumnIndex], currentRow[endOfRowIndex]);
 
-            int xCoordinateNormalizedToIndex = (int)((currentData.XPosition - distanceBetweenDataPoints) / distanceBetweenDataPoints);
-            int zCoordinateNormalizedToIndex = (int)((currentData.ZPosition - distanceBetweenDataPoints) / distanceBetweenDataPoints);
+            bool isRepeatingCoordinates = false;
+            bool isRepeatingDataIndex = dataIndex == previousDataIndex;
+            if (previousData != null && !isRepeatingDataIndex)
+                isRepeatingCoordinates = currentData.XPosition == previousData.XPosition && currentData.ZPosition == previousData.ZPosition;
 
-            bool matchingIndex = xCoordinateNormalizedToIndex == colIndex && zCoordinateNormalizedToIndex == rowIndex;
-            if (matchingIndex)
+            if (!isRepeatingCoordinates)
             {
-                rectangularData[colIndex, rowIndex] = currentData.DataValue;
-                dataCounter++;
+                int xCoordinateNormalizedToIndex = NormalizeCoordinateToIndex(currentData.XPosition, minX);
+                int zCoordinateNormalizedToIndex = NormalizeCoordinateToIndex(currentData.ZPosition, minZ);
+
+                assignedColIndex = colIndex;
+                assignedRowIndex = rowIndex;
+
+                bool matchingIndex = xCoordinateNormalizedToIndex == colIndex && zCoordinateNormalizedToIndex == rowIndex;
+                if (matchingIndex)
+                {
+                    valueToAssignToData = currentData.DataValue;
+                    previousDataIndex = dataIndex;
+                    dataIndex++;
+                }
+                else
+                {
+                    previousDataIndex = dataIndex;
+                    valueToAssignToData = defaultValueWhenNotFound;
+                }
+
+                if(flipDataReadingHorizontally)
+                    assignedColIndex = (totalCols - 1) - assignedColIndex;
+                if(flipDataReadingVertically)
+                    assignedRowIndex = (totalRows - 1) - assignedRowIndex;
+                rectangularData[assignedColIndex, assignedRowIndex] = valueToAssignToData;
+
+                if (rowIndex < totalRows - 1)
+                    rowIndex++;
+                else
+                {
+                    rowIndex = 0;
+                    colIndex++;
+                }
             }
             else
-                rectangularData[colIndex, rowIndex] = 0;
-
-            if (rowIndex < totalRows - 1)
-                rowIndex++;
-            else
             {
-                rowIndex = 0;
-                colIndex++;
+                previousDataIndex = dataIndex;
+                dataIndex++;
             }
+
+            //if(previousData != null)
+            //{
+            //    newDebugMessage += $"DataX: {currentData.XPosition}, " +
+            //    $"PreviousDataX: {previousData.XPosition}, " +
+            //    $"DataY: {currentData.ZPosition}, " +
+            //    $"PreviousDataY: {previousData.ZPosition}, " +
+            //    $"Value: {currentData.DataValue}, " +
+            //    $"colIndex: {colIndex}, " +
+            //    $"rowIndex: {rowIndex}, " +
+            //    $"dataIndex: {dataIndex}, " +
+            //    $"prevDataIndex: {previousDataIndex}" + "\n";
+            //}
+            
         }
 
         modifyData.CheckToModifyData(rectangularData);
-        DebugListOut2DArray(rectangularData, "This is rect data: ");
+        DebugListOut2DArray(rectangularData, "This is rect data: ", "RevitPathingCSV_02");
     }
 
 
-    private float FindMaximumValue(string[] dataAsRows, int columnBeingChecked)
+    private void FindExtremeValues(string[] dataAsRows)
     {
-        float maximumValue = 0.0f;
-        float valueToCheck = 0.0f;
+        float xValueToCheck = 0.0f;
+        float zValueToCheck = 0.0f;
 
         string firstRow = dataAsRows[0];
         string currentRow = firstRow;
@@ -176,19 +253,28 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         while (!string.IsNullOrEmpty(currentRow))
         {
             segmentedRow = SplitRowIntoIndividualValues(currentRow);
-            float.TryParse(segmentedRow[columnBeingChecked], out valueToCheck);
 
-            if(valueToCheck != 0.0f)
+            float.TryParse(segmentedRow[xCoordinateColumnIndex], out xValueToCheck);
+            if (xValueToCheck != 0.0f)
             {
-                if (valueToCheck > maximumValue)
-                    maximumValue = valueToCheck;
+                if (Mathf.Abs(xValueToCheck) > maxX)
+                    maxX = Mathf.Abs(xValueToCheck);
+                else if (Mathf.Abs(xValueToCheck) < minX)
+                    minX = Mathf.Abs(xValueToCheck);
+            }
+
+            float.TryParse(segmentedRow[yCoordinateColumnIndex], out zValueToCheck);
+            if (zValueToCheck != 0.0f)
+            {
+                if (Mathf.Abs(zValueToCheck) > maxZ)
+                    maxZ = Mathf.Abs(zValueToCheck);
+                else if (Mathf.Abs(zValueToCheck) < minZ)
+                    minZ = Mathf.Abs(zValueToCheck);
             }
 
             rowIndex++;
             currentRow = dataAsRows[rowIndex];
         }
-
-        return maximumValue;
     }
 
     private void DisplayRowData(string[] row)
@@ -232,7 +318,7 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
 
     #region Debugging
 
-    private void DebugListOutStringArray(string[] array, string debugMessageStart)
+    private void DebugListOutStringArray(string[] array, string debugMessageStart, string debugLogFileName)
     {
         string message = debugMessageStart + "\n";
 
@@ -242,7 +328,7 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         }
 
         //Debug.Log(message);
-        ExportDataToDebugLog(message);
+        ExportDataToDebugLog(message, debugLogFileName);
     }
 
     private void DebugListOutStringArray(float[,] array, string debugMessageStart)
@@ -258,7 +344,7 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         //ExportDataToDebugLog(message);
     }
 
-    private void DebugListOut2DArray(float[,] array, string debugMessageStart)
+    private void DebugListOut2DArray(float[,] array, string debugMessageStart, string debugLogFileName)
     {
         string message = debugMessageStart + "\n";
 
@@ -275,10 +361,10 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         }
 
         Debug.Log(message);
-        ExportDataToDebugLog(message);
+        ExportDataToDebugLog(message, debugLogFileName);
     }
 
-    private void DebugListOut2DArray(int[,] array, string debugMessageStart)
+    private void DebugListOut2DArray(int[,] array, string debugMessageStart, string debugLogFileName)
     {
         string message = debugMessageStart + "\n";
 
@@ -295,12 +381,12 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         }
 
         Debug.Log(message);
-        ExportDataToDebugLog(message);
+        ExportDataToDebugLog(message, debugLogFileName);
     }
 
-    public void ExportDataToDebugLog(string debugMessage)
+    public void ExportDataToDebugLog(string debugMessage, string fileName)
     {
-        string filePath = $"Assets/Resources/DebugLogDATATEST.txt";
+        string filePath = $"Assets/Resources/DebugLogs/{fileName}.txt";
         StreamWriter file = new StreamWriter(filePath, true);
 
         file.Write(debugMessage);
