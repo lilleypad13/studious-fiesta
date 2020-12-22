@@ -9,7 +9,7 @@ public class ColliderCreator
         foreach (GameObject item in objectsToApplyCollidersTo)
         {
             item.AddComponent<MeshCollider>();
-            item.GetComponent<MeshCollider>().convex = true;
+            item.GetComponent<MeshCollider>().convex = false;
         }
     }
 }
