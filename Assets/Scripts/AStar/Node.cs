@@ -45,7 +45,7 @@ public class Node: IHeapItem<Node>
     // Base cost parameters
     public int gCost;
     public int hCost;
-    public int fCost { get { return gCost + hCost; } } // fCost will never be anything else, so no reason to directly assign it
+    public int fCost { get { return gCost + hCost; } }
 
     // Architectural Parameters
     public int Window
