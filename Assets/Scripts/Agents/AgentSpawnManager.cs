@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,9 @@ public class AgentSpawnManager : MonoBehaviour
     #region Variables
     [Header("Spawn Parameters")]
     [SerializeField] private GameObject agentPrefab; // Types of agents to spawn
+    [SerializeField] private bool isSearchingForNearestWalkableSpawn = false;
+    [SerializeField] private int iterationsSearchForWalkable = 1;
+
     private Transform spawnPoint; // Location where agents will spawn from
     public Transform SpawnPoint
     {
@@ -30,8 +34,8 @@ public class AgentSpawnManager : MonoBehaviour
         }
     }
 
-    private Transform target; // Target passed on to agents spawned from this manager
-    public Transform Target
+    private Vector3 target; // Target passed on to agents spawned from this manager
+    public Vector3 Target
     {
         get
         {
@@ -46,7 +50,7 @@ public class AgentSpawnManager : MonoBehaviour
         set
         {
             target = value;
-            Debug.Log($"Target transform was set to the location of {value} at {value.position}.");
+            Debug.Log($"Target position was set to the location {value}.");
         }
     }
 
@@ -81,56 +85,50 @@ public class AgentSpawnManager : MonoBehaviour
         agentAI.AgentRequestPath();
     }
 
-    private void SpawnAgent(Transform spawnPoint)
-    {
-        if (AGridRuntime.Instance.NodeFromWorldPoint(spawnPoint.position).walkable)
-        {
-            GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
-
-            // Set this specific instantiated agent's parameters
-            UnitSimple agentAI = agent.GetComponent<UnitSimple>();
-            agentAI.target = target;
-            agentAI.Window = windowAffinity;
-            agentAI.Connectivity = connectivityAffinity;
-
-            DataRecorder.Instance.GenerateNewPathData();
-            DataRecorder.Instance.SetCurrentPathSpawn(spawnPoint);
-
-            // Tell agent to determine path after setting parameters
-            agentAI.AgentRequestPath();
-        }
-        else
-            Debug.LogWarning("Tried to spawn new agent onto unwalkable space.");
-    }
-
     private void SpawnAgent(Vector3 spawnPosition)
     {
-        if (AGridRuntime.Instance.NodeFromWorldPoint(spawnPosition).walkable)
+        Node spawnNode = null;
+
+        if (isSearchingForNearestWalkableSpawn)
         {
-            GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPosition, Quaternion.identity);
-
-            // Set this specific instantiated agent's parameters
-            UnitSimple agentAI = agent.GetComponent<UnitSimple>();
-            agentAI.target = target;
-            agentAI.Window = windowAffinity;
-            agentAI.Connectivity = connectivityAffinity;
-
-            Debug.Log($"{agent.name} has target {target.name} at {target.position}.");
-
-            DataRecorder.Instance.GenerateNewPathData();
-            DataRecorder.Instance.SetCurrentPathSpawn(spawnPosition);
-
-            // Tell agent to determine path after setting parameters
-            agentAI.AgentRequestPath();
+            spawnNode = AGridRuntime.Instance.FindNearestWalkableNodeFromWorldPoint(spawnPosition, iterationsSearchForWalkable);
         }
         else
-            Debug.LogWarning("Tried to spawn new agent onto unwalkable space.");
+        {
+            if (!AGridRuntime.Instance.NodeFromWorldPoint(spawnPosition).walkable)
+            {
+                Debug.LogWarning("Tried to spawn new agent onto unwalkable space.");
+                return;
+            }
+            else
+                spawnNode = AGridRuntime.Instance.NodeFromWorldPoint(spawnPosition);
+        }
+
+        if(spawnNode == null || !spawnNode.walkable)
+        {
+            Debug.LogWarning("Could not find a proper node to spawn new agent onto.");
+            return;
+        }
+
+        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnNode.worldPosition, Quaternion.identity);
+
+        // Set this specific instantiated agent's parameters
+        UnitSimple agentAI = agent.GetComponent<UnitSimple>();
+        agentAI.target = target;
+        agentAI.Window = windowAffinity;
+        agentAI.Connectivity = connectivityAffinity;
+
+        Debug.Log($"{agent.name} has target {target}.");
+
+        DataRecorder.Instance.GenerateNewPathData();
+        DataRecorder.Instance.SetCurrentPathSpawn(spawnPosition);
+
+        // Tell agent to determine path after setting parameters
+        agentAI.AgentRequestPath();
     }
 
     public void Spawn()
     {
-        //if(spawnPoint != null)
-        //    SpawnAgent(spawnPoint);
         if (spawnPosition != Vector3.zero)
             SpawnAgent(spawnPosition);
         else

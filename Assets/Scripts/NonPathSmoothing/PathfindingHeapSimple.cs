@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Diagnostics;
 using System;
+using System.Diagnostics;
 using UnityEngine.UI;
 
 public enum ArchitecturePathingData
@@ -11,13 +11,17 @@ public enum ArchitecturePathingData
     connectivity
 }
 
+[RequireComponent(typeof(GenerateNodePath))]
 public class PathfindingHeapSimple : MonoBehaviour
 {
     [Tooltip("In Game UI Also")]
     [SerializeField] private ArchitecturePathingData typeUsedForPathing;
 
+    [SerializeField] private bool isFindingNearestWalkableNode = false;
+    [SerializeField] private int walkableNodeSearchIterations = 1;
     private PathRequestManagerSimple requestManager;
     private AGridRuntime aGridRuntime;
+    private GenerateNodePath generateNodePath;
     private const int MAX_AFFINITY = 100;
 
     // Architecture Cost Rates
@@ -27,6 +31,7 @@ public class PathfindingHeapSimple : MonoBehaviour
     private void Awake()
     {
         requestManager = GetComponent<PathRequestManagerSimple>();
+        generateNodePath = GetComponent<GenerateNodePath>();
         aGridRuntime = AGridRuntime.Instance;
     }
 
@@ -45,12 +50,15 @@ public class PathfindingHeapSimple : MonoBehaviour
         Vector3[] waypoints = new Vector3[0];
         bool pathSuccess = false;
 
-        Node startNode = aGridRuntime.NodeFromWorldPoint(startPosition);
-        Node targetNode = aGridRuntime.NodeFromWorldPoint(targetPosition);
+        Node startNode = FindAppropriateNodeFromWorldPoint(startPosition, isFindingNearestWalkableNode);
+        Node targetNode = FindAppropriateNodeFromWorldPoint(targetPosition, isFindingNearestWalkableNode);
+        UnityEngine.Debug.Log($"PathfindingHeap for {agent.name}: \n" +
+            $" Start walkable: {startNode.walkable}\n" + 
+            $" Target Walkability: {targetNode.walkable}");
+
 
         if (startNode.walkable && targetNode.walkable)
         {
-            UnityEngine.Debug.Log("Start and Target walkable");
             Heap<Node> openSet = new Heap<Node>(aGridRuntime.MaxSize);
             HashSet<Node> closedSet = new HashSet<Node>();
             openSet.Add(startNode);
@@ -121,68 +129,27 @@ public class PathfindingHeapSimple : MonoBehaviour
         {
             DataRecorder.Instance.SetCurrentPathAgent(agent);
             DataRecorder.Instance.SetCurrentArchitecturalType(typeUsedForPathing.ToString());
-            waypoints = RetracePath(startNode, targetNode);
+            waypoints = generateNodePath.RetracePath(startNode, targetNode);
         }
         requestManager.FinishedProcessingPath(waypoints, pathSuccess);
     }
 
-    /*
-     * Sets all the architecutral rates for a given agent
-     */
+
+    private Node FindAppropriateNodeFromWorldPoint(Vector3 worldPosition, bool isFindingNearestNode)
+    {
+        if (isFindingNearestWalkableNode)
+            return aGridRuntime.FindNearestWalkableNodeFromWorldPoint(worldPosition, walkableNodeSearchIterations);
+        else
+            return aGridRuntime.NodeFromWorldPoint(worldPosition);
+    }
+
+    
     private void CalcAgentArchitectureRates(UnitSimple agent)
     {
         windowRate = MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.Window);
         connectivityRate = MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.Connectivity);
     }
 
-    /*
-     * Finds the path of nodes between two nodes by cycling through the parent hierarchy of the endNode 
-     * until it reaches the startNode.
-     */
-    private Vector3[] RetracePath(Node startNode, Node endNode)
-    {
-        List<Node> path = new List<Node>();
-        Node currentNode = endNode;
-
-        while(currentNode != startNode)
-        {
-            //currentNode.OutputNodeCosts();
-            path.Add(currentNode);
-            currentNode = currentNode.parent;
-        }
-
-        Node[] pathArray = path.ToArray();
-        DataRecorder.Instance.SetCurrentPathPath(pathArray);
-        //Vector3[] waypoints = SimplifyPath(path);
-        List<Vector3> waypointsList = new List<Vector3>();
-        for (int i = 0; i < path.Count; i++)
-        {
-            waypointsList.Add(path[i].worldPosition);
-        }
-        Vector3[] waypoints = waypointsList.ToArray();
-
-        Array.Reverse(waypoints);
-        return waypoints;
-        //path.Reverse();
-        //aGrid.path = path;
-    }
-
-    private Vector3[] SimplifyPath(List<Node> path)
-    {
-        List<Vector3> waypoints = new List<Vector3>();
-        Vector2 directionOld = Vector2.zero;
-
-        for (int i = 1; i < path.Count; i++)
-        {
-            Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
-            if(directionNew != directionOld)
-            {
-                waypoints.Add(path[i].worldPosition);
-            }
-            directionOld = directionNew;
-        }
-        return waypoints.ToArray();
-    }
 
     /*
      * Returns an approximated and scaled integer distance value between two nodes.

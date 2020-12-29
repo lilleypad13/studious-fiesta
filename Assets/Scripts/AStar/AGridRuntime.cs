@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UI;
 using UnityEngine;
 
 public class AGridRuntime
@@ -37,12 +38,6 @@ public class AGridRuntime
         gridWorldSize = nodeGrid.GridWorldSize;
         gridSizeX = nodeGrid.GridSizeX;
         gridSizeY = nodeGrid.GridSizeY;
-
-        Debug.Log($"AGridRuntime set with parameters: \n" +
-            $"Grid: {grid}\n" +
-            $"Overall Size: {gridWorldSize}\n" +
-            $"Grid Size x: {gridSizeX}\n" +
-            $"Grid Size y: {gridSizeY}");
     }
 
     // Returns the overall area of the grid given its dimensions
@@ -105,6 +100,60 @@ public class AGridRuntime
         return grid[lastClosestXIndex, lastClosestZIndex];
     }
 
+    public Node FindNearestWalkableNodeFromWorldPoint(Vector3 worldPosition, int iterations)
+    {
+        if (iterations == 0)
+        {
+            Node onlyNode = NodeFromWorldPoint(worldPosition);
+            if (onlyNode.walkable)
+                return onlyNode;
+            else
+                return null;
+        }
+
+        int iterationCounter = 1;
+        int searchIndex = 0;
+        Node initialNode = NodeFromWorldPoint(worldPosition);
+        Node searchNode = initialNode;
+        List<Node> nodesToSearch = GetNeighbors(initialNode);
+
+        if (!searchNode.walkable)
+        {
+            foreach (Node node in nodesToSearch)
+            {
+                searchNode = node;
+                if (searchNode.walkable)
+                    return searchNode;
+            }
+        }
+
+        while(!searchNode.walkable && 
+            iterationCounter <= iterations && 
+            searchIndex <= nodesToSearch.Count)
+        {
+            if (searchIndex < nodesToSearch.Count)
+            {
+                searchNode = nodesToSearch[searchIndex];
+                searchIndex++;
+            }
+            else
+            {
+                searchIndex = 0;
+                iterationCounter++;
+                if(iterationCounter <= iterations)
+                    nodesToSearch = GetNeighborsDistanceAway(initialNode, iterationCounter);
+            }
+        }
+
+        if (searchNode.walkable)
+            return searchNode;
+        else
+        {
+            Debug.LogWarning("Searched for nearest walkalbe node but did not find any.");
+            return initialNode;
+        }
+    }
+
     /*
      * Creates a list of all the nodes around a particular node.
      * This is checking for the 8 nodes around the node in a 3x3 grid with the node of interest at the center.
@@ -134,4 +183,102 @@ public class AGridRuntime
 
         return neighbors;
     }
+
+    private List<Node> GetNeighborsDistanceAway(Node node, int nodesAway)
+    {
+        int nodesToCheck = nodesAway;
+        if (nodesToCheck == 0)
+        {
+            List<Node> self = new List<Node>();
+            self.Add(node);
+            return self;
+        }
+
+        nodesToCheck = Mathf.Abs(nodesToCheck);
+
+        List<Node> neighbors = new List<Node>();
+        int xIndex = 0;
+        int yIndex = 0;
+
+        for (int x = -nodesToCheck; x <= nodesToCheck; x++)
+        {
+            int y = nodesToCheck;
+
+            xIndex = node.gridX + x;
+            yIndex = node.gridY + y;
+
+            if (xIndex >= 0 && xIndex < gridSizeX &&
+                yIndex >= 0 && yIndex < gridSizeY)
+            {
+                neighbors.Add(grid[xIndex, yIndex]);
+            }
+        }
+
+        for (int x = -nodesToCheck; x <= nodesToCheck; x++)
+        {
+            int y = -nodesToCheck;
+
+            xIndex = node.gridX + x;
+            yIndex = node.gridY + y;
+
+            if (xIndex >= 0 && xIndex < gridSizeX &&
+                yIndex >= 0 && yIndex < gridSizeY)
+            {
+                neighbors.Add(grid[xIndex, yIndex]);
+            }
+        }
+
+        if(nodesToCheck > 1)
+        {
+            nodesToCheck--;
+
+            for (int y = -nodesToCheck; y <= nodesToCheck; y++)
+            {
+                int x = nodesToCheck;
+
+                xIndex = node.gridX + x;
+                yIndex = node.gridY + y;
+
+                if (xIndex >= 0 && xIndex < gridSizeX &&
+                    yIndex >= 0 && yIndex < gridSizeY)
+                {
+                    neighbors.Add(grid[xIndex, yIndex]);
+                }
+            }
+
+            for (int y = -nodesToCheck; y <= nodesToCheck; y++)
+            {
+                int x = -nodesToCheck;
+
+                xIndex = node.gridX + x;
+                yIndex = node.gridY + y;
+
+                if (xIndex >= 0 && xIndex < gridSizeX &&
+                    yIndex >= 0 && yIndex < gridSizeY)
+                {
+                    neighbors.Add(grid[xIndex, yIndex]);
+                }
+            }
+        }
+
+        DebugNodeList(neighbors, $"GetNeighborsDistanceAway with nodesAway: {nodesAway}");
+
+        return neighbors;
+    }
+
+    #region Debugging
+
+    private void DebugNodeList(List<Node> nodes, string introDebugMessage)
+    {
+        string debugMessage = $"List of Node Coordinates from {introDebugMessage}: \n";
+
+        foreach (Node node in nodes)
+        {
+            debugMessage += $"[{node.gridX}, {node.gridY}]\n";
+        }
+
+        Debug.Log(debugMessage);
+    }
+
+    #endregion
 }
