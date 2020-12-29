@@ -31,7 +31,7 @@ public class Affinity
 
 public class UnitSimple : MonoBehaviour
 {
-    public Transform target;
+    public Vector3 target;
     public float speed = 20.0f;
     private Vector3[] waypoints;
     private int targetIndex;
@@ -80,7 +80,7 @@ public class UnitSimple : MonoBehaviour
     public void AgentRequestPath()
     {
         Debug.Log(gameObject.name + " has requested a path.");
-        PathRequestManagerSimple.RequestPath(transform.position, target.position, OnPathFound, this);
+        PathRequestManagerSimple.RequestPath(transform.position, target, OnPathFound, this);
     }
 
     public void OnPathFound(Vector3[] newWaypointPath, bool pathSuccessful)

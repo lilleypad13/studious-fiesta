@@ -34,10 +34,24 @@ public class DropdownTargetManager : DropdownManager
     }
 
 
+    //protected override void MethodToPerformOnSelection(int index)
+    //{
+    //    spawnManager.Target = spawnPoints[index].transform;
+
+    //    if (currentModel != null)
+    //    {
+    //        currentModel.GetComponent<MeshRenderer>().material = originalMaterial;
+    //    }
+    //    currentModel = spawnPoints[index];
+    //    MeshRenderer currentModelRenderer = currentModel.GetComponent<MeshRenderer>();
+
+    //    originalMaterial = currentModelRenderer.material;
+    //    currentModelRenderer.material = targetHighlightMaterial;
+    //}
+
     protected override void MethodToPerformOnSelection(int index)
     {
-        spawnManager.Target = spawnPoints[index].transform;
-
+        spawnManager.Target = GlobalModelData.Instance.GetPositionByBounds(spawnPoints[index]);
         if (currentModel != null)
         {
             currentModel.GetComponent<MeshRenderer>().material = originalMaterial;
@@ -47,5 +61,6 @@ public class DropdownTargetManager : DropdownManager
 
         originalMaterial = currentModelRenderer.material;
         currentModelRenderer.material = targetHighlightMaterial;
+        Debug.Log($"Target Highlight: \n Model: {currentModel.name} \n Original Material: {originalMaterial.name} \n Current Material: {currentModelRenderer.name}");
     }
 }
