@@ -99,7 +99,7 @@ public class PathfindingHeapSimple : MonoBehaviour
                             architecturalCost = windowRate * currentNode.Window + MathArchCost.Instance.ARCHCOST_DEFAULT;
                             break;
                         case ArchitecturePathingData.connectivity:
-                            architecturalCost = connectivityRate * MathArchCost.Instance.normalizeConnectivity(currentNode.Connectivity) + MathArchCost.Instance.ARCHCOST_DEFAULT;
+                            architecturalCost = connectivityRate * MathArchCost.Instance.NormalizeConnectivity(currentNode.Connectivity) + MathArchCost.Instance.ARCHCOST_DEFAULT;
                             break;
                         default:
                             architecturalCost = MathArchCost.Instance.ARCHCOST_DEFAULT;

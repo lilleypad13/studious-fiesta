@@ -13,6 +13,8 @@ public class InitializationManager : MonoBehaviour
             initializer.Initialization();
             DebugCurrentInitializationStep(initializer);
         }
+
+        GlobalModelData.Instance.ReportArchitecturalDictionary();
     }
 
     #region Debug Methods

@@ -38,7 +38,7 @@ public class RevitModelDataHandlerManager
     public void ApplyHandlerMethodBasedOnString(
         string handlerIdentifier, GameObject objectToModify, string valueForModification)
     {
-        Debug.Log($"DataHandlerManager attempting to modify {objectToModify.name} with value {valueForModification} using handlerID: {handlerIdentifier}.");
+        //Debug.Log($"DataHandlerManager attempting to modify {objectToModify.name} with value {valueForModification} using handlerID: {handlerIdentifier}.");
         IRevitModelDataHandler dataHandler;
         revitHandlerDictionary.TryGetValue(handlerIdentifier, out dataHandler);
 
