@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Affinity
 {
-    private string name;
-    public string Name { get => name; }
-    private int affinityValue;
+    public readonly string Name;
+
     public int AffinityValue
     {
-        get { return affinityValue; }
+        get => affinityValue;
         set
         {
             if (value > MathArchCost.Instance.MAX_AFFINITY)
@@ -18,10 +17,12 @@ public class Affinity
                 affinityValue = value;
         }
     }
+    private int affinityValue;
+
 
     public Affinity(string _name, int _affinityValue)
     {
-        name = _name;
+        Name = _name;
         if (_affinityValue > MathArchCost.Instance.MAX_AFFINITY)
             affinityValue = MathArchCost.Instance.MAX_AFFINITY;
         else
