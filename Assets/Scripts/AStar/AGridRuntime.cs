@@ -47,6 +47,27 @@ public class AGridRuntime
     }
 
 
+    /*
+     * Consistently checks if a node is within the overall grid bounds before trying to get it 
+     * and set values to it.
+     */
+    //private int xIndex = 0;
+    //private int zIndex = 0;
+
+    public bool WithinNodeGridBounds(int xIndex, int zIndex)
+    {
+        int rows = grid.GetLength(0);
+        int columns = grid.GetLength(1);
+
+        bool isOnPositiveGrid = (xIndex >= 0 && zIndex >= 0);
+        bool isWithinGridBounds = (xIndex < columns && zIndex < rows);
+
+        if (isOnPositiveGrid)
+            return isWithinGridBounds;
+        else
+            return false;
+    }
+
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
         bool foundX = false;
