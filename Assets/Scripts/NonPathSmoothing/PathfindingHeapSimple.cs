@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Diagnostics;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public enum ArchitecturePathingData
 {
@@ -22,12 +23,6 @@ public class PathfindingHeapSimple : MonoBehaviour
     private PathRequestManagerSimple requestManager;
     private AGridRuntime aGridRuntime;
     private GenerateNodePath generateNodePath;
-    private const int MAX_AFFINITY = 100;
-
-    // Architecture Cost Rates
-    // TODO: Modify to use new architectural value system
-    private int windowRate = 0;
-    private int connectivityRate = 0;
 
 
     private void Awake()
@@ -80,8 +75,6 @@ public class PathfindingHeapSimple : MonoBehaviour
                     break;
                 }
 
-                CalcAgentArchitectureRates(agent); // Required before cycling through all the nodes
-
                 foreach (Node neighbor in aGridRuntime.GetNeighbors(currentNode))
                 {
                     if (!neighbor.walkable || closedSet.Contains(neighbor))
@@ -95,22 +88,26 @@ public class PathfindingHeapSimple : MonoBehaviour
                     // architectural element type)
                     int architecturalCost = 0;
 
-                    // TODO: Modify to use new architectural value system
-                    switch (typeUsedForPathing)
+                    foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
                     {
-                        case ArchitecturePathingData.window:
-                            architecturalCost = windowRate * currentNode.Window + MathArchCost.Instance.ARCHCOST_DEFAULT;
-                            break;
-                        case ArchitecturePathingData.connectivity:
-                            architecturalCost = connectivityRate * MathArchCost.Instance.NormalizeConnectivity(currentNode.Connectivity) + MathArchCost.Instance.ARCHCOST_DEFAULT;
-                            break;
-                        default:
-                            architecturalCost = MathArchCost.Instance.ARCHCOST_DEFAULT;
-                            break;
+                        architecturalCost +=  MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.affinityTypes[container.Key].AffinityValue) *
+                            MathArchCost.Instance.NormailzeArchitecturalValue(currentNode.architecturalElementTypes[container.Key]) + 
+                            MathArchCost.Instance.ARCHCOST_DEFAULT;
+
+                        //UnityEngine.Debug.Log($"Calculated Arch Cost from:\n" +
+                        //    $"Affinity: {agent.affinityTypes[container.Key].AffinityValue}" +
+                        //    $"Rate: {MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.affinityTypes[container.Key].AffinityValue)}" +
+                        //    $"Architectural Value: {currentNode.architecturalElementTypes[container.Key].ArchitecturalValue}" +
+                        //    $"Normalized Arch Value: {MathArchCost.Instance.NormailzeArchitecturalValue(currentNode.architecturalElementTypes[container.Key])}" +
+                        //    $"Partial Arch Cost: {architecturalCost}");
                     }
 
                     int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor)
                         + neighbor.movementPenalty + architecturalCost;
+
+                    //UnityEngine.Debug.Log($"Costs of Node {currentNode.NodeCoordinates}:\n" +
+                    //    $"G Cost: {currentNode.gCost}" +
+                    //    $"Arch Cost: {architecturalCost}");
 
                     if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                     {
@@ -144,14 +141,6 @@ public class PathfindingHeapSimple : MonoBehaviour
             return aGridRuntime.FindNearestWalkableNodeFromWorldPoint(worldPosition, walkableNodeSearchIterations);
         else
             return aGridRuntime.NodeFromWorldPoint(worldPosition);
-    }
-
-    
-    // TODO: Edit to use new Affinity
-    private void CalcAgentArchitectureRates(UnitSimple agent)
-    {
-        windowRate = MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.Window);
-        connectivityRate = MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.Connectivity);
     }
 
 

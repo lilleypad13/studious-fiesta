@@ -19,6 +19,10 @@ public class Affinity
     }
     private int affinityValue;
 
+    public Affinity(string _name)
+    {
+        Name = _name;
+    }
 
     public Affinity(string _name, int _affinityValue)
     {
@@ -64,11 +68,19 @@ public class UnitSimple : MonoBehaviour
     }
     [SerializeField] private int connectivity = 0;
 
+    public Dictionary<string, Affinity> affinityTypes = new Dictionary<string, Affinity>();
+
+    private void Awake()
+    {
+        if (affinityTypes.Count == 0)
+            PopulateDictionaryFromGlobal();
+    }
+
     // Agents determine their path here in Start
     private void Start()
     {
+        DebugReportAffinityValues();
         followRoutine = FollowPath();
-        //PathRequestManagerSimple.RequestPath(transform.position, target.position, OnPathFound, this);
     }
 
     /*
@@ -112,6 +124,21 @@ public class UnitSimple : MonoBehaviour
         }
     }
 
+
+    // Most likely needs run when creating a new agent.
+    // Can be possibly covered by running in this Awake method.
+    public void PopulateDictionaryFromGlobal()
+    {
+        foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
+        {
+            if (!affinityTypes.ContainsKey(container.Key))
+            {
+                Affinity affinity = new Affinity(container.Key);
+                affinityTypes.Add(container.Key, affinity);
+            }
+        }
+    }
+
     public void OnDrawGizmos()
     {
         if(waypoints != null)
@@ -132,4 +159,20 @@ public class UnitSimple : MonoBehaviour
             }
         }
     }
+
+    #region Debugging
+
+    private void DebugReportAffinityValues()
+    {
+        string debugMessage = $"{name} Affinity Values:\n";
+
+        foreach (KeyValuePair<string, Affinity> aff in affinityTypes)
+        {
+            debugMessage += $"Type: {aff.Key}; Value: {aff.Value.AffinityValue}";
+        }
+
+        Debug.Log(debugMessage);
+    }
+
+    #endregion
 }

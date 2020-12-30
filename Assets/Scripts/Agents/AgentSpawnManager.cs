@@ -114,9 +114,16 @@ public class AgentSpawnManager : MonoBehaviour
 
         // Set this specific instantiated agent's parameters
         UnitSimple agentAI = agent.GetComponent<UnitSimple>();
+        agentAI.PopulateDictionaryFromGlobal();
         agentAI.target = target;
-        agentAI.Window = windowAffinity;
-        agentAI.Connectivity = connectivityAffinity;
+
+        foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
+        {
+            if (agentAI.affinityTypes.ContainsKey(container.Key))
+                agentAI.affinityTypes[container.Key].AffinityValue = Random.Range(0, 50);
+        }
+        //agentAI.Window = windowAffinity;
+        //agentAI.Connectivity = connectivityAffinity;
 
         Debug.Log($"{agent.name} has target {target}.");
 
