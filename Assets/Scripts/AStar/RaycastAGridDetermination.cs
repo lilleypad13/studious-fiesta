@@ -21,7 +21,7 @@ public class RaycastChecker
 public class RaycastAGridDetermination : MonoBehaviour
 {
     [SerializeField] private float unitHeight = 1.0f;
-    [SerializeField] private float nodeRadius = 1.0f;
+    [SerializeField] private float checkRadius = 1.0f;
     [SerializeField] private LayerMask unwalkableMask;
 
     [SerializeField] private bool isUsingSphereCollisionCheck = false;
@@ -78,7 +78,7 @@ public class RaycastAGridDetermination : MonoBehaviour
     // TODO-A: Needs to have better control of where it is performed
     private bool SphereCollisionCheck(Vector3 worldPoint)
     {
-        bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+        bool walkable = !(Physics.CheckSphere(worldPoint, checkRadius, unwalkableMask));
 
         return walkable;
     }

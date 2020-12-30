@@ -10,7 +10,6 @@ public class AGrid : Initializer
     [Tooltip("EXPERIMENTAL: Normaly only works with value of 1")]
     [SerializeField] private float nodeDiameter = 1.0f; // how much space each individual node covers
     public float NodeDiameter { get => nodeDiameter; }
-    public float unitHeight = 0.0f; // Used to adjust node positioning for agent height
 
     [Header("Node Grid Options")]
     public bool isReadingDataFromFile = false;

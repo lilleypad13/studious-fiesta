@@ -56,12 +56,17 @@ public class MathArchCost : MonoBehaviour
     // pmax = -pmin
     private int MAX_COSTPERARCH { get => -MIN_COSTPERARCH; }
 
+    // WILL BE REMOVED
     // Individual Architectural Parameter Controllers
     [SerializeField]private int minConnectivity = 0;
     public int MinConnectivity { get => minConnectivity; }
     [SerializeField]private int maxConnectivity = 3500;
     public int MaxConnectivity { get => maxConnectivity; }
 
+    // TODO: Possibly add Affinity control here as well
+
+    // TODO: Modify to use new architectural value system
+    // WILL BE REMOVED
     public int NormalizeConnectivity(int connectivity)
     {
         int normalizedValue = 0;

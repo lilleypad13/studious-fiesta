@@ -23,10 +23,7 @@ public class Affinity
     public Affinity(string _name, int _affinityValue)
     {
         Name = _name;
-        if (_affinityValue > MathArchCost.Instance.MAX_AFFINITY)
-            affinityValue = MathArchCost.Instance.MAX_AFFINITY;
-        else
-            affinityValue = _affinityValue;
+        AffinityValue = _affinityValue;
     }
 }
 
@@ -89,8 +86,6 @@ public class UnitSimple : MonoBehaviour
         if (pathSuccessful)
         {
             waypoints = newWaypointPath;
-            //StopCoroutine("FollowPath");
-            //StartCoroutine("FollowPath");
             StopCoroutine(followRoutine);
             StartCoroutine(followRoutine);
         }

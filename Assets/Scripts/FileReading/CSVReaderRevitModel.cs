@@ -6,8 +6,10 @@ using UnityEngine;
 [Serializable]
 public class SheetAndColumn
 {
+    [Tooltip("Exact sheet name.")]
     [SerializeField] private string sheetName;
     public string SheetName { get => sheetName; }
+    [Tooltip("Exact column header where values of interest are located.")]
     [SerializeField] private string columnName;
     public string ColumnName { get => columnName; }
 

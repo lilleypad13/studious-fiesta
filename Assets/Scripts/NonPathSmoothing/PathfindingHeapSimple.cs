@@ -25,8 +25,10 @@ public class PathfindingHeapSimple : MonoBehaviour
     private const int MAX_AFFINITY = 100;
 
     // Architecture Cost Rates
+    // TODO: Modify to use new architectural value system
     private int windowRate = 0;
     private int connectivityRate = 0;
+
 
     private void Awake()
     {
@@ -93,6 +95,7 @@ public class PathfindingHeapSimple : MonoBehaviour
                     // architectural element type)
                     int architecturalCost = 0;
 
+                    // TODO: Modify to use new architectural value system
                     switch (typeUsedForPathing)
                     {
                         case ArchitecturePathingData.window:
@@ -144,6 +147,7 @@ public class PathfindingHeapSimple : MonoBehaviour
     }
 
     
+    // TODO: Edit to use new Affinity
     private void CalcAgentArchitectureRates(UnitSimple agent)
     {
         windowRate = MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.Window);

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Transactions;
 using UnityEngine;
 
 [Serializable]
@@ -67,22 +62,25 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
     // Data about the file being read
     [Header("File to Read")]
     [Tooltip("File name that can be copied from any file in the Resources folder.")]
-    //[SerializeField] private string rhinoInputCSVName = "DemoModel_VGACoordinates";
     [SerializeField] private CSVFile csv;
     public CSVFile CSV { get => csv; }
     public string DataType { get => csv.DataName; }
 
 
     [Header("File Parameters")]
-    [Tooltip("EXPERIMENTAL: Generally keep at 1 (unless weird data set).")]
+    [Tooltip("General distance between each data point in the file to be read.")]
     [SerializeField] private float distanceBetweenDataPoints = 1.0f; // Increment value between coordinates of each data point
     [Tooltip("Value to assign empty coordinate locations not found in the file.")]
     [SerializeField] private int defaultValueWhenNotFound = 0;
-    [SerializeField] private int xCoordinateColumnIndex = 1;
-    [SerializeField] private int yCoordinateColumnIndex = 2;
     [SerializeField] private bool convertInchesToFeet = false;
-    [SerializeField] private bool isDataStartingAtOrigin = false;
 
+    [Header("Coordinate Columns")]
+    [Tooltip("Column x-coordinate is found in the file to be read.")]
+    [SerializeField] private int xCoordinateColumnIndex = 1;
+    [Tooltip("Column y-coordinate (or z-coordinate) is found in the file to be read.")]
+    [SerializeField] private int yCoordinateColumnIndex = 2;
+
+    [Header("Data Alignment")]
     [SerializeField] private bool flipDataReadingHorizontally = false;
     [SerializeField] private bool flipDataReadingVertically = false;
 
