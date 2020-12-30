@@ -1,0 +1,2 @@
+Id,TypeId,PhaseCreated,PhaseDemolished,DesignOption,AssemblyName,IfcGUID,Volume,Area,Comments,FasciaDepth,RafterCut,RafterorTruss,BaseLevel,CutoffOffset,CutoffLevel,BaseOffsetFromLevel,Thickness,Mark
+417409,223,118390,,,,,854.1776412,2802.420083,,0,Plumb Cut,,370415,0,,0,0.3048,

@@ -1,0 +1,4 @@
+Id,TypeId,PhaseCreated,PhaseDemolished,DesignOption,AssemblyName,IfcGUID,Comments,ActualNumberofRisers,MultistoryTopLevel,TopOffset,BaseOffset,ActualRiserHeight,Width,TopLevel,BaseLevel,Mark,ValueGroup,Walkable
+391040,168814,118390,,,,,,7,,0,0,0.174171429,,355928,355884,,,
+392514,168814,118390,,,,,,7,,0,0,0.174171429,,355928,355884,,,
+394142,168814,118390,,,,,,7,,0,0,0.174171429,,355928,355884,,,

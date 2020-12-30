@@ -1,0 +1,3 @@
+Id,TypeId,PhaseCreated,PhaseDemolished,DesignOption,AssemblyName,IfcGUID,EstimatedReinforcementVolume,Volume,Area,Comments,Level,Structural,Perimeter,HeightOffsetFromLevel,ElevationatBottomSurvey,ElevationatTopSurvey,ElevationatTop,ElevationatBottom,Mark,Walkable
+370514,226,118390,,,,,,751.3519234,2465.065366,,355884,0,352.597199,0,,,10.9728,10.668,,1
+372570,226,118390,,,,,,95.87770703,314.5594063,,355928,0,123.4606763,0,,,12.192,11.8872,,
