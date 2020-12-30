@@ -35,7 +35,7 @@ public class ModifyDataForPathingNodes : MonoBehaviour
         }
     }
 
-    private CSVReaderRevitDataToAStarGrid csvReader;
+    public CSVReaderRevitDataToAStarGrid csvReader;
     [SerializeField]private AGrid aGrid;
 
     private float distanceRatio = 0.0f; // D
@@ -125,7 +125,10 @@ public class ModifyDataForPathingNodes : MonoBehaviour
         else
             valueToAssign = DirectDataAssignment(node);
 
-        node.Connectivity = valueToAssign;
+        if (node.architecturalElementTypes.ContainsKey(csvReader.DataType))
+        {
+            node.architecturalElementTypes[csvReader.DataType].ArchitecturalValue = valueToAssign;
+        }
     }
 
     private int DirectDataAssignment(Node node)

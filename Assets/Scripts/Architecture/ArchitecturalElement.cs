@@ -1,45 +1,41 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class ArchitecturalElement
 {
-    private string name;
-    public string Name { get => name; }
+    public readonly string Name;
 
-    private int minimumValue = 0;
-    public int MinimumValue
+    public int ArchitecturalValue
     {
-        get => minimumValue;
+        get => architecturalValue;
         set
         {
-            if (value < minimumValue)
-                minimumValue = value;
+            architecturalValue = value;
+            CheckAgainstGlobalArchitecturalMinAndMax();
         }
     }
-    private int maximumValue = 0;
-    public int MaximumValue
-    {
-        get => maximumValue;
-        set
-        {
-            if (value > maximumValue)
-                maximumValue = value;
-        }
-    }
+    private int architecturalValue = 0;
+
 
     public ArchitecturalElement(string _name)
     {
-        name = _name;
+        Name = _name;
+        GlobalModelData.Instance.CheckIfAlreadyInDictionary(_name);
     }
 
-    public void CheckValueAgainstMinMax(int valueToCheck)
+    public ArchitecturalElement(string _name, int _value)
     {
-        if (minimumValue == 0 & maximumValue == 0)
-            maximumValue = valueToCheck;
-        else if (valueToCheck > maximumValue)
-            maximumValue = valueToCheck;
-        else if (valueToCheck < minimumValue)
-            minimumValue = valueToCheck;
+        Name = _name;
+        GlobalModelData.Instance.CheckIfAlreadyInDictionary(_name);
+
+        ArchitecturalValue = _value;
+    }
+
+    private void CheckAgainstGlobalArchitecturalMinAndMax()
+    {
+        GlobalModelData.Instance.CheckValueAgainstArchitecturalElementContainer(this);
     }
 }

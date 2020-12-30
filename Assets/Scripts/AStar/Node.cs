@@ -3,34 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.AI;
 
-public class ArchitecturalPathing
-{
-    private string name;
-    public string Name { get => name; }
-    private int architecturalValue;
-    public int ArchitecturalValue
-    {
-        get => architecturalValue;
-        set
-        {
-            if (value > MathArchCost.Instance.MAX_ARCHVALUE)
-                architecturalValue = MathArchCost.Instance.MAX_ARCHVALUE;
-            else
-                architecturalValue = value;
-        }
-    }
-
-    public ArchitecturalPathing(string _name, int _architecturalValue)
-    {
-        name = _name;
-
-        if (_architecturalValue > MathArchCost.Instance.MAX_ARCHVALUE)
-            architecturalValue = MathArchCost.Instance.MAX_ARCHVALUE;
-        else
-            architecturalValue = _architecturalValue;
-    }
-}
-
 public class Node: IHeapItem<Node>
 {
     // General fields
@@ -40,7 +12,14 @@ public class Node: IHeapItem<Node>
     public int gridY;
     public int movementPenalty;
     public Node parent;
-    public int heapIndex;
+
+    public int HeapIndex
+    {
+        get => heapIndex;
+        set => heapIndex = value;
+    }
+    private int heapIndex;
+
 
     // Base cost parameters
     public int gCost;
@@ -71,7 +50,7 @@ public class Node: IHeapItem<Node>
     }
     private int connectivity = 0;
 
-    public Dictionary<string, ArchitecturalPathing> dictionaryOfArchitecturalPathingTypes = new Dictionary<string, ArchitecturalPathing>();
+    public Dictionary<string, ArchitecturalElement> architecturalElementTypes = new Dictionary<string, ArchitecturalElement>();
 
     // Debugging Variables
     public string NodeCoordinates { get { return gridX + " , " + gridY; } } // Helpful for identifying a specific node during debugging
@@ -83,19 +62,10 @@ public class Node: IHeapItem<Node>
         gridX = _gridX;
         gridY = _gridY;
         movementPenalty = _penalty;
+        PopulateDictionaryFromGlobal();
     }
 
-    public int HeapIndex
-    {
-        get
-        {
-            return heapIndex;
-        }
-        set
-        {
-            heapIndex = value;
-        }
-    }
+    
 
     /*
      * Compares the fCost of this node and another node, and if they are equal, compares 
@@ -110,8 +80,16 @@ public class Node: IHeapItem<Node>
         {
             compare = hCost.CompareTo(nodeToCompare.hCost);
         }
-        //Debug.Log("Compare value between node " + NodeCoordinates + " and node " + nodeToCompare.NodeCoordinates + " is " + compare);
         return -compare;
+    }
+
+    private void PopulateDictionaryFromGlobal()
+    {
+        foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
+        {
+            ArchitecturalElement element = new ArchitecturalElement(container.Key);
+            architecturalElementTypes.Add(container.Key, element);
+        }
     }
 
     /*
@@ -119,7 +97,14 @@ public class Node: IHeapItem<Node>
      */
     public void ArchitecturalOutput()
     {
-        Debug.Log("Node: " + NodeCoordinates + " has architectural values: " + "Window : " + Window);
+        string debugMessage = $"Node: {NodeCoordinates} architectural values: \n";
+
+        foreach (KeyValuePair<string, ArchitecturalElement> element in architecturalElementTypes)
+        {
+            debugMessage += $"{element.Key} has value {element.Value.ArchitecturalValue}\n";
+        }
+
+        Debug.Log(debugMessage);
     }
 
     /*

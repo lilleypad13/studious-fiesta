@@ -21,14 +21,13 @@ public sealed class GlobalModelData
         }
     }
 
-    private Bounds modelBounds;
     public Bounds ModelBounds
     {
         get => modelBounds;
         set => modelBounds = value;
     }
+    private Bounds modelBounds;
 
-    private List<GameObject> objectsInEntireModel;
     public List<GameObject> ObjectsInEntireModel
     {
         get => objectsInEntireModel;
@@ -40,18 +39,38 @@ public sealed class GlobalModelData
                 Debug.LogWarning("An attempt at changing the list of objects in the entire model was made.");
         }
     }
+    private List<GameObject> objectsInEntireModel;
 
-    public static Dictionary<string, ArchitecturalElement> architecturalElementTypes = new Dictionary<string, ArchitecturalElement>();
+    public static Dictionary<string, ArchitecturalElementContainer> architecturalElementContainers = new Dictionary<string, ArchitecturalElementContainer>();
+
+    public ArchitecturalElementContainer GetFromContainerDictionary(string key)
+    {
+        if (architecturalElementContainers.ContainsKey(key))
+            return architecturalElementContainers[key];
+        else
+            return null;
+    }
 
     public void CheckIfAlreadyInDictionary(string key)
     {
-        if (!architecturalElementTypes.ContainsKey(key))
-            architecturalElementTypes.Add(key, new ArchitecturalElement(key));
+        if (!architecturalElementContainers.ContainsKey(key))
+        {
+            architecturalElementContainers.Add(key, new ArchitecturalElementContainer(key));
+            Debug.Log($"{key} architectural type added to global architectural element dictionary.");
+        }
+    }
+
+    public void CheckValueAgainstArchitecturalElementContainer(ArchitecturalElement element)
+    {
+        if (architecturalElementContainers.ContainsKey(element.Name))
+        {
+            architecturalElementContainers[element.Name].CheckValueAgainstMinAndMax(element.ArchitecturalValue);
+        }
     }
 
     public GameObject SearchEntireModelForObjectWithNameContaining(string searchID)
     {
-        Debug.Log($"Searching entire model for object containing ID: {searchID}");
+        //Debug.Log($"Searching entire model for object containing ID: {searchID}");
         foreach (GameObject item in GlobalModelData.Instance.ObjectsInEntireModel)
         {
             if (item.name.Contains(searchID))
@@ -74,4 +93,20 @@ public sealed class GlobalModelData
             return Vector3.zero;
         }
     }
+
+    #region Debugging
+
+    public void ReportArchitecturalDictionary()
+    {
+        string debugMessage = "Global Architectural Element Dictionary: \n";
+
+        foreach (KeyValuePair <string, ArchitecturalElementContainer> container in architecturalElementContainers)
+        {
+            debugMessage += $"Architecture Type: {container.Key}; Min: {container.Value.MinimumValue}; Max: {container.Value.MaximumValue}\n";
+        }
+
+        Debug.Log(debugMessage);
+    }
+
+    #endregion
 }

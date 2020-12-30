@@ -33,44 +33,28 @@ public class MathArchCost : MonoBehaviour
     }
 
     // Affinity Parameters
-    public int AVERAGE_AFFINITY // A
-    {
-        get { return _AVERAGE_AFFINITY; }
-    }
-    private int _AVERAGE_AFFINITY = 50;
+    private int _MIN_AFFINITY = 0;
+    public int MIN_AFFINITY { get => _MIN_AFFINITY; }
 
-    public int MAX_AFFINITY // 2A
-    {
-        get { return 2 * _AVERAGE_AFFINITY; }
-    }
+    private int _AVERAGE_AFFINITY = 50;
+    public int AVERAGE_AFFINITY { get => _AVERAGE_AFFINITY; } // A
+
+    public int MAX_AFFINITY { get => 2 * _AVERAGE_AFFINITY; } // 2A
 
     // Architecture Value Parameters
-    public int MIN_ARCHVALUE
-    {
-        get { return _MIN_ARCHVALUE; }
-    }
-    [SerializeField]private int _MIN_ARCHVALUE = 0;
+    public int MIN_ARCHVALUE{ get => _MIN_ARCHVALUE; }
+    [SerializeField] private int _MIN_ARCHVALUE = 0;
 
-    public int MAX_ARCHVALUE // B
-    {
-        get { return _MAX_ARCHVALUE; }
-    }
+    public int MAX_ARCHVALUE {get => _MAX_ARCHVALUE; } // B
     [SerializeField]private int _MAX_ARCHVALUE = 100;
 
-    public int ARCHCOST_DEFAULT // D
-    {
-        get { return _ARCHCOST_DEFAULT; }
-    }
+    public int ARCHCOST_DEFAULT {get => _ARCHCOST_DEFAULT; } // D
     [SerializeField]private int _ARCHCOST_DEFAULT = 1000;
 
-    private int MIN_COSTPERARCH // pmin = -D/B because I want [pmin * B = D] to cancel it in the end
-    {
-        get { return (-ARCHCOST_DEFAULT / MAX_ARCHVALUE); }
-    }
-    private int MAX_COSTPERARCH // pmax = -pmin
-    {
-        get { return -MIN_COSTPERARCH; }
-    }
+    // pmin = -D/B because I want [pmin * B = D] to cancel it in the end
+    private int MIN_COSTPERARCH {get => -ARCHCOST_DEFAULT / MAX_ARCHVALUE; }
+    // pmax = -pmin
+    private int MAX_COSTPERARCH { get => -MIN_COSTPERARCH; }
 
     // Individual Architectural Parameter Controllers
     [SerializeField]private int minConnectivity = 0;
@@ -78,12 +62,23 @@ public class MathArchCost : MonoBehaviour
     [SerializeField]private int maxConnectivity = 3500;
     public int MaxConnectivity { get => maxConnectivity; }
 
-    public int normalizeConnectivity(int connectivity)
+    public int NormalizeConnectivity(int connectivity)
     {
         int normalizedValue = 0;
         int connectivityRange = maxConnectivity - minConnectivity;
 
         normalizedValue = (int)((float)(connectivity - minConnectivity) / connectivityRange * _MAX_ARCHVALUE);
+
+        return normalizedValue;
+    }
+
+    public int NormailzeArchitecturalValue(ArchitecturalElement element)
+    {
+        ArchitecturalElementContainer container = GlobalModelData.Instance.GetFromContainerDictionary(element.Name);
+        int normalizedValue = 0;
+        int elementRange = container.MaximumValue - container.MinimumValue;
+
+        normalizedValue = (int)((float)(element.ArchitecturalValue - minConnectivity) / elementRange * _MAX_ARCHVALUE);
 
         return normalizedValue;
     }

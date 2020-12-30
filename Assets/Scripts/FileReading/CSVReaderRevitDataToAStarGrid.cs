@@ -7,6 +7,23 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Transactions;
 using UnityEngine;
 
+[Serializable]
+public class CSVFile
+{
+    public string DataName { get => dataName; set => dataName = value; }
+    [SerializeField]private string dataName = "";
+
+    public string FilePath { get => filePath; }
+    [SerializeField]private string filePath = "";
+
+    public CSVFile(string _dataName, string _filePath)
+    {
+        dataName = _dataName;
+        filePath = _filePath;
+    }
+
+}
+
 public class DataWithPosition
 {
     private float xPosition;
@@ -50,7 +67,11 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
     // Data about the file being read
     [Header("File to Read")]
     [Tooltip("File name that can be copied from any file in the Resources folder.")]
-    [SerializeField] private string rhinoInputCSVName = "DemoModel_VGACoordinates";
+    //[SerializeField] private string rhinoInputCSVName = "DemoModel_VGACoordinates";
+    [SerializeField] private CSVFile csv;
+    public CSVFile CSV { get => csv; }
+    public string DataType { get => csv.DataName; }
+
 
     [Header("File Parameters")]
     [Tooltip("EXPERIMENTAL: Generally keep at 1 (unless weird data set).")]
@@ -132,12 +153,16 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         modifyData = ModifyDataForPathingNodes.Instance;
         modifyData.DetermineCaseForCreatingDataArray(distanceBetweenDataPoints);
 
-        TextAsset gridData = Resources.Load<TextAsset>(rhinoInputCSVName);
+        TextAsset gridData = Resources.Load<TextAsset>(csv.FilePath);
         int dataIndex = 1; // Starts at 1 to account for header row
 
         string[] data = SplitTextAssetIntoRows(gridData);
         string[] firstRow = SplitRowIntoIndividualValues(data[0]);
         int[] rowInt = new int[firstRow.Length];
+
+        if (csv.DataName == "")
+            csv.DataName = firstRow[firstRow.Length - 1];
+        GlobalModelData.Instance.CheckIfAlreadyInDictionary(csv.DataName);
 
         FindExtremeValues(data);
         Debug.Log($"File Reader found a max X of {maxX} and a max Z of {maxZ}.");
@@ -293,19 +318,6 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
                         "Con: " + row[3] + "\n");
     }
 
-    /*
-     * Checks if passed in node indices match those of a piece of data extracted from the .csv file.
-     */
-    public void CheckToAssignValue(Node node)
-    {
-        int arrayXIndex = node.gridX;
-        int arrayYIndex = node.gridY;
-
-        if (arrayXIndex < rectangularData.GetLength(1) && arrayYIndex < rectangularData.GetLength(0))
-            node.Connectivity = rectangularData[arrayXIndex, arrayYIndex];
-        else
-            Debug.LogWarning($"Node[{arrayXIndex}, {arrayYIndex}]: File reader attempted to assign value to a node whose index is outside of the file's data bounds.");
-    }
 
     /*
      * Solely provides a reference on a monobehaviour class to allow a button to access the static instance of DataRecorder which 
