@@ -32,6 +32,11 @@ public class InfluenceManager : Initializer
     public void FindInfluenceObjects()
     {
         influenceObjects = FindObjectsOfType<Influence>();
+
+        foreach (Influence influence in influenceObjects)
+        {
+            GlobalModelData.Instance.AddIfNotInDictionary(influence.InfluenceName);
+        }
     }
 
     public override void Initialization()

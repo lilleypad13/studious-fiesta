@@ -4,26 +4,15 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AgentSpawnManager : MonoBehaviour
+public class AgentSpawnManager : Initializer
 {
     #region Variables
-    [Header("Spawn Parameters")]
     [SerializeField] private GameObject agentPrefab; // Types of agents to spawn
-    [SerializeField] private bool isSearchingForNearestWalkableSpawn = false;
-    [SerializeField] private int iterationsSearchForWalkable = 1;
 
-    private Transform spawnPoint; // Location where agents will spawn from
-    public Transform SpawnPoint
-    {
-        get => spawnPoint;
-        set
-        {
-            spawnPoint = value;
-            //Debug.Log($"Spawn point was set to the location of {value.gameObject.name} at {value.position}.");
-        }
-    }
+    [Header("Spawn Parameters")]
+    [SerializeField] private bool isSearchingForNearestWalkableSpawn = true;
+    [SerializeField] private int iterationsSearchForWalkable = 3;
 
-    private Vector3 spawnPosition; // Location where agents will spawn from
     public Vector3 SpawnPosition
     {
         get => spawnPosition;
@@ -33,8 +22,8 @@ public class AgentSpawnManager : MonoBehaviour
             Debug.Log($"Spawn position was set to the location of {value} at {value}.");
         }
     }
+    private Vector3 spawnPosition;
 
-    private Vector3 target; // Target passed on to agents spawned from this manager
     public Vector3 Target
     {
         get
@@ -53,36 +42,52 @@ public class AgentSpawnManager : MonoBehaviour
             Debug.Log($"Target position was set to the location {value}.");
         }
     }
+    private Vector3 target;
 
-    // Agent Affinities
-    [Header("Affinities for Spawned Agents")]
-    [Range(0, 100)]
-    [Tooltip("In Game UI Also")]
-    public int windowAffinity = 0;
-    [Range(0, 100)]
-    [Tooltip("In Game UI Also")]
-    public int connectivityAffinity = 0;
+    public Dictionary<string, Affinity> spawnerAffinityTypes = new Dictionary<string, Affinity>();
 
-    // Accessories
-    [Header("UI Elements")]
-    public Text agentWindowAffinityText;
-    public Text agentConnectivityAffinityText;
+    [Header("Slider UI References")]
+    public GameObject sliderContainer;
+    public GameObject affinitySliderPrefab;
     #endregion
 
 
     #region Unity Methods
-    private void SpawnAgent()
+    public override void Initialization()
     {
-        GameObject agent = (GameObject)Instantiate(agentPrefab, spawnPoint.position, spawnPoint.rotation);
+        foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
+        {
+            if (!spawnerAffinityTypes.ContainsKey(container.Key))
+            {
+                Affinity affinity = new Affinity(container.Key);
+                spawnerAffinityTypes.Add(container.Key, affinity);
+            }
+        }
 
-        // Set this specific instantiated agent's parameters
-        UnitSimple agentAI = agent.GetComponent<UnitSimple>();
-        agentAI.target = target;
-        agentAI.Window = windowAffinity;
-        agentAI.Connectivity = connectivityAffinity;
+        GenerateAffinitySlidersUI();
+    }
 
-        // Tell agent to determine path after setting parameters
-        agentAI.AgentRequestPath();
+    public bool SetAffinityByKey(string key, int valeToSet)
+    {
+        if (spawnerAffinityTypes.ContainsKey(key))
+        {
+            spawnerAffinityTypes[key].AffinityValue = valeToSet;
+            return true;
+        }
+        else
+        {
+            Debug.LogWarning($"Spawn Manager does not have this affinity type: {key}");
+            return false;
+        }
+    }
+
+    private void GenerateAffinitySlidersUI()
+    {
+        foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
+        {
+            affinitySliderPrefab.GetComponentInChildren<SliderAgentAffinity>().key = container.Key;
+            Instantiate(affinitySliderPrefab, sliderContainer.transform);
+        }
     }
 
     private void SpawnAgent(Vector3 spawnPosition)
@@ -120,10 +125,8 @@ public class AgentSpawnManager : MonoBehaviour
         foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
         {
             if (agentAI.affinityTypes.ContainsKey(container.Key))
-                agentAI.affinityTypes[container.Key].AffinityValue = Random.Range(0, 50);
+                agentAI.affinityTypes[container.Key].AffinityValue = spawnerAffinityTypes[container.Key].AffinityValue;
         }
-        //agentAI.Window = windowAffinity;
-        //agentAI.Connectivity = connectivityAffinity;
 
         Debug.Log($"{agent.name} has target {target}.");
 
@@ -134,6 +137,7 @@ public class AgentSpawnManager : MonoBehaviour
         agentAI.AgentRequestPath();
     }
 
+    // Method for outside access to spawn objects with this spawner
     public void Spawn()
     {
         if (spawnPosition != Vector3.zero)
