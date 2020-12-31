@@ -168,7 +168,7 @@ public class UnitSimple : MonoBehaviour
 
         foreach (KeyValuePair<string, Affinity> aff in affinityTypes)
         {
-            debugMessage += $"Type: {aff.Key}; Value: {aff.Value.AffinityValue}";
+            debugMessage += $"Type: {aff.Key}; Value: {aff.Value.AffinityValue}\n";
         }
 
         Debug.Log(debugMessage);
