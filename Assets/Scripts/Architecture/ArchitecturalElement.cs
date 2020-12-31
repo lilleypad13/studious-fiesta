@@ -23,13 +23,13 @@ public class ArchitecturalElement
     public ArchitecturalElement(string _name)
     {
         Name = _name;
-        GlobalModelData.Instance.CheckIfAlreadyInDictionary(_name);
+        GlobalModelData.Instance.AddIfNotInDictionary(_name);
     }
 
     public ArchitecturalElement(string _name, int _value)
     {
         Name = _name;
-        GlobalModelData.Instance.CheckIfAlreadyInDictionary(_name);
+        GlobalModelData.Instance.AddIfNotInDictionary(_name);
 
         ArchitecturalValue = _value;
     }

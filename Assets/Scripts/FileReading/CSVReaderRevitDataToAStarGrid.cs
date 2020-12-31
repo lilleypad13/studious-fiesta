@@ -160,7 +160,7 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
 
         if (csv.DataName == "")
             csv.DataName = firstRow[firstRow.Length - 1];
-        GlobalModelData.Instance.CheckIfAlreadyInDictionary(csv.DataName);
+        GlobalModelData.Instance.AddIfNotInDictionary(csv.DataName);
 
         FindExtremeValues(data);
         Debug.Log($"File Reader found a max X of {maxX} and a max Z of {maxZ}.");

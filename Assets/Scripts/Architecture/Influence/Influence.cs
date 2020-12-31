@@ -32,13 +32,13 @@ public class Influence : MonoBehaviour
     public Influence(string _name)
     {
         influenceName = _name;
-        GlobalModelData.Instance.CheckIfAlreadyInDictionary(_name);
+        GlobalModelData.Instance.AddIfNotInDictionary(_name);
     }
 
     private void Awake()
     {
         if(InfluenceName != string.Empty)
-            GlobalModelData.Instance.CheckIfAlreadyInDictionary(InfluenceName);
+            GlobalModelData.Instance.AddIfNotInDictionary(InfluenceName);
 
         Rend = this.gameObject.GetComponent<Renderer>();
         influenceOriginPosition = DetermineInfluenceOriginPosition();
@@ -66,7 +66,6 @@ public class Influence : MonoBehaviour
                 {
                     if (grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].architecturalElementTypes.ContainsKey(influenceName))
                         grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].architecturalElementTypes[influenceName].ArchitecturalValue += architectureInfluenceAmount;
-                    //grid[influenceOrigin.gridX + x, influenceOrigin.gridY + z].Window += ArchitectureInfluenceAmount;
                 }
             }
         }

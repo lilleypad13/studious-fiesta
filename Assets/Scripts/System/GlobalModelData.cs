@@ -51,7 +51,7 @@ public sealed class GlobalModelData
             return null;
     }
 
-    public void CheckIfAlreadyInDictionary(string key)
+    public void AddIfNotInDictionary(string key)
     {
         if (!architecturalElementContainers.ContainsKey(key))
         {
