@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class RevitModelDataHandlerManager
@@ -31,18 +29,20 @@ public class RevitModelDataHandlerManager
     private static RevitWallDataHandler wallHandler = new RevitWallDataHandler();
     private static RevitAddInfluenceDataHandler influenceHandler = new RevitAddInfluenceDataHandler();
     private static RevitWalkabilityDataHandler walkableHandler = new RevitWalkabilityDataHandler();
+    private static RevitSpawnDataHandler spawnHandler = new RevitSpawnDataHandler();
 
     private static Dictionary<string, IRevitModelDataHandler> revitHandlerDictionary = new Dictionary<string, IRevitModelDataHandler>() {
         ["Doors"] = doorHandler,
         ["Walls"] = wallHandler,
         ["Influence"] = influenceHandler,
-        ["Walkable"] = walkableHandler
+        ["Walkable"] = walkableHandler,
+        ["Spawn"] = spawnHandler
     };
 
     public void ApplyHandlerMethodBasedOnString(
-        string handlerIdentifier, GameObject objectToModify, string valueForModification)
+        string handlerIdentifier, 
+        GameObject objectToModify, string valueForModification)
     {
-        //Debug.Log($"DataHandlerManager attempting to modify {objectToModify.name} with value {valueForModification} using handlerID: {handlerIdentifier}.");
         IRevitModelDataHandler dataHandler;
         revitHandlerDictionary.TryGetValue(handlerIdentifier, out dataHandler);
 

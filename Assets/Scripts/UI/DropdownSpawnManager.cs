@@ -17,7 +17,10 @@ public class DropdownSpawnManager : DropdownManager
     {
         base.Start();
 
-        spawnPoints = GlobalModelData.Instance.ObjectsInEntireModel;
+        if (spawnManager.AllObjectsAsSpawnTargets)
+            spawnPoints = GlobalModelData.Instance.ObjectsInEntireModel;
+        else
+            spawnPoints = GlobalModelData.Instance.spawnObjects;
 
         foreach (GameObject item in spawnPoints)
         {

@@ -13,6 +13,10 @@ public class AgentSpawnManager : Initializer
     [SerializeField] private bool isSearchingForNearestWalkableSpawn = true;
     [SerializeField] private int iterationsSearchForWalkable = 3;
 
+    public bool AllObjectsAsSpawnTargets { get => allObjectsAsSpawnTargets; }
+    [Header("Determine Spawn Points")]
+    [SerializeField] private bool allObjectsAsSpawnTargets = true;
+
     public Vector3 SpawnPosition
     {
         get => spawnPosition;

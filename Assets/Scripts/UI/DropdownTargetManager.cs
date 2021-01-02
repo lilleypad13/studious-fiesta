@@ -8,7 +8,7 @@ public class DropdownTargetManager : DropdownManager
     [SerializeField] private AgentSpawnManager spawnManager;
     [SerializeField] private Material targetHighlightMaterial;
 
-    List<GameObject> spawnPoints = new List<GameObject>();
+    List<GameObject> targetPoints = new List<GameObject>();
 
     private Material originalMaterial;
     private GameObject currentModel;
@@ -17,9 +17,12 @@ public class DropdownTargetManager : DropdownManager
     {
         base.Start();
 
-        spawnPoints = GlobalModelData.Instance.ObjectsInEntireModel;
+        if (spawnManager.AllObjectsAsSpawnTargets)
+            targetPoints = GlobalModelData.Instance.ObjectsInEntireModel;
+        else
+            targetPoints = GlobalModelData.Instance.targetObjects;
 
-        foreach (GameObject item in spawnPoints)
+        foreach (GameObject item in targetPoints)
         {
             AddToDropdownList(item.name);
         }
@@ -34,12 +37,12 @@ public class DropdownTargetManager : DropdownManager
 
     protected override void MethodToPerformOnSelection(int index)
     {
-        spawnManager.Target = GlobalModelData.Instance.GetPositionByBounds(spawnPoints[index]);
+        spawnManager.Target = GlobalModelData.Instance.GetPositionByBounds(targetPoints[index]);
         if (currentModel != null)
         {
             currentModel.GetComponent<MeshRenderer>().material = originalMaterial;
         }
-        currentModel = spawnPoints[index];
+        currentModel = targetPoints[index];
         MeshRenderer currentModelRenderer = currentModel.GetComponent<MeshRenderer>();
 
         originalMaterial = currentModelRenderer.material;

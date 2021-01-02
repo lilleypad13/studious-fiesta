@@ -54,6 +54,8 @@ public class CSVReaderRevitModel : Initializer
     private string influencerHandlerId = "Influence";
     [SerializeField] private string columnHeaderWalkableId = "Unwalkable";
     private string walkabilityHandlerId = "Walkable";
+    [SerializeField] private string columnHeaderSpawnId = "SpawnTarget";
+    private string spawnerHandlerId = "Spawn";
 
     private static Dictionary<string, string[,]> sheetDataDictionary = new Dictionary<string, string[,]>();
 
@@ -134,6 +136,7 @@ public class CSVReaderRevitModel : Initializer
         {
             FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderWalkableId, walkabilityHandlerId);
             FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderInfluenceId, influencerHandlerId);
+            FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderSpawnId, spawnerHandlerId);
         }
 
         //foreach(SheetAndColumn item in sheetsOfInterest)

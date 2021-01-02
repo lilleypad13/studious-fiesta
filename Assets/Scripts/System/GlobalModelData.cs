@@ -41,6 +41,9 @@ public sealed class GlobalModelData
     }
     private List<GameObject> objectsInEntireModel;
 
+    public List<GameObject> spawnObjects = new List<GameObject>();
+    public List<GameObject> targetObjects = new List<GameObject>();
+
     public static Dictionary<string, ArchitecturalElementContainer> architecturalElementContainers = new Dictionary<string, ArchitecturalElementContainer>();
 
     public ArchitecturalElementContainer GetFromContainerDictionary(string key)
@@ -98,6 +101,16 @@ public sealed class GlobalModelData
             Debug.LogWarning("Tried to find the position of an object based on bounds that has no renderer component.");
             return Vector3.zero;
         }
+    }
+
+    public void AddToSpawnObjects(GameObject spawn)
+    {
+        spawnObjects.Add(spawn);
+    }
+
+    public void AddToTargetObjects(GameObject target)
+    {
+        targetObjects.Add(target);
     }
 
     #region Debugging
