@@ -6,22 +6,12 @@ using System.Diagnostics;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public enum ArchitecturePathingData
-{
-    window, 
-    connectivity
-}
-
 [RequireComponent(typeof(GenerateNodePath))]
 public class PathfindingHeapSimple : MonoBehaviour
 {
-    [Tooltip("In Game UI Also")]
-    [SerializeField] private ArchitecturePathingData typeUsedForPathing;
-
-    [SerializeField] private bool isFindingNearestWalkableNode = false;
-    [SerializeField] private int walkableNodeSearchIterations = 1;
+    [SerializeField] private bool isFindingNearestWalkableNode = true;
+    [SerializeField] private int walkableNodeSearchIterations = 3;
     private PathRequestManagerSimple requestManager;
-    private AGridRuntime aGridRuntime;
     private GenerateNodePath generateNodePath;
 
 
@@ -29,7 +19,7 @@ public class PathfindingHeapSimple : MonoBehaviour
     {
         requestManager = GetComponent<PathRequestManagerSimple>();
         generateNodePath = GetComponent<GenerateNodePath>();
-        aGridRuntime = AGridRuntime.Instance;
+        
     }
 
     public void StartFindPath(Vector3 startPosition, Vector3 targetPosition, UnitSimple agent)
@@ -56,7 +46,7 @@ public class PathfindingHeapSimple : MonoBehaviour
 
         if (startNode.walkable && targetNode.walkable)
         {
-            Heap<Node> openSet = new Heap<Node>(aGridRuntime.MaxSize);
+            Heap<Node> openSet = new Heap<Node>(AGridRuntime.Instance.MaxSize);
             HashSet<Node> closedSet = new HashSet<Node>();
             openSet.Add(startNode);
 
@@ -75,35 +65,22 @@ public class PathfindingHeapSimple : MonoBehaviour
                     break;
                 }
 
-                foreach (Node neighbor in aGridRuntime.GetNeighbors(currentNode))
+                foreach (Node neighbor in AGridRuntime.Instance.GetNeighbors(currentNode))
                 {
                     if (!neighbor.walkable || closedSet.Contains(neighbor))
                     {
                         continue;
                     }
 
-                    // Where extra variables are factored into the gCost
+                    // Factor extra costs into the gCost
+                    // Architectural cost of all elements
+                    int architecturalCost = CalculateArchitecturalCost(agent, currentNode);
 
-                    // Where all architectural cost is totaled (including additional default architectural cost for each 
-                    // architectural element type)
-                    int architecturalCost = 0;
-
-                    foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
-                    {
-                        architecturalCost +=  MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.affinityTypes[container.Key].AffinityValue) *
-                            MathArchCost.Instance.NormailzeArchitecturalValue(currentNode.architecturalElementTypes[container.Key]) + 
-                            MathArchCost.Instance.ARCHCOST_DEFAULT;
-
-                        //UnityEngine.Debug.Log($"Calculated Arch Cost from:\n" +
-                        //    $"Affinity: {agent.affinityTypes[container.Key].AffinityValue}" +
-                        //    $"Rate: {MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.affinityTypes[container.Key].AffinityValue)}" +
-                        //    $"Architectural Value: {currentNode.architecturalElementTypes[container.Key].ArchitecturalValue}" +
-                        //    $"Normalized Arch Value: {MathArchCost.Instance.NormailzeArchitecturalValue(currentNode.architecturalElementTypes[container.Key])}" +
-                        //    $"Partial Arch Cost: {architecturalCost}");
-                    }
-
-                    int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor)
-                        + neighbor.movementPenalty + architecturalCost;
+                    // Total cost
+                    int newMovementCostToNeighbor = currentNode.gCost + 
+                        GetDistance(currentNode, neighbor) + 
+                        neighbor.movementPenalty + 
+                        architecturalCost;
 
                     //UnityEngine.Debug.Log($"Costs of Node {currentNode.NodeCoordinates}:\n" +
                     //    $"G Cost: {currentNode.gCost}" +
@@ -128,19 +105,38 @@ public class PathfindingHeapSimple : MonoBehaviour
         if (pathSuccess)
         {
             DataRecorder.Instance.SetCurrentPathAgent(agent);
-            DataRecorder.Instance.SetCurrentArchitecturalType(typeUsedForPathing.ToString());
             waypoints = generateNodePath.RetracePath(startNode, targetNode);
         }
         requestManager.FinishedProcessingPath(waypoints, pathSuccess);
     }
 
+    private static int CalculateArchitecturalCost(UnitSimple agent, Node currentNode)
+    {
+        int architecturalCost = 0;
+
+        foreach (KeyValuePair<string, ArchitecturalElementContainer> container in GlobalModelData.architecturalElementContainers)
+        {
+            architecturalCost += MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.affinityTypes[container.Key].AffinityValue) *
+                MathArchCost.Instance.NormailzeArchitecturalValue(currentNode.architecturalElementTypes[container.Key]) +
+                MathArchCost.Instance.ARCHCOST_DEFAULT;
+
+            //UnityEngine.Debug.Log($"Calculated Arch Cost from:\n" +
+            //    $"Affinity: {agent.affinityTypes[container.Key].AffinityValue}" +
+            //    $"Rate: {MathArchCost.Instance.CalculateCostPerArchFromAffinity(agent.affinityTypes[container.Key].AffinityValue)}" +
+            //    $"Architectural Value: {currentNode.architecturalElementTypes[container.Key].ArchitecturalValue}" +
+            //    $"Normalized Arch Value: {MathArchCost.Instance.NormailzeArchitecturalValue(currentNode.architecturalElementTypes[container.Key])}" +
+            //    $"Partial Arch Cost: {architecturalCost}");
+        }
+
+        return architecturalCost;
+    }
 
     private Node FindAppropriateNodeFromWorldPoint(Vector3 worldPosition, bool isFindingNearestNode)
     {
         if (isFindingNearestWalkableNode)
-            return aGridRuntime.FindNearestWalkableNodeFromWorldPoint(worldPosition, walkableNodeSearchIterations);
+            return AGridRuntime.Instance.FindNearestWalkableNodeFromWorldPoint(worldPosition, walkableNodeSearchIterations);
         else
-            return aGridRuntime.NodeFromWorldPoint(worldPosition);
+            return AGridRuntime.Instance.NodeFromWorldPoint(worldPosition);
     }
 
 
@@ -150,7 +146,7 @@ public class PathfindingHeapSimple : MonoBehaviour
      * the sqrt(2), which is approximately 1.4. These values are then multiplied by 10 to give their 
      * respective values of 10 and 14 for ease of use and readability.
      */
-    int GetDistance(Node nodeA, Node nodeB)
+    private int GetDistance(Node nodeA, Node nodeB)
     {
         int distanceX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
         int distanceY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
@@ -159,13 +155,5 @@ public class PathfindingHeapSimple : MonoBehaviour
             return 14 * distanceY + 10 * (distanceX - distanceY);
         else
             return 14 * distanceX + 10 * (distanceY - distanceX);
-    }
-
-    /*
-     * Allows setting of architecture type used for pathing by the enum's index
-     */
-    public void SetArchitecturalType(int index)
-    {
-        typeUsedForPathing = (ArchitecturePathingData)index;
     }
 }

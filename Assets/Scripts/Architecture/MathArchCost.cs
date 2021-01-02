@@ -33,49 +33,29 @@ public class MathArchCost : MonoBehaviour
     }
 
     // Affinity Parameters
-    private int _MIN_AFFINITY = 0;
     public int MIN_AFFINITY { get => _MIN_AFFINITY; }
+    [SerializeField]private int _MIN_AFFINITY = 0;
 
-    private int _AVERAGE_AFFINITY = 50;
-    public int AVERAGE_AFFINITY { get => _AVERAGE_AFFINITY; } // A
+    //private int _AVERAGE_AFFINITY = 50;
+    public int AVERAGE_AFFINITY { get => (_MAX_AFFINITY - _MIN_AFFINITY) / 2; } // A
 
-    public int MAX_AFFINITY { get => 2 * _AVERAGE_AFFINITY; } // 2A
+    public int MAX_AFFINITY { get => _MAX_AFFINITY; } // 2A
+    [SerializeField] private int _MAX_AFFINITY = 100;
 
     // Architecture Value Parameters
     public int MIN_ARCHVALUE{ get => _MIN_ARCHVALUE; }
     [SerializeField] private int _MIN_ARCHVALUE = 0;
 
     public int MAX_ARCHVALUE {get => _MAX_ARCHVALUE; } // B
-    [SerializeField]private int _MAX_ARCHVALUE = 100;
+    [SerializeField] private int _MAX_ARCHVALUE = 100;
 
     public int ARCHCOST_DEFAULT {get => _ARCHCOST_DEFAULT; } // D
-    [SerializeField]private int _ARCHCOST_DEFAULT = 1000;
+    [SerializeField] private int _ARCHCOST_DEFAULT = 1000;
 
     // pmin = -D/B because I want [pmin * B = D] to cancel it in the end
     private int MIN_COSTPERARCH {get => -ARCHCOST_DEFAULT / MAX_ARCHVALUE; }
     // pmax = -pmin
     private int MAX_COSTPERARCH { get => -MIN_COSTPERARCH; }
-
-    // WILL BE REMOVED
-    // Individual Architectural Parameter Controllers
-    [SerializeField]private int minConnectivity = 0;
-    public int MinConnectivity { get => minConnectivity; }
-    [SerializeField]private int maxConnectivity = 3500;
-    public int MaxConnectivity { get => maxConnectivity; }
-
-    // TODO: Possibly add Affinity control here as well
-
-    // TODO: Modify to use new architectural value system
-    // WILL BE REMOVED
-    public int NormalizeConnectivity(int connectivity)
-    {
-        int normalizedValue = 0;
-        int connectivityRange = maxConnectivity - minConnectivity;
-
-        normalizedValue = (int)((float)(connectivity - minConnectivity) / connectivityRange * _MAX_ARCHVALUE);
-
-        return normalizedValue;
-    }
 
     public int NormailzeArchitecturalValue(ArchitecturalElement element)
     {
@@ -83,7 +63,7 @@ public class MathArchCost : MonoBehaviour
         int normalizedValue = 0;
         int elementRange = container.MaximumValue - container.MinimumValue;
 
-        normalizedValue = (int)((float)(element.ArchitecturalValue - minConnectivity) / elementRange * _MAX_ARCHVALUE);
+        normalizedValue = (int)((float)(element.ArchitecturalValue - container.MinimumValue) / elementRange * _MAX_ARCHVALUE);
 
         return normalizedValue;
     }
