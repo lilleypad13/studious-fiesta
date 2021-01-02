@@ -8,18 +8,10 @@ public class PathHistoryVisualizer : MonoBehaviour
     private DataRecorder dataRecorder;
     private LineRenderer lineRenderer;
 
-    public Text pathTypeText;
-    public Text affinityValuesText;
-
     private void Awake()
     {
         dataRecorder = DataRecorder.Instance;
         lineRenderer = GetComponent<LineRenderer>();
-    }
-
-    private void Start()
-    {
-        AssignTextValues(null);
     }
 
     /*
@@ -58,32 +50,5 @@ public class PathHistoryVisualizer : MonoBehaviour
         lineRenderer.SetPositions(pathPositionsArray);
 
         lineRenderer.enabled = true;
-        AssignTextValues(pathData);
-    }
-
-    /*
-     * Sets text values to display information about the affinity values of the agent 
-     * as well as what architectural value was used for the generation of the 
-     * passed in path parameter.
-     */
-    private void AssignTextValues(PathData pathData)
-    {
-        if(pathData == null)
-        {
-            pathTypeText.text = "Path Type: None";
-
-            string windowData = "Window Affinity: None" + "\n";
-            string connectivityData = "Connectivity Affinity: None";
-            affinityValuesText.text = windowData + connectivityData;
-        }
-        else
-        {
-            pathTypeText.text = "Path Type: " + pathData.GetPathArchitecturalType();
-
-            string windowData = "Window Affinity: " + pathData.GetAgentData().Window + "\n";
-            string connectivityData = "Connectivity Affinity: " + pathData.GetAgentData().Connectivity;
-            affinityValuesText.text = windowData + connectivityData;
-        }
-            
     }
 }

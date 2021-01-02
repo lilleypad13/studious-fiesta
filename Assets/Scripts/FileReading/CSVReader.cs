@@ -46,8 +46,6 @@ public class CSVReader
         int dataWidth = FindWidthOfData(headerRow);
         int dataHeight = data.Length - 1; // Length normally provides an extra row because the final line also has a new line character
 
-        Debug.Log($"Data Width is: {dataWidth} and Data Height is: {dataHeight}.");
-
         // Initializes array to be filled with data that will be the return of the method
         string[,] fullySeparated2DDataArray = new string[dataWidth, dataHeight];
 

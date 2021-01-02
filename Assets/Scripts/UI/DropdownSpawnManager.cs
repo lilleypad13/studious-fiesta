@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class DropdownSpawnManager : DropdownManager
 {
     [SerializeField] private AgentSpawnManager spawnManager;
-    [SerializeField] private Text textBox;
     [SerializeField] private Material spawnHighlightMaterial;
 
     List<GameObject> spawnPoints = new List<GameObject>();
@@ -30,7 +29,6 @@ public class DropdownSpawnManager : DropdownManager
     protected override void DropdownItemSelected(Dropdown dropdown)
     {
         base.DropdownItemSelected(dropdown);
-        textBox.text = "Current Spawn Point: " + DropdownText(dropdown.value);
     }
 
 
@@ -47,19 +45,5 @@ public class DropdownSpawnManager : DropdownManager
         originalMaterial = currentModelRenderer.material;
         currentModelRenderer.material = spawnHighlightMaterial;
         Debug.Log($"Spawn Highlight: \n Model: {currentModel.name} \n Original Material: {originalMaterial.name} \n Current Material: {currentModelRenderer.name}");
-    }
-
-    private void HighlightModel(GameObject model)
-    {
-        originalMaterial = model.GetComponent<Material>();
-        model.GetComponent<Renderer>().material = spawnHighlightMaterial;
-    }
-
-    private void DeselectPreviousModel(GameObject model)
-    {
-        if(originalMaterial != null)
-        {
-
-        }
     }
 }
