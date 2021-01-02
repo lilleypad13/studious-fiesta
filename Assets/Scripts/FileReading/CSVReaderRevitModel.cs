@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 [Serializable]
 public class SheetAndColumn
@@ -50,6 +50,11 @@ public class CSVReaderRevitModel : Initializer
     [Tooltip("List of exact sheet names to read model data from")]
     [SerializeField] private SheetAndColumn[] sheetsOfInterest;
 
+    [SerializeField] private string columnHeaderInfluenceId = "ValueGroup";
+    private string influencerHandlerId = "Influence";
+    [SerializeField] private string columnHeaderWalkableId = "Unwalkable";
+    private string walkabilityHandlerId = "Walkable";
+
     private static Dictionary<string, string[,]> sheetDataDictionary = new Dictionary<string, string[,]>();
 
 
@@ -70,12 +75,13 @@ public class CSVReaderRevitModel : Initializer
     {
         Dictionary<string, string[,]> allDataDictionary = new Dictionary<string, string[,]>();
 
-        foreach (SheetAndColumn sheetName in sheetsOfInterest)
-        {
-            string filePath = nameFolderRevitModelCSVs + "/" + sheetName.SheetName;
+        UnityEngine.Object[] csvFiles = Resources.LoadAll(nameFolderRevitModelCSVs, typeof(TextAsset));
 
-            allDataDictionary.Add(sheetName.SheetName, CSVReader.Instance.ReadCSVFileTo2DStringArray(filePath));
-            Debug.Log("Added item to dictionary with key name: " + sheetName.SheetName);
+        foreach (UnityEngine.Object file in csvFiles)
+        {
+            string filePath = nameFolderRevitModelCSVs + "/" + file.name;
+            allDataDictionary.Add(file.name, CSVReader.Instance.ReadCSVFileTo2DStringArray(filePath));
+            Debug.Log($"Added csv file to dictionary: {file.name}");
         }
 
         return allDataDictionary;
@@ -88,7 +94,6 @@ public class CSVReaderRevitModel : Initializer
 
         for (int i = 0; i < rowOfStrings.Length; i++)
         {
-            Debug.Log($"Comparing: {searchTerm} &&& {rowOfStrings[i]}.");
             if (rowOfStrings[i].Contains(searchTerm))
             {
                 Debug.Log("FOUND RESULT.");
@@ -124,25 +129,54 @@ public class CSVReaderRevitModel : Initializer
 
     private void ApplyDataToModel()
     {
-        foreach(SheetAndColumn item in sheetsOfInterest)
+        // Checks to do for ALL Csv files
+        foreach (KeyValuePair<string, string[,]> dataArray in sheetDataDictionary)
         {
-            Debug.Log($"CSVReaderRevitModel trying to apply data based on sheet: {item.SheetName}.");
-            string[,] data = FindWithinDictionary(item.SheetName);
-            string[] headingRow = new string[data.GetLength(0)];
-            int columnIndex = SearchHeadersForColumnIndex(data, headingRow, item.ColumnName);
+            FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderWalkableId, walkabilityHandlerId);
+            FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderInfluenceId, influencerHandlerId);
+        }
 
+        //foreach(SheetAndColumn item in sheetsOfInterest)
+        //{
+        //    Debug.Log($"CSVReaderRevitModel trying to apply data based on sheet: {item.SheetName}.");
+        //    string[,] data = FindWithinDictionary(item.SheetName);
+        //    string[] headingRow = new string[data.GetLength(0)];
+        //    int columnIndex = SearchHeadersForColumnIndex(data, headingRow, item.ColumnName);
+
+        //    for (int i = 1; i < data.GetLength(1); i++)
+        //    {
+        //        string idNumber = data[0, i];
+        //        GameObject modelToModify = GlobalModelData.Instance.SearchEntireModelForObjectWithNameContaining(idNumber);
+        //        if (modelToModify != null)
+        //            RevitModelDataHandlerManager.Instance.ApplyHandlerMethodBasedOnString(item.SheetName, modelToModify, data[columnIndex, i]);
+        //        else
+        //            Debug.Log($"Did not find an object within the model associated with ID: {idNumber}.");
+        //    }
+        //}
+    }
+
+
+    private void FindColumnAndApplyDataHandler(string nameDataArray, string columnHeaderId, string handlerId)
+    {
+        string[,] data = FindWithinDictionary(nameDataArray);
+        string[] headingRow = new string[data.GetLength(0)];
+        int columnIndex = SearchHeadersForColumnIndex(data, headingRow, columnHeaderId);
+
+        if (columnIndex != 0)
+        {
             for (int i = 1; i < data.GetLength(1); i++)
             {
                 string idNumber = data[0, i];
                 GameObject modelToModify = GlobalModelData.Instance.SearchEntireModelForObjectWithNameContaining(idNumber);
                 if (modelToModify != null)
-                    RevitModelDataHandlerManager.Instance.ApplyHandlerMethodBasedOnString(item.SheetName, modelToModify, data[columnIndex, i]);
-                else
-                    Debug.Log($"Did not find an object within the model associated with ID: {idNumber}.");
+                    RevitModelDataHandlerManager.Instance.ApplyHandlerMethodBasedOnString(handlerId, modelToModify, data[columnIndex, i]);
+                //else
+                //    Debug.Log($"Did not find an object within the model associated with ID: {idNumber}.");
             }
         }
+        else
+            Debug.Log($"Column {columnHeaderId} was not found in data of: {nameDataArray}");
     }
-
 
     #region Debugging
 

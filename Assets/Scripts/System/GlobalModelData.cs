@@ -53,11 +53,17 @@ public sealed class GlobalModelData
 
     public void AddIfNotInDictionary(string key)
     {
-        if (!architecturalElementContainers.ContainsKey(key))
+        if (!string.IsNullOrEmpty(key) && !string.IsNullOrWhiteSpace(key))
         {
-            architecturalElementContainers.Add(key, new ArchitecturalElementContainer(key));
-            Debug.Log($"{key} architectural type added to global architectural element dictionary.");
+            if (!architecturalElementContainers.ContainsKey(key))
+            {
+                architecturalElementContainers.Add(key, new ArchitecturalElementContainer(key));
+
+                Debug.Log($"{key} architectural type added to global architectural element dictionary.");
+            }
         }
+        //else
+        //    Debug.LogWarning("Tried to add null or empty string to global arch element dictionary.");
     }
 
     public void CheckValueAgainstArchitecturalElementContainer(ArchitecturalElement element)
@@ -77,7 +83,7 @@ public sealed class GlobalModelData
                 return item;
         }
 
-        Debug.LogWarning("Revit model data contained an ID number which was not found in the current model.");
+        //Debug.LogWarning("Revit model data contained an ID number which was not found in the current model.");
         return null;
     }
 

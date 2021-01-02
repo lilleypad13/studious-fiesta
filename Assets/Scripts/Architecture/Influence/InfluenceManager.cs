@@ -20,9 +20,7 @@ public class InfluenceManager : Initializer
     {
         foreach (Influence influencer in influenceObjects)
         {
-            Node influencerOrigin = AGridRuntime.Instance.NodeFromWorldPoint(influencer.InfluenceOriginPosition);
-
-            influencer.ApplyInfluence(grid, influencerOrigin);
+            influencer.ApplyInfluence(grid);
         }
     }
 

@@ -29,10 +29,14 @@ public class RevitModelDataHandlerManager
 
     private static RevitDoorDataHandler doorHandler = new RevitDoorDataHandler();
     private static RevitWallDataHandler wallHandler = new RevitWallDataHandler();
+    private static RevitAddInfluenceDataHandler influenceHandler = new RevitAddInfluenceDataHandler();
+    private static RevitWalkabilityDataHandler walkableHandler = new RevitWalkabilityDataHandler();
 
     private static Dictionary<string, IRevitModelDataHandler> revitHandlerDictionary = new Dictionary<string, IRevitModelDataHandler>() {
         ["Doors"] = doorHandler,
-        ["Walls"] = wallHandler
+        ["Walls"] = wallHandler,
+        ["Influence"] = influenceHandler,
+        ["Walkable"] = walkableHandler
     };
 
     public void ApplyHandlerMethodBasedOnString(

@@ -7,7 +7,15 @@ using UnityEngine;
 public class Influence : MonoBehaviour
 {
     #region Variables
-    public string InfluenceName { get => influenceName; }
+    public string InfluenceName 
+    { 
+        get => influenceName;
+        set
+        {
+            GlobalModelData.Instance.AddIfNotInDictionary(value);
+            influenceName = value;
+        }
+    }
     [SerializeField]private string influenceName;
 
     public Renderer Rend { get => rend; set => rend = value; }
@@ -29,19 +37,24 @@ public class Influence : MonoBehaviour
     #endregion
 
     #region Unity Methods
-    public Influence(string _name)
+    public static void AddInfluence(GameObject objectToAddInfluenceTo, string _influenceName, int _rangeX, int _rangeZ, int _influenceValue)
     {
-        influenceName = _name;
-        GlobalModelData.Instance.AddIfNotInDictionary(_name);
+        if(!string.IsNullOrEmpty(_influenceName) && !string.IsNullOrWhiteSpace(_influenceName))
+        {
+            Influence influencer = objectToAddInfluenceTo.AddComponent<Influence>();
+            influencer.InfluenceName = _influenceName;
+            influencer.xInfluence = _rangeX;
+            influencer.zInfluence = _rangeZ;
+            influencer.ArchitectureInfluenceAmount = _influenceValue;
+        }
     }
 
     private void Awake()
     {
-        if(InfluenceName != string.Empty)
-            GlobalModelData.Instance.AddIfNotInDictionary(InfluenceName);
-
-        Rend = this.gameObject.GetComponent<Renderer>();
+        rend = this.gameObject.GetComponent<Renderer>();
         influenceOriginPosition = DetermineInfluenceOriginPosition();
+
+        Debug.Log($"{gameObject.name} with type {influenceName} has influence origin at position {influenceOriginPosition}");
     }
 
     private Vector3 DetermineInfluenceOriginPosition()
@@ -56,8 +69,12 @@ public class Influence : MonoBehaviour
      * Node origin helps localize the node editing (so Influence class knows where to start influencing 
      * and where to spread out from)
      */
-    public void ApplyInfluence(Node[,] grid, Node influenceOrigin)
+    public void ApplyInfluence(Node[,] grid)
     {
+        rend = this.gameObject.GetComponent<Renderer>();
+        influenceOriginPosition = DetermineInfluenceOriginPosition();
+        Node influenceOrigin = AGridRuntime.Instance.NodeFromWorldPoint(influenceOriginPosition);
+
         for (int x = -xRange; x < xRange; x++)
         {
             for (int z = -zRange; z < zRange; z++)
@@ -69,17 +86,8 @@ public class Influence : MonoBehaviour
                 }
             }
         }
-    }
 
-
-    /*
-     * Debug to show which nodes an influence object is impacting on the grid.
-     * influenceName can be manually put in to show which type of influence is being applied or the name of the object
-     * applying influence.
-     */
-    public void DebugShowInfluencedNodes(string influenceName, int x, int z)
-    {
-        Debug.Log($"Applied {influenceName} to {x} , {z}.");
+        Debug.Log($"{this.gameObject.name} applied influence around node {influenceOrigin.NodeCoordinates}");
     }
 
     #endregion
