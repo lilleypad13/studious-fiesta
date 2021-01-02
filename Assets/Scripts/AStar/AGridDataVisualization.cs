@@ -6,12 +6,6 @@ using UnityEngine.UI;
 public class AGridDataVisualization : MonoBehaviour
 {
     public string dataTypeVisualized = "Walkable";
-    public Text dataVisualizedText;
-
-    private void Update()
-    {
-        dataVisualizedText.text = "Current Data Visualized: " + dataTypeVisualized;
-    }
 
     // Displays the nodes in a more visual way while also being able to convey information about the nodes
     public void VisualizeNodeData(float nodeRadius, int gridSizeX, int gridSizeY, Node[,] grid)
