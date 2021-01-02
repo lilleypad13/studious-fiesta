@@ -31,8 +31,11 @@ public class PathData
      */
     public void SetAgentAffinitiesString(UnitSimple agent)
     {
-        agentAffinities = "Window Affinity: ," + agent.Window.ToString() + "\n" +
-            "Connectivity Affinity: ," + agent.Connectivity.ToString() + "\n";
+        foreach (KeyValuePair<string, Affinity> aff in agent.affinityTypes)
+        {
+            agentAffinities += $"{aff.Key} Affinity: ," +
+                $"{aff.Value.AffinityValue}\n";
+        }
     }
 
     // Methods for Node Paths
