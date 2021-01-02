@@ -40,6 +40,6 @@ public class DropdownDataVisualization : DropdownManager
 
     protected override void MethodToPerformOnSelection(int index)
     {
-        dataVisualizer.dataTypeVisualized = DropdownText(index);
+        dataVisualizer.SetDataType(DropdownText(index));
     }
 }

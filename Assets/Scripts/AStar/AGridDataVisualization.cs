@@ -5,31 +5,39 @@ using UnityEngine.UI;
 
 public class AGridDataVisualization : MonoBehaviour
 {
-    public string dataTypeVisualized = "Walkable";
+    private string dataTypeVisualized;
+
+    public void SetDataType(string dataType)
+    {
+        dataTypeVisualized = dataType;
+    }
 
     // Displays the nodes in a more visual way while also being able to convey information about the nodes
     public void VisualizeNodeData(float nodeRadius, int gridSizeX, int gridSizeY, Node[,] grid)
     {
-        Vector3 nodePosition = new Vector3();
-        Vector3 pointSize = new Vector3(nodeRadius, nodeRadius, nodeRadius);
-
-        for (int x = 0; x < gridSizeX; x++)
+        if(!string.IsNullOrEmpty(dataTypeVisualized))
         {
-            for (int y = 0; y < gridSizeY; y++)
+            Vector3 nodePosition = new Vector3();
+            Vector3 pointSize = new Vector3(nodeRadius, nodeRadius, nodeRadius);
+
+            for (int x = 0; x < gridSizeX; x++)
             {
-                if (string.Equals(dataTypeVisualized, "Walkable"))
-                    WalkableNodeCheck(grid[x, y], pointSize);
-                else if(GlobalModelData.architecturalElementContainers.ContainsKey(dataTypeVisualized))
+                for (int y = 0; y < gridSizeY; y++)
                 {
-                    nodePosition = grid[x, y].worldPosition;
+                    if (string.Equals(dataTypeVisualized, "Walkable"))
+                        WalkableNodeCheck(grid[x, y], pointSize);
+                    else if (GlobalModelData.architecturalElementContainers.ContainsKey(dataTypeVisualized))
+                    {
+                        nodePosition = grid[x, y].worldPosition;
 
-                    string key = GlobalModelData.architecturalElementContainers[dataTypeVisualized].Name;
+                        string key = GlobalModelData.architecturalElementContainers[dataTypeVisualized].Name;
 
-                    Gizmos.color = HeatMapColor(GlobalModelData.architecturalElementContainers[key].MinimumValue,
-                        GlobalModelData.architecturalElementContainers[key].MaximumValue,
-                        grid[x, y].architecturalElementTypes[key].ArchitecturalValue);
+                        Gizmos.color = HeatMapColor(GlobalModelData.architecturalElementContainers[key].MinimumValue,
+                            GlobalModelData.architecturalElementContainers[key].MaximumValue,
+                            grid[x, y].architecturalElementTypes[key].ArchitecturalValue);
 
-                    Gizmos.DrawCube(nodePosition, pointSize);
+                        Gizmos.DrawCube(nodePosition, pointSize);
+                    }
                 }
             }
         }
