@@ -3,28 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum DataVisual
-{
-    walkable, 
-    window, 
-    connectivity
-}
-
 public class AGridDataVisualization : MonoBehaviour
 {
-    private AGrid aGrid;
-    //[SerializeField] private DataVisual dataToVisualize = DataVisual.walkable;
-    [SerializeField] private string dataTypeVisualized = "Walkable";
+    public string dataTypeVisualized = "Walkable";
     public Text dataVisualizedText;
-
-    private void Awake()
-    {
-        aGrid = GetComponent<AGrid>();
-    }
 
     private void Update()
     {
-        //dataVisualizedText.text = "Current Data Visualized: " + dataToVisualize.ToString();
         dataVisualizedText.text = "Current Data Visualized: " + dataTypeVisualized;
     }
 
@@ -40,7 +25,7 @@ public class AGridDataVisualization : MonoBehaviour
             {
                 if (string.Equals(dataTypeVisualized, "Walkable"))
                     WalkableNodeCheck(grid[x, y], pointSize);
-                else
+                else if(GlobalModelData.architecturalElementContainers.ContainsKey(dataTypeVisualized))
                 {
                     nodePosition = grid[x, y].worldPosition;
 
@@ -50,35 +35,8 @@ public class AGridDataVisualization : MonoBehaviour
                         GlobalModelData.architecturalElementContainers[key].MaximumValue,
                         grid[x, y].architecturalElementTypes[key].ArchitecturalValue);
 
-                    //Gizmos.color = HeatMapColor(0,
-                    //    200,
-                    //    grid[x, y].architecturalElementTypes[key].ArchitecturalValue);
-
                     Gizmos.DrawCube(nodePosition, pointSize);
                 }
-
-
-                //switch (dataToVisualize)
-                //{
-                //    case DataVisual.walkable:
-                //        WalkableNodeCheck(grid[x, y], pointSize);
-                //        break;
-                //    case DataVisual.window:
-                //        nodePosition = grid[x, y].worldPosition;
-                //        Gizmos.color = HeatMapColor(MathArchCost.Instance.MIN_ARCHVALUE, MathArchCost.Instance.MAX_ARCHVALUE, grid[x, y].Window);
-                //        Gizmos.DrawCube(nodePosition, pointSize);
-                //        break;
-                //    case DataVisual.connectivity:
-                //        nodePosition = grid[x, y].worldPosition;
-                //        Gizmos.color = HeatMapColor(MathArchCost.Instance.MinConnectivity, MathArchCost.Instance.MaxConnectivity, grid[x, y].Connectivity);
-                //        Gizmos.DrawCube(nodePosition, pointSize);
-                //        break;
-                //    default:
-                //        nodePosition = grid[x, y].worldPosition;
-                //        Gizmos.color = new Color(x / gridSizeX, x / gridSizeX, x / gridSizeX);
-                //        Gizmos.DrawCube(nodePosition, pointSize);
-                //        break;
-                //}
             }
         }
     }
