@@ -74,7 +74,7 @@ public class PathfindingHeapSimple : MonoBehaviour
 
                     // Factor extra costs into the gCost
                     // Architectural cost of all elements
-                    int architecturalCost = CalculateArchitecturalCost(agent, currentNode);
+                    int architecturalCost = CalculateArchitecturalCost(agent, neighbor);
 
                     // Total cost
                     int newMovementCostToNeighbor = currentNode.gCost + 
