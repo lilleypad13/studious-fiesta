@@ -21,7 +21,6 @@ public class AGridRuntime
             {
                 if (instance == null)
                 {
-                    Debug.LogWarning("Created new AGridRuntime.");
                     instance = new AGridRuntime();
                 }
             }
@@ -115,8 +114,6 @@ public class AGridRuntime
 
         int lastClosestXIndex = xCounter - 1;
         int lastClosestZIndex = zCounter - 1;
-
-        Debug.Log($"NodeFromWorldPoint found node: {lastClosestXIndex}, {lastClosestZIndex}.");
 
         return grid[lastClosestXIndex, lastClosestZIndex];
     }

@@ -258,7 +258,7 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         }
 
         modifyData.CheckToModifyData(rectangularData);
-        DebugListOut2DArray(rectangularData, "This is rect data: ", "RevitPathingCSV_02");
+        DebugListOut2DArray(rectangularData, "This is area data applied: ", "RevitPathingCSV_02");
     }
 
 

@@ -84,8 +84,6 @@ public class Influence : MonoBehaviour
                 }
             }
         }
-
-        Debug.Log($"{this.gameObject.name} applied influence around node {influenceOrigin.NodeCoordinates}");
     }
 
     #endregion
