@@ -40,34 +40,6 @@ public class UnitSimple : MonoBehaviour
 
     IEnumerator followRoutine;
 
-    // Architectural Parameters
-    // Measures their affinity towards a certain architectural element (higher = moves towards it)
-    public int Window
-    {
-        get { return window; }
-        set
-        {
-            if (value > MathArchCost.Instance.MAX_AFFINITY)
-                window = MathArchCost.Instance.MAX_AFFINITY;
-            else
-                window = value;
-        }
-    }
-    [SerializeField]private int window = 0;
-
-    public int Connectivity
-    {
-        get { return connectivity; }
-        set
-        {
-            if (value > MathArchCost.Instance.MAX_AFFINITY)
-                connectivity = MathArchCost.Instance.MAX_AFFINITY;
-            else
-                connectivity = value;
-        }
-    }
-    [SerializeField] private int connectivity = 0;
-
     public Dictionary<string, Affinity> affinityTypes = new Dictionary<string, Affinity>();
 
     private void Awake()
