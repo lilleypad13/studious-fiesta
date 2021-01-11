@@ -16,6 +16,8 @@ public class SliderAgentAffinity : MonoBehaviour
     {
         slider = GetComponent<Slider>();
         spawnManager = FindObjectOfType<AgentSpawnManager>();
+        slider.value = 0.5f;
+        valueText.text = (slider.value * MathArchCost.Instance.MAX_AFFINITY).ToString();
     }
 
     private void Start()
