@@ -59,6 +59,9 @@ public class CSVReaderRevitModel : Initializer
 
     private static Dictionary<string, string[,]> sheetDataDictionary = new Dictionary<string, string[,]>();
 
+    // Debugging Fields
+    private string debugInfo = "";
+
 
     public override void Initialization()
     {
@@ -83,7 +86,7 @@ public class CSVReaderRevitModel : Initializer
         {
             string filePath = nameFolderRevitModelCSVs + "/" + file.name;
             allDataDictionary.Add(file.name, CSVReader.Instance.ReadCSVFileTo2DStringArray(filePath));
-            Debug.Log($"Added csv file to dictionary: {file.name}");
+            //Debug.Log($"Added csv file to dictionary: {file.name}");
         }
 
         return allDataDictionary;
@@ -92,18 +95,17 @@ public class CSVReaderRevitModel : Initializer
 
     private int FindColumnIndexWithString(string[] rowOfStrings, string searchTerm)
     {
-        Debug.Log($"Find column index searched: {searchTerm} within the elements {ListOfArrayStrings(rowOfStrings)}.");
+        //Debug.Log($"Find column index searched: {searchTerm} within the elements {ListOfArrayStrings(rowOfStrings)}.");
 
         for (int i = 0; i < rowOfStrings.Length; i++)
         {
             if (rowOfStrings[i].Contains(searchTerm))
             {
-                Debug.Log("FOUND RESULT.");
                 return i;
             }
         }
 
-        Debug.Log($"Could not find {searchTerm} in headers.");
+        //Debug.Log($"Could not find {searchTerm} in headers.");
         return 0;
     }
 
@@ -139,6 +141,8 @@ public class CSVReaderRevitModel : Initializer
             FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderSpawnId, spawnerHandlerId);
         }
 
+        Debug.Log("CSVReaderRevitModel Data: \n" + debugInfo);
+
         //foreach(SheetAndColumn item in sheetsOfInterest)
         //{
         //    Debug.Log($"CSVReaderRevitModel trying to apply data based on sheet: {item.SheetName}.");
@@ -173,12 +177,11 @@ public class CSVReaderRevitModel : Initializer
                 GameObject modelToModify = GlobalModelData.Instance.SearchEntireModelForObjectWithNameContaining(idNumber);
                 if (modelToModify != null)
                     RevitModelDataHandlerManager.Instance.ApplyHandlerMethodBasedOnString(handlerId, modelToModify, data[columnIndex, i]);
-                //else
-                //    Debug.Log($"Did not find an object within the model associated with ID: {idNumber}.");
             }
+            debugInfo += $"{nameDataArray} data: {columnHeaderId} column found. \n";
         }
         else
-            Debug.Log($"Column {columnHeaderId} was not found in data of: {nameDataArray}");
+            debugInfo += $"{nameDataArray} data: {columnHeaderId} column NOT found. \n";
     }
 
     #region Debugging
