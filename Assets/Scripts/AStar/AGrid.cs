@@ -86,25 +86,10 @@ public class AGrid : Initializer
                 if (useHalfNodeOffset) // Centers nodes based on half their dimensions
                     worldPoint -= Vector3.right * (nodeDiameter / 2.0f) + Vector3.forward * (nodeDiameter / 2.0f);
 
-
-                // Determine if node is traversable
-                //bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
-                bool walkable = true;
-
-                int movementPenalty = 0;
-
-                // Raycast
-                walkable = raycastSystem.DetermineWalkabilityWithRaycast(worldPoint);
-                //RaycastChecker check = raycastSystem.DetermineWalkabilityAndNormalWithRaycast(worldPoint);
-                //walkable = check.IsWalkable;
-                worldPoint.y = raycastSystem.DetermineElevationWithRaycast(worldPoint);
-
-                if (!walkable)
-                    movementPenalty += obstacleProximityPenalty;
+                Node nodeToSet = new Node(worldPoint, x, y);
 
                 // Create node and assign determined values
-                grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
-                //Debug.Log($"Raycast Normal Check --- Node: {grid[x,y].gridX}, {grid[x,y].gridY}; Normal: {check.Normal}.");
+                grid[x, y] = raycastSystem.DetermineWalkabilityWithRaycast(nodeToSet);
 
                 if (isReadingDataFromFile)
                     ModifyDataForPathingNodes.Instance.CheckToAssignValue(grid[x, y]);

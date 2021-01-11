@@ -26,30 +26,6 @@ public class Node: IHeapItem<Node>
     public int hCost;
     public int fCost { get { return gCost + hCost; } }
 
-    // Architectural Parameters
-    public int Window
-    {
-        get { return window; }
-        set
-        {
-            if (value > MathArchCost.Instance.MAX_ARCHVALUE)
-                window = MathArchCost.Instance.MAX_ARCHVALUE;
-            else
-                window = value;
-        }
-    }
-    private int window = 0;
-
-    public int Connectivity
-    {
-        get { return connectivity; }
-        set
-        {
-            connectivity = value;
-        }
-    }
-    private int connectivity = 0;
-
     public Dictionary<string, ArchitecturalElement> architecturalElementTypes = new Dictionary<string, ArchitecturalElement>();
 
     // Debugging Variables
@@ -65,6 +41,15 @@ public class Node: IHeapItem<Node>
         PopulateDictionaryFromGlobal();
     }
 
+    public Node(Vector3 _worldPos, int _gridX, int _gridY)
+    {
+        walkable = true;
+        worldPosition = _worldPos;
+        gridX = _gridX;
+        gridY = _gridY;
+        movementPenalty = 0;
+        PopulateDictionaryFromGlobal();
+    }
     
 
     /*
