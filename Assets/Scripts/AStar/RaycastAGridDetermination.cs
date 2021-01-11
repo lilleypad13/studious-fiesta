@@ -27,10 +27,10 @@ public class RaycastAGridDetermination : MonoBehaviour
         {
             if (hit.collider.gameObject.layer == 8)
                 walkable = false;
-            else
-            {
+            //else
+            //{
                 setNode.worldPosition.y = hit.point.y + unitHeight / 2;
-            }
+            //}
         }
         else
             walkable = false;
@@ -69,7 +69,10 @@ public class RaycastAGridDetermination : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 200))
         {
             if (hit.collider.gameObject.layer == UNWALKABLE_LAYER_CONST)
+            {
+                setNode.worldPosition.y = hit.point.y;
                 walkable = false;
+            }
             else
             {
                 setNode.worldPosition.y = hit.point.y;
