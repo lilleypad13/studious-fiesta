@@ -53,8 +53,6 @@ public class Influence : MonoBehaviour
     {
         rend = this.gameObject.GetComponent<Renderer>();
         influenceOriginPosition = DetermineInfluenceOriginPosition();
-
-        Debug.Log($"{gameObject.name} with type {influenceName} has influence origin at position {influenceOriginPosition}");
     }
 
     private Vector3 DetermineInfluenceOriginPosition()
