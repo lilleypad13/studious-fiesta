@@ -27,10 +27,8 @@ public class RaycastAGridDetermination : MonoBehaviour
         {
             if (hit.collider.gameObject.layer == 8)
                 walkable = false;
-            //else
-            //{
-                setNode.worldPosition.y = hit.point.y + unitHeight / 2;
-            //}
+
+            setNode.worldPosition.y = hit.point.y + unitHeight / 2;
         }
         else
             walkable = false;
@@ -70,12 +68,12 @@ public class RaycastAGridDetermination : MonoBehaviour
         {
             if (hit.collider.gameObject.layer == UNWALKABLE_LAYER_CONST)
             {
-                setNode.worldPosition.y = hit.point.y;
+                setNode.worldPosition.y = hit.point.y + unitHeight / 2;
                 walkable = false;
             }
             else
             {
-                setNode.worldPosition.y = hit.point.y;
+                setNode.worldPosition.y = hit.point.y + unitHeight / 2;
 
                 secondRay = new Ray(hit.point + incrementalRayMove, Vector3.up);
                 if (Physics.Raycast(secondRay, out secondHit, 200.0f, 1 << LayerMask.NameToLayer("Unwalkable"))) // Ray travels until hitting the unwalkableMask layer
@@ -100,22 +98,6 @@ public class RaycastAGridDetermination : MonoBehaviour
         setNode.walkable = walkable;
 
         return setNode;
-    }
-
-    public float DetermineElevationWithRaycast(Vector3 worldPoint)
-    {
-        float elevation = 0.0f;
-
-        // Raycast
-        Ray ray = new Ray(worldPoint + Vector3.down * 50, Vector3.up);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 200.0f))
-        {
-            elevation = hit.point.y + unitHeight / 2;
-        }
-
-        return elevation;
     }
 
     // TODO-A: Needs to have better control of where it is performed
