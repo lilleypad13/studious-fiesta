@@ -105,8 +105,17 @@ public class PathfindingHeapSimple : MonoBehaviour
         if (pathSuccess)
         {
             DataRecorder.Instance.SetCurrentPathAgent(agent);
+            DataRecorder.Instance.SetCurrentPathTotalArchCost(CalculateTotalPathArchCost(startNode, targetNode, agent));
+            DataRecorder.Instance.SetCurrentPathTotalCost(CalculateTotalPathCost(startNode, targetNode));
             waypoints = generateNodePath.RetracePath(startNode, targetNode);
+
+
+            UnityEngine.Debug.Log($"Pathing Total Costs: \n " +
+            $"Total Path Architectural Cost was: {CalculateTotalPathArchCost(startNode, targetNode, agent)}\n" +
+            $"Total Path Cost was: {CalculateTotalPathCost(startNode, targetNode)}");
         }
+
+        
         requestManager.FinishedProcessingPath(waypoints, pathSuccess);
     }
 
@@ -129,6 +138,40 @@ public class PathfindingHeapSimple : MonoBehaviour
         }
 
         return architecturalCost;
+    }
+
+    private int CalculateTotalPathArchCost(Node startNode, Node endNode, UnitSimple agent)
+    {
+        int cost = 0;
+
+        List<Node> path = new List<Node>();
+        Node currentNode = endNode;
+        cost = CalculateArchitecturalCost(agent, currentNode);
+
+        while (currentNode != startNode)
+        {
+            currentNode = currentNode.parent;
+            cost += CalculateArchitecturalCost(agent, currentNode);
+        }
+
+        return cost;
+    }
+
+    private int CalculateTotalPathCost(Node startNode, Node endNode)
+    {
+        int cost = 0;
+
+        List<Node> path = new List<Node>();
+        Node currentNode = endNode;
+        cost = currentNode.gCost;
+
+        while (currentNode != startNode)
+        {
+            currentNode = currentNode.parent;
+            cost += currentNode.gCost;
+        }
+
+        return cost;
     }
 
     private Node FindAppropriateNodeFromWorldPoint(Vector3 worldPosition, bool isFindingNearestNode)

@@ -11,7 +11,25 @@ public class PathData
 
     private string spawnPointName;
     private string agentAffinities = "";
-    private string pathArchitecturalType;
+    private string pathTotalArchitecturalCost;
+
+    public string PathTotalArchitecturalCost
+    {
+        set
+        {
+            pathTotalArchitecturalCost = "Total Architectural Cost of Path: " + value + "\n";
+        }
+    }
+
+    private string pathTotalCost;
+    public string PathTotalCost
+    {
+        set
+        {
+            pathTotalCost = "Total Overall Cost of Path: " + value + "\n";
+        }
+    }
+
     private string pathString = "Node Path: "; // Initial segment of the string that lists all the nodes within a path
 
     // Methods for Agent Data
@@ -62,16 +80,6 @@ public class PathData
         }
     }
 
-    // Methods for Spawn Points
-    public void SetSpawnPoint(Transform location)
-    {
-        spawnPoint = location;
-    }
-
-    public Transform GetSpawnPoint()
-    {
-        return spawnPoint;
-    }
 
     /*
      * Takes a spawn point transform and returns the name of its gameobject as the spawn point's 
@@ -86,25 +94,14 @@ public class PathData
         spawnPointName = "Spawned At: ," + spawnPosition + "\n";
     }
 
-    /*
-     * Used to keep track of what architectural element type was used in this path
-     */
-    public void SetPathArchitecturalType(string pathType)
-    {
-        pathArchitecturalType = pathType;
-    }
-
-    public string GetPathArchitecturalType()
-    {
-        return pathArchitecturalType;
-    }
-
     public string GetFullStringData()
     {
         string fullStringData = "";
 
         fullStringData += spawnPointName +
             agentAffinities + 
+            pathTotalArchitecturalCost + 
+            pathTotalCost +
             pathString;
 
         return fullStringData;

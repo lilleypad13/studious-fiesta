@@ -29,7 +29,8 @@ public class DataRecorder : MonoBehaviour
     private static List<PathData> pathRecords = new List<PathData>();
     private static PathData currentPath;
 
-    [SerializeField] private string filePath = "Assets/Resources/PathData_00.txt";
+    [SerializeField] private string fileName = "PathData_00.txt";
+    private string fixedFilePath = "Assets/Resources/PathData/";
 
     public DropdownPathHistory dropdownPathHistory;
 
@@ -98,10 +99,16 @@ public class DataRecorder : MonoBehaviour
         currentPath.SetSpawnPointName(spawnPosition);
     }
 
-    public void SetCurrentArchitecturalType(string architecturalType)
+    public void SetCurrentPathTotalArchCost(int cost)
     {
-        currentPath.SetPathArchitecturalType(architecturalType);
+        currentPath.PathTotalArchitecturalCost = cost.ToString();
     }
+
+    public void SetCurrentPathTotalCost(int cost)
+    {
+        currentPath.PathTotalCost = cost.ToString();
+    }
+
 
     /*
      * Last step of organizing the string formats of all the path history data before 
@@ -132,7 +139,8 @@ public class DataRecorder : MonoBehaviour
      */
     public void ExportDataToCSV(string pathInformation)
     {
-        StreamWriter file = new StreamWriter(filePath, true);
+        string fullFilePath = fixedFilePath + fileName;
+        StreamWriter file = new StreamWriter(fullFilePath, true);
 
         file.Write(pathInformation);
         file.Close();
