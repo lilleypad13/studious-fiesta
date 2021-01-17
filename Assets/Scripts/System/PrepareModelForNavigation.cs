@@ -23,7 +23,10 @@ public class PrepareModelForNavigation : Initializer
         objectsInEntireModel = childGatherer.CreateListOfChildrenObjects(modelToPrepare);
 
         // Applies colliders to entire list of objects within the overall model
+        // Adds tags to make objects selectable
+        // Add component for selectable logic
         colliderCreator.CreateColliders(objectsInEntireModel);
+        AddSelectableComponent(objectsInEntireModel);
 
         // Creation of model bounds
         entireModelBounds = ModelBoundsFinder.EncapsulateGroupOfModelRenderers(objectsInEntireModel);
@@ -31,5 +34,14 @@ public class PrepareModelForNavigation : Initializer
         // Set global values for use by other classes
         GlobalModelData.Instance.ObjectsInEntireModel = objectsInEntireModel;
         GlobalModelData.Instance.ModelBounds = entireModelBounds;
+    }
+
+
+    private void AddSelectableComponent(List<GameObject> objects)
+    {
+        foreach (GameObject item in objects)
+        {
+            item.AddComponent<Selectable>();
+        }
     }
 }
