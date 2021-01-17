@@ -7,11 +7,14 @@ public class DropdownTargetManager : DropdownManager
 {
     [SerializeField] private AgentSpawnManager spawnManager;
     [SerializeField] private Material targetHighlightMaterial;
+    [SerializeField] GameObject targetMarker;
+    [SerializeField] float markerHeight = 10.0f;
 
     List<GameObject> targetPoints = new List<GameObject>();
+    private GameObject targetObject;
 
     private Material originalMaterial;
-    private GameObject currentModel;
+    private Selectable selection;
 
     protected override void Start()
     {
@@ -38,15 +41,52 @@ public class DropdownTargetManager : DropdownManager
     protected override void MethodToPerformOnSelection(int index)
     {
         spawnManager.Target = GlobalModelData.Instance.GetPositionByBounds(targetPoints[index]);
-        if (currentModel != null)
-        {
-            currentModel.GetComponent<MeshRenderer>().material = originalMaterial;
-        }
-        currentModel = targetPoints[index];
-        MeshRenderer currentModelRenderer = currentModel.GetComponent<MeshRenderer>();
 
-        originalMaterial = currentModelRenderer.material;
-        currentModelRenderer.material = targetHighlightMaterial;
-        Debug.Log($"Target Highlight: \n Model: {currentModel.name} \n Original Material: {originalMaterial.name} \n Current Material: {currentModelRenderer.name}");
+        if (targetObject != null)
+        {
+            if (selection != null)
+                selection.RemoveAsSpawnOrTarget();
+            else
+                targetObject.GetComponent<MeshRenderer>().material = originalMaterial;
+        }
+
+        targetObject = targetPoints[index];
+        SetMarker(targetObject);
+
+        selection = targetObject.GetComponent<Selectable>();
+        if (selection != null) // Case when object chosen has Selectable component
+        {
+            selection.SetAsSpawnOrTarget(targetHighlightMaterial);
+        }
+        else // Necessary actions to replicate Selectable Selected options without Selectable component
+        {
+            MeshRenderer currentModelRenderer = targetObject.GetComponent<MeshRenderer>();
+            originalMaterial = currentModelRenderer.material;
+            currentModelRenderer.material = targetHighlightMaterial;
+        }
+    }
+
+    private void SetMarker(GameObject markedObject)
+    {
+        Vector3 markerAddition = new Vector3(0.0f, markerHeight, 0.0f);
+        Vector3 objectPosition;
+
+        Renderer rend = markedObject.GetComponent<Renderer>();
+        if (rend != null)
+            objectPosition = rend.bounds.center;
+        else
+            objectPosition = markedObject.transform.position;
+        
+        if (!targetMarker.activeInHierarchy)
+            targetMarker.SetActive(true);
+
+        targetMarker.transform.position = objectPosition + markerAddition;
+    }
+
+    public void AddNewOption(Transform selection)
+    {
+        GlobalModelData.Instance.AddToTargetObjects(selection.gameObject);
+
+        AddToDropdownList(selection.gameObject.name);
     }
 }

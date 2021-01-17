@@ -7,11 +7,14 @@ public class DropdownSpawnManager : DropdownManager
 {
     [SerializeField] private AgentSpawnManager spawnManager;
     [SerializeField] private Material spawnHighlightMaterial;
+    [SerializeField] GameObject spawnMarker;
+    [SerializeField] float markerHeight = 10.0f;
 
     List<GameObject> spawnPoints = new List<GameObject>();
+    private GameObject spawnObject;
 
     private Material originalMaterial;
-    private GameObject currentModel;
+    private Selectable selection;
 
     protected override void Start()
     {
@@ -38,15 +41,52 @@ public class DropdownSpawnManager : DropdownManager
     protected override void MethodToPerformOnSelection(int index)
     {
         spawnManager.SpawnPosition = GlobalModelData.Instance.GetPositionByBounds(spawnPoints[index]);
-        if(currentModel != null)
-        {
-            currentModel.GetComponent<MeshRenderer>().material = originalMaterial;
-        }
-        currentModel = spawnPoints[index];
-        MeshRenderer currentModelRenderer = currentModel.GetComponent<MeshRenderer>();
 
-        originalMaterial = currentModelRenderer.material;
-        currentModelRenderer.material = spawnHighlightMaterial;
-        Debug.Log($"Spawn Highlight: \n Model: {currentModel.name} \n Original Material: {originalMaterial.name} \n Current Material: {currentModelRenderer.name}");
+        if(spawnObject != null)
+        {
+            if (selection != null)
+                selection.RemoveAsSpawnOrTarget();
+            else
+                spawnObject.GetComponent<MeshRenderer>().material = originalMaterial;
+        }
+
+        spawnObject = spawnPoints[index];
+        SetMarker(spawnObject);
+
+        selection = spawnObject.GetComponent<Selectable>();
+        if(selection != null) // Case when object chosen has Selectable component
+        {
+            selection.SetAsSpawnOrTarget(spawnHighlightMaterial);
+        }
+        else // Necessary actions to replicate Selectable Selected options without Selectable component
+        {
+            MeshRenderer currentModelRenderer = spawnObject.GetComponent<MeshRenderer>();
+            originalMaterial = currentModelRenderer.material;
+            currentModelRenderer.material = spawnHighlightMaterial;
+        }
+    }
+
+    private void SetMarker(GameObject markedObject)
+    {
+        Vector3 markerAddition = new Vector3(0.0f, markerHeight, 0.0f);
+        Vector3 objectPosition;
+
+        Renderer rend = markedObject.GetComponent<Renderer>();
+        if (rend != null)
+            objectPosition = rend.bounds.center;
+        else
+            objectPosition = markedObject.transform.position;
+
+        if (!spawnMarker.activeInHierarchy)
+            spawnMarker.SetActive(true);
+
+        spawnMarker.transform.position = objectPosition + markerAddition;
+    }
+
+    public void AddNewOption(Transform selection)
+    {
+        GlobalModelData.Instance.AddToSpawnObjects(selection.gameObject);
+
+        AddToDropdownList(selection.gameObject.name);
     }
 }
