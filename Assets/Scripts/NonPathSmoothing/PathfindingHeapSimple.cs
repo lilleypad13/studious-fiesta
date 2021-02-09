@@ -105,6 +105,7 @@ public class PathfindingHeapSimple : MonoBehaviour
         if (pathSuccess)
         {
             DataRecorder.Instance.SetCurrentPathAgent(agent);
+            DataRecorder.Instance.SetCurrentPathDistance(CalculateTotalPathDistance(startNode, targetNode));
             DataRecorder.Instance.SetCurrentPathTotalArchCost(CalculateTotalPathArchCost(startNode, targetNode, agent));
             DataRecorder.Instance.SetCurrentPathTotalCost(CalculateTotalPathCost(startNode, targetNode));
             waypoints = generateNodePath.RetracePath(startNode, targetNode);
@@ -143,8 +144,6 @@ public class PathfindingHeapSimple : MonoBehaviour
     private int CalculateTotalPathArchCost(Node startNode, Node endNode, UnitSimple agent)
     {
         int cost = 0;
-
-        List<Node> path = new List<Node>();
         Node currentNode = endNode;
         cost = CalculateArchitecturalCost(agent, currentNode);
 
@@ -160,8 +159,6 @@ public class PathfindingHeapSimple : MonoBehaviour
     private int CalculateTotalPathCost(Node startNode, Node endNode)
     {
         int cost = 0;
-
-        List<Node> path = new List<Node>();
         Node currentNode = endNode;
         cost = currentNode.gCost;
 
@@ -172,6 +169,20 @@ public class PathfindingHeapSimple : MonoBehaviour
         }
 
         return cost;
+    }
+
+    private float CalculateTotalPathDistance(Node startNode, Node endNode)
+    {
+        float distance = 0.0f;
+        Node currentNode = endNode;
+
+        while (currentNode != startNode)
+        {
+            distance += Vector3.Distance(currentNode.worldPosition, currentNode.parent.worldPosition);
+            currentNode = currentNode.parent;
+        }
+
+        return distance;
     }
 
     private Node FindAppropriateNodeFromWorldPoint(Vector3 worldPosition, bool isFindingNearestNode)

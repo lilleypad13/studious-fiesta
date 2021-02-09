@@ -11,32 +11,17 @@ public class PathData
 
     private string spawnPointName;
     private string agentAffinities = "";
+    public string PathTotalArchitecturalCost { set { pathTotalArchitecturalCost = "Total Architectural Cost of Path: ," + value + "\n"; } }
     private string pathTotalArchitecturalCost;
-
-    public string PathTotalArchitecturalCost
-    {
-        set
-        {
-            pathTotalArchitecturalCost = "Total Architectural Cost of Path: " + value + "\n";
-        }
-    }
-
+    public string PathTotalCost { set { pathTotalCost = "Total Overall Cost of Path: ," + value + "\n"; } }
     private string pathTotalCost;
-    public string PathTotalCost
-    {
-        set
-        {
-            pathTotalCost = "Total Overall Cost of Path: " + value + "\n";
-        }
-    }
+    public string PathTotalDistance { set { pathTotalDistance = "Total Distance of Path: ," + value + "\n"; } }
+    private string pathTotalDistance;
 
     private string pathString = "Node Path: "; // Initial segment of the string that lists all the nodes within a path
 
     // Methods for Agent Data
-    public void SetAgentData(UnitSimple agent)
-    {
-        agentData = agent;
-    }
+    public void SetAgentData(UnitSimple agent) { agentData = agent; }
 
     public UnitSimple GetAgentData()
     {
@@ -56,7 +41,6 @@ public class PathData
         }
     }
 
-    // Methods for Node Paths
     public void SetNodePath(Node[] path)
     {
         nodePath = path;
@@ -82,13 +66,8 @@ public class PathData
 
 
     /*
-     * Takes a spawn point transform and returns the name of its gameobject as the spawn point's 
-     * name as a string.
+     * Takes a spawn point position and returns those coordinates as a string.
      */
-    public void SetSpawnPointName(Transform spawnPoint)
-    {
-        spawnPointName = "Spawned At: ," + spawnPoint.name + "\n";
-    }
     public void SetSpawnPointName(Vector3 spawnPosition)
     {
         spawnPointName = "Spawned At: ," + spawnPosition + "\n";
@@ -100,6 +79,7 @@ public class PathData
 
         fullStringData += spawnPointName +
             agentAffinities + 
+            pathTotalDistance +
             pathTotalArchitecturalCost + 
             pathTotalCost +
             pathString;

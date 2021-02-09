@@ -29,7 +29,7 @@ public class DataRecorder : MonoBehaviour
     private static List<PathData> pathRecords = new List<PathData>();
     private static PathData currentPath;
 
-    [SerializeField] private string fileName = "PathData_00.txt";
+    [SerializeField] private string pathDataFileName = "PathData_";
     private string fixedFilePath = "Assets/Resources/PathData/";
 
     public DropdownPathHistory dropdownPathHistory;
@@ -88,15 +88,16 @@ public class DataRecorder : MonoBehaviour
         currentPath.SetNodePathString(path);
     }
 
-    public void SetCurrentPathSpawn(Transform spawnPoint)
-    {
-        //currentPath.SetSpawnPoint(spawnPoint);
-        currentPath.SetSpawnPointName(spawnPoint);
-    }
+    
     public void SetCurrentPathSpawn(Vector3 spawnPosition)
     {
         //currentPath.SetSpawnPoint(spawnPoint);
         currentPath.SetSpawnPointName(spawnPosition);
+    }
+
+    public void SetCurrentPathDistance(float distance)
+    {
+        currentPath.PathTotalDistance = distance.ToString();
     }
 
     public void SetCurrentPathTotalArchCost(int cost)
@@ -116,33 +117,35 @@ public class DataRecorder : MonoBehaviour
      */
     public void OutputPathData()
     {
-        string pathInformation = "";
         int identifier = 0;
 
         foreach (PathData path in pathRecords)
         {
+            string pathInformation = "";
+            string individualFileName = pathDataFileName + identifier.ToString();
 
             pathInformation += "Agent ID: ," + identifier + "\n" +
                 path.GetFullStringData();
 
             Debug.Log(pathInformation);
+            ExportDataToCSV(pathInformation, individualFileName);
 
             identifier++;
         }
 
-        ExportDataToCSV(pathInformation);
+        //ExportDataToCSV(pathInformation);
     }
 
     /*
      * Responsible for outputting all the path history information to a text file format
      * useable outside of Unity.
      */
-    public void ExportDataToCSV(string pathInformation)
+    public void ExportDataToCSV(string pathInformationToWrite, string fileName)
     {
-        string fullFilePath = fixedFilePath + fileName;
+        string fullFilePath = fixedFilePath + fileName + ".txt";
         StreamWriter file = new StreamWriter(fullFilePath, true);
 
-        file.Write(pathInformation);
+        file.Write(pathInformationToWrite);
         file.Close();
     }
 }
