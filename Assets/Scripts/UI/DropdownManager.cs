@@ -40,4 +40,16 @@ public class DropdownManager : MonoBehaviour
     {
         return dropdown.options[index].text;
     }
+
+
+    public void RenameCurrentDropDownItemText(string nameChange)
+    {
+        int index = dropdown.value;
+
+        Dropdown.OptionData changedNameItem = new Dropdown.OptionData(nameChange);
+        dropdown.options.RemoveAt(index);
+        dropdown.options.Insert(index, changedNameItem);
+
+        dropdown.RefreshShownValue();
+    }
 }
