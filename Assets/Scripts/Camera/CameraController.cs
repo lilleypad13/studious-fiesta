@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
@@ -25,26 +26,29 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        CameraZoom();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            SetIsoCam();
-
-        if (Input.GetKeyDown(KeyCode.Q))
-            SetAngle();
-
-        if (Input.GetMouseButtonDown(2))
+        if(EventSystem.current.currentSelectedGameObject == null)
         {
-            dragOrigin = Input.mousePosition;
-            return;
+            CameraZoom();
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                SetIsoCam();
+
+            if (Input.GetKeyDown(KeyCode.Q))
+                SetAngle();
+
+            if (Input.GetMouseButtonDown(2))
+            {
+                dragOrigin = Input.mousePosition;
+                return;
+            }
+
+            if (!Input.GetMouseButton(2)) return;
+
+            Vector3 position = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+            Vector3 move = new Vector3(position.x * dragSpeed, 0.0f, position.y * dragSpeed);
+
+            transform.Translate(move, Space.World);
         }
-
-        if (!Input.GetMouseButton(2)) return;
-
-        Vector3 position = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-        Vector3 move = new Vector3(position.x * dragSpeed, 0.0f, position.y * dragSpeed);
-
-        transform.Translate(move, Space.World);
     }
 
     private void ResetCameraRotation()
