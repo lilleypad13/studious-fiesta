@@ -69,6 +69,9 @@ public class AGridDataVisualization : MonoBehaviour
                     cubeDrawer.AddCubeToBatch(nodePosition, nodeColor);
                 }
             }
+
+            // Actually create mesh with all added cubes
+            cubeDrawer.CleanUpRemainingBatch();
         }
     }
 

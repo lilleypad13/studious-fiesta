@@ -6,6 +6,7 @@ public class CubeDrawer : MonoBehaviour
     public Material cubeMaterial;
     private const float CubeRadius = 0.25f;
     private int cubesMade;
+    private int cubesPerBatch = 2000;
 
     static readonly List<Vector3> batchedVertices = new List<Vector3>(24);
     static readonly List<int> batchedTriangles = new List<int>(36);
@@ -63,23 +64,19 @@ public class CubeDrawer : MonoBehaviour
     void Start()
     {
         cubesMade = 0;
-
-        //for (int i = 0; i < 500; i++)
-        //{
-        //    Vector3 offset = new Vector3(i * 2.0f, 0.0f, 0.0f);
-        //    AddCubeToBatch(offset, Color.red);
-        //}
-
-        //AddCubeToBatch(new Vector3(3.0f, 3.0f, 3.0f), Color.blue);
     }
 
     void Update()
     {
-        for (int i = 0; i < batches.Count; i++)
+        if(batches.Count > 0)
         {
-            MeshWrapper wrapper = batches[i];
-            Graphics.DrawMesh(wrapper.mesh, wrapper.location, Quaternion.identity, cubeMaterial, 0);
+            for (int i = 0; i < batches.Count; i++)
+            {
+                MeshWrapper wrapper = batches[i];
+                Graphics.DrawMesh(wrapper.mesh, wrapper.location, Quaternion.identity, cubeMaterial, 0);
+            }
         }
+        
     }
 
     public void AddCubeToBatch(Vector3 centralPosition, Color color)
@@ -92,28 +89,78 @@ public class CubeDrawer : MonoBehaviour
 
         for (int triIndex = 0; triIndex < tris.Length; triIndex++)
         {
-            //batchedTriangles.Add(tris[triIndex] + cubesMade * verts.Length);
-            batchedTriangles.Add(tris[triIndex]);
+            batchedTriangles.Add(tris[triIndex] + cubesMade * verts.Length);
+            //batchedTriangles.Add(tris[triIndex]);
         }
-    
-        // Set necessary mesh parameters
-        Mesh batchedMesh = new Mesh();
-        batchedMesh.SetVertices(batchedVertices);
-        batchedMesh.SetColors(batchedColors);
-        batchedMesh.SetTriangles(batchedTriangles, 0);
-        batchedMesh.Optimize();
-        batchedMesh.UploadMeshData(true);
-
-        // Add current mesh wrapper to total list for rendering
-        batches.Add(new MeshWrapper { mesh = batchedMesh, location = Vector3.zero });
-
-        // Clear out lists to prepare for next cube
-        batchedVertices.Clear();
-        batchedColors.Clear();
-        batchedTriangles.Clear();
 
         cubesMade += 1;
+
+        if(cubesMade >= cubesPerBatch)
+        {
+            // Set necessary mesh parameters
+            Mesh batchedMesh = new Mesh();
+            batchedMesh.SetVertices(batchedVertices);
+            batchedMesh.SetColors(batchedColors);
+            batchedMesh.SetTriangles(batchedTriangles, 0);
+            batchedMesh.Optimize();
+            batchedMesh.UploadMeshData(true);
+
+            // Add current mesh wrapper to total list for rendering
+            batches.Add(new MeshWrapper { mesh = batchedMesh, location = Vector3.zero });
+
+            // Clear out lists to prepare for next cube
+            batchedVertices.Clear();
+            batchedColors.Clear();
+            batchedTriangles.Clear();
+
+            cubesMade = 0;
+
+            Debug.Log("Batch count increased to: " + batches.Count);
+        }
     }
+
+    public void CleanUpRemainingBatch()
+    {
+        if(cubesMade > 0)
+        {
+            // Set necessary mesh parameters
+            Mesh batchedMesh = new Mesh();
+            batchedMesh.SetVertices(batchedVertices);
+            batchedMesh.SetColors(batchedColors);
+            batchedMesh.SetTriangles(batchedTriangles, 0);
+            batchedMesh.Optimize();
+            batchedMesh.UploadMeshData(true);
+
+            // Add current mesh wrapper to total list for rendering
+            batches.Add(new MeshWrapper { mesh = batchedMesh, location = Vector3.zero });
+
+            // Clear out lists to prepare for next cube
+            batchedVertices.Clear();
+            batchedColors.Clear();
+            batchedTriangles.Clear();
+
+            cubesMade = 0;
+        }
+    }
+
+    //public void CreateMeshFromBatch()
+    //{
+    //    // Set necessary mesh parameters
+    //    Mesh batchedMesh = new Mesh();
+    //    batchedMesh.SetVertices(batchedVertices);
+    //    batchedMesh.SetColors(batchedColors);
+    //    batchedMesh.SetTriangles(batchedTriangles, 0);
+    //    batchedMesh.Optimize();
+    //    batchedMesh.UploadMeshData(true);
+
+    //    // Add current mesh wrapper to total list for rendering
+    //    batches.Add(new MeshWrapper { mesh = batchedMesh, location = Vector3.zero });
+
+    //    // Clear out lists to prepare for next cube
+    //    batchedVertices.Clear();
+    //    batchedColors.Clear();
+    //    batchedTriangles.Clear();
+    //}
 
     public void ResetCubeDrawer()
     {
