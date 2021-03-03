@@ -108,20 +108,9 @@ public class AGrid : Initializer
         // Used to pass on constructed node grid information to AGridRuntime to deal with run time events pertaining to grid
         nodeGrid = new NodeGrid(grid, gridWorldSize, gridSizeX, gridSizeY);
         aGridRuntime.SetGrid(nodeGrid);
+
+        dataVisualizer.SetVisualizer(nodeDiameter / 2.0f, gridSizeX, gridSizeY, grid, displayGridGizmos);
     }
-
-    #region Data Visualization
-
-    // Displays the nodes in a more visual way while also being able to convey information about the nodes
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying && displayGridGizmos)
-        {
-            dataVisualizer.VisualizeNodeData(nodeDiameter / 2.0f, gridSizeX, gridSizeY, grid);
-        }
-
-    }
-    #endregion
 
     #region Debugging
     private void DebugCheckObjectRaycastHitAtLocation(Vector3 worldPoint, RaycastHit hit)
