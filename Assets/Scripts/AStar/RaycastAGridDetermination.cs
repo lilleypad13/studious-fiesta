@@ -93,8 +93,6 @@ public class RaycastAGridDetermination : MonoBehaviour
         else
             walkable = false;
 
-        
-
         setNode.walkable = walkable;
 
         return setNode;
