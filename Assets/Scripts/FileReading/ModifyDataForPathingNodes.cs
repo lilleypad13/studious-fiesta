@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.IO;
 
 public enum DataResolutionComparison
@@ -111,7 +109,7 @@ public class ModifyDataForPathingNodes : MonoBehaviour
             }
         }
 
-        DebugListOut2DArray(modifiedData, "Here is the data array after being modified: ");
+        //DebugListOut2DArray(modifiedData, "Here is the data array after being modified: ");
 
         return modifiedData;
     }
