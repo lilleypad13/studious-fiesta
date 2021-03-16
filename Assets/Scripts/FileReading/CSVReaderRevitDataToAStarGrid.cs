@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 
 [Serializable]
 public class CSVFile
@@ -57,8 +56,6 @@ public class DataWithPosition
 
 public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
 {
-    public Text buildTestText;
-
     [SerializeField] private AGrid aGrid;
     private ModifyDataForPathingNodes modifyData;
 
@@ -153,12 +150,6 @@ public class CSVReaderRevitDataToAStarGrid : MonoBehaviour
         modifyData.DetermineCaseForCreatingDataArray(distanceBetweenDataPoints);
 
         TextAsset gridData = Resources.Load<TextAsset>(csv.FilePath);
-        // BUILD TEST
-        if (gridData != null)
-            buildTestText.text = gridData.name;
-        else
-            buildTestText.text = "FILE READ FAILED";
-        // BUILD TEST
         int dataIndex = 1; // Starts at 1 to account for header row
 
         string[] data = SplitTextAssetIntoRows(gridData);
