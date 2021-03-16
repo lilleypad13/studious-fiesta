@@ -121,31 +121,34 @@ public class DataRecorder : MonoBehaviour
 
         foreach (PathData path in pathRecords)
         {
-            string pathInformation = "";
+            // Path of file and file name creation
+            string agentPathInformation = "";
             string individualFileName = pathDataFileName + identifier.ToString();
 
-            pathInformation += "Agent ID: ," + identifier + "\n" +
+            // File content
+            agentPathInformation += "Agent ID: ," + identifier + "\n" +
                 path.GetFullStringData();
 
-            Debug.Log(pathInformation);
-            ExportDataToCSV(pathInformation, individualFileName);
+            // Create file and add content
+            Debug.Log(agentPathInformation);
+            ExportDataToCSV(agentPathInformation, individualFileName);
 
             identifier++;
         }
-
-        //ExportDataToCSV(pathInformation);
     }
 
     /*
      * Responsible for outputting all the path history information to a text file format
      * useable outside of Unity.
      */
-    public void ExportDataToCSV(string pathInformationToWrite, string fileName)
+    public void ExportDataToCSV(string fileContent, string fileName)
     {
-        string fullFilePath = fixedFilePath + fileName + ".txt";
-        StreamWriter file = new StreamWriter(fullFilePath, true);
+        string filePath = Application.dataPath + "/" + fileName + ".txt";
+        Debug.Log("File path output: " + filePath);
 
-        file.Write(pathInformationToWrite);
-        file.Close();
+        if (!File.Exists(filePath))
+        {
+            File.WriteAllText(filePath, fileContent);
+        }
     }
 }
