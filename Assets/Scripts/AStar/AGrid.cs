@@ -12,7 +12,7 @@ public class AGrid : Initializer
     public float NodeDiameter { get => nodeDiameter; }
 
     [Header("Node Grid Options")]
-    public bool isReadingDataFromFile = false;
+    //public bool isReadingDataFromFile = false;
     public bool useHalfNodeOffset = true;
 
     //[Header("Obstacle Parameters")]
@@ -50,7 +50,7 @@ public class AGrid : Initializer
         Debug.Log($"Grid World Sizes are: x: {gridWorldSize.x}; z: {gridWorldSize.y}. \n" +
             $"Grid Index Sizes are: x: {gridSizeX}; z: {gridSizeY}.");
 
-        if (isReadingDataFromFile)
+        if (DemoManager.Instance.IsReadingFromFile)
             CSVReaderRevitDataToAStarGrid.Instance.ReadInData(); // Ensures data is read in from .csv file before trying to assign values from it
 
         influenceManager.FindInfluenceObjects(); // Automatically finds all influence objects in scene
@@ -91,7 +91,7 @@ public class AGrid : Initializer
                 // Create node and assign determined values
                 grid[x, y] = raycastSystem.DetermineWalkabilityWithRaycast(nodeToSet);
 
-                if (isReadingDataFromFile)
+                if (DemoManager.Instance.IsReadingFromFile)
                     ModifyDataForPathingNodes.Instance.CheckToAssignValue(grid[x, y]);
             }
         }
