@@ -12,11 +12,6 @@ public class PrepareModelForNavigation : Initializer
     private List<GameObject> objectsInEntireModel = new List<GameObject>();
     private Bounds entireModelBounds;
 
-    //private void OnDrawGizmos()
-    //{
-    //    ModelBoundsFinder.VisualizeBoundsBox(entireModelBounds);
-    //}
-
     public override void Initialization()
     {
         // Gathers all children objects within the entire model and creates a list of them

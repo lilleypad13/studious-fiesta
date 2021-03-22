@@ -7,8 +7,6 @@ public class SelectionManager : MonoBehaviour
     public DropdownSpawnManager spawnDropdown;
     public DropdownTargetManager targetDropdown;
 
-    [SerializeField] private string selectableTag = "Selectable";
-    private string untaggedTag = "Untagged";
     [SerializeField] private Material highlightMaterial;
     [SerializeField] private Material selectionMaterial;
 
