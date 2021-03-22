@@ -22,6 +22,7 @@ public class SheetAndColumn
 
 public class CSVReaderRevitModel : Initializer
 {
+    #region Singleton Pattern
     private static CSVReaderRevitModel instance;
     private CSVReaderRevitModel()
     {
@@ -43,12 +44,11 @@ public class CSVReaderRevitModel : Initializer
             return instance;
         }
     }
+    #endregion
 
     [Header("Files to Read")]
     [Tooltip("Name of folder in Unity's Resources folder which holds the .csv files corresponding to Revit models.")]
     [SerializeField] private string nameFolderRevitModelCSVs = "RevitModelCSVs";
-    [Tooltip("List of exact sheet names to read model data from")]
-    [SerializeField] private SheetAndColumn[] sheetsOfInterest;
 
     [SerializeField] private string columnHeaderInfluenceId = "ValueGroup";
     private string influencerHandlerId = "Influence";
@@ -56,6 +56,8 @@ public class CSVReaderRevitModel : Initializer
     private string walkabilityHandlerId = "Walkable";
     [SerializeField] private string columnHeaderSpawnId = "SpawnTarget";
     private string spawnerHandlerId = "Spawn";
+    [SerializeField] private string columnHeaderSelectableId = "Selectable";
+    private string selectableHandlerId = "Select";
 
     private static Dictionary<string, string[,]> sheetDataDictionary = new Dictionary<string, string[,]>();
 
@@ -67,10 +69,7 @@ public class CSVReaderRevitModel : Initializer
     {
         sheetDataDictionary = CreateDataArraysFromCSVs();
 
-        if (sheetsOfInterest == null)
-            Debug.LogWarning("No Data was read in from Revit Data to apply to models.");
-        else
-            ApplyDataToModel();
+        ApplyDataToModel();
 
         DebugDisplay2DArrayStringDictionary(sheetDataDictionary);
     }
@@ -86,7 +85,7 @@ public class CSVReaderRevitModel : Initializer
         {
             string filePath = nameFolderRevitModelCSVs + "/" + file.name;
             allDataDictionary.Add(file.name, CSVReader.Instance.ReadCSVFileTo2DStringArray(filePath));
-            //Debug.Log($"Added csv file to dictionary: {file.name}");
+            Debug.Log($"Added csv file to dictionary: {file.name}");
         }
 
         return allDataDictionary;
@@ -95,8 +94,6 @@ public class CSVReaderRevitModel : Initializer
 
     private int FindColumnIndexWithString(string[] rowOfStrings, string searchTerm)
     {
-        //Debug.Log($"Find column index searched: {searchTerm} within the elements {ListOfArrayStrings(rowOfStrings)}.");
-
         for (int i = 0; i < rowOfStrings.Length; i++)
         {
             if (rowOfStrings[i].Contains(searchTerm))
@@ -105,7 +102,6 @@ public class CSVReaderRevitModel : Initializer
             }
         }
 
-        //Debug.Log($"Could not find {searchTerm} in headers.");
         return 0;
     }
 
@@ -139,27 +135,10 @@ public class CSVReaderRevitModel : Initializer
             FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderWalkableId, walkabilityHandlerId);
             FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderInfluenceId, influencerHandlerId);
             FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderSpawnId, spawnerHandlerId);
+            FindColumnAndApplyDataHandler(dataArray.Key, columnHeaderSelectableId, selectableHandlerId);
         }
 
         Debug.Log("CSVReaderRevitModel Data: \n" + debugInfo);
-
-        //foreach(SheetAndColumn item in sheetsOfInterest)
-        //{
-        //    Debug.Log($"CSVReaderRevitModel trying to apply data based on sheet: {item.SheetName}.");
-        //    string[,] data = FindWithinDictionary(item.SheetName);
-        //    string[] headingRow = new string[data.GetLength(0)];
-        //    int columnIndex = SearchHeadersForColumnIndex(data, headingRow, item.ColumnName);
-
-        //    for (int i = 1; i < data.GetLength(1); i++)
-        //    {
-        //        string idNumber = data[0, i];
-        //        GameObject modelToModify = GlobalModelData.Instance.SearchEntireModelForObjectWithNameContaining(idNumber);
-        //        if (modelToModify != null)
-        //            RevitModelDataHandlerManager.Instance.ApplyHandlerMethodBasedOnString(item.SheetName, modelToModify, data[columnIndex, i]);
-        //        else
-        //            Debug.Log($"Did not find an object within the model associated with ID: {idNumber}.");
-        //    }
-        //}
     }
 
 
@@ -185,17 +164,6 @@ public class CSVReaderRevitModel : Initializer
     }
 
     #region Debugging
-
-    private void DebugDisplaySheetsData(List<string[,]> allDataArrays)
-    {
-        int sheetCounter = 0;
-        foreach (string[,] array in allDataArrays)
-        {
-            CSVReader.Instance.DebugListOut2DArray(array, sheetsOfInterest[sheetCounter].SheetName);
-            sheetCounter++;
-        }
-    }
-
     private void DebugDisplay2DArrayStringDictionary(Dictionary<string, string[,]> dictionary)
     {
         foreach (KeyValuePair<string, string[,]> kvp in dictionary)

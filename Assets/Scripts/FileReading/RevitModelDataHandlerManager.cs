@@ -30,13 +30,15 @@ public class RevitModelDataHandlerManager
     private static RevitAddInfluenceDataHandler influenceHandler = new RevitAddInfluenceDataHandler();
     private static RevitWalkabilityDataHandler walkableHandler = new RevitWalkabilityDataHandler();
     private static RevitSpawnDataHandler spawnHandler = new RevitSpawnDataHandler();
+    private static RevitSelectableDataHandler selectableHandler = new RevitSelectableDataHandler();
 
     private static Dictionary<string, IRevitModelDataHandler> revitHandlerDictionary = new Dictionary<string, IRevitModelDataHandler>() {
         ["Doors"] = doorHandler,
         ["Walls"] = wallHandler,
         ["Influence"] = influenceHandler,
         ["Walkable"] = walkableHandler,
-        ["Spawn"] = spawnHandler
+        ["Spawn"] = spawnHandler,
+        ["Select"] = selectableHandler
     };
 
     public void ApplyHandlerMethodBasedOnString(
