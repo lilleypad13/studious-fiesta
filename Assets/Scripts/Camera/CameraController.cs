@@ -8,10 +8,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float minSize = 10.0f;
     [SerializeField] private float maxSize = 150.0f;
     [SerializeField] private float sensitivity = 50.0f;
-
-    [SerializeField] private float dragSpeed = 2.0f;
+    [Range(0.5f, 10.0f)] [SerializeField] private float dragSpeed = 2.0f;
     private Vector3 dragOrigin;
-
+    [SerializeField] private bool isControlsReversed = false;
     private Quaternion originalRotation;
 
     private bool isIso = false;
@@ -44,11 +43,18 @@ public class CameraController : MonoBehaviour
 
             if (!Input.GetMouseButton(2)) return;
 
-            Vector3 position = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-            Vector3 move = new Vector3(position.x * dragSpeed, 0.0f, position.y * dragSpeed);
-
-            transform.Translate(move, Space.World);
+            PanCamera();
         }
+    }
+
+    private void PanCamera()
+    {
+        Vector3 position = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+        Vector3 move = new Vector3(position.x * dragSpeed, 0.0f, position.y * dragSpeed);
+        if (isControlsReversed)
+            move *= -1.0f;
+
+        transform.Translate(move, Space.World);
     }
 
     private void ResetCameraRotation()
