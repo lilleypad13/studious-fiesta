@@ -49,6 +49,8 @@ public class SelectionManager : MonoBehaviour
 
                         ResetCurrentTransform();
                     }
+                    else
+                        ResetCurrentTransform();
                 }
                 currentTransform = newTransform;
             }
@@ -59,7 +61,8 @@ public class SelectionManager : MonoBehaviour
                 newTransform = null;
             }
 
-            ClickSelection(newTransform);
+            if (Input.GetMouseButtonDown(0))
+                ClickSelection(newTransform);
         }
     }
 
@@ -77,26 +80,38 @@ public class SelectionManager : MonoBehaviour
 
     private void ClickSelection(Transform selectedObject)
     {
-        if(selectedObject != null)
+        if (selectedObject != null)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                newSelection = selectedObject.GetComponent<Selectable>();
-                if(newSelection != null)
-                {
-                    if(currentSelection != null)
-                        currentSelection.Deselected();
+            newSelection = selectedObject.GetComponent<Selectable>();
 
-                    newSelection.Selected(selectionMaterial);
-                    currentSelection = newSelection;
+            DeselectCurrentSelection();
 
-                    selectionText.text = "Current Selection: \n" + newSelection.transform.gameObject.name;
-
-                    newTransform = null;
-                    currentTransform = null;
-                }
-            }
+            if (newSelection != null)
+                SelectNewSelection();
         }
+        else
+        {
+            DeselectCurrentSelection();
+            newSelection = null;
+            selectionText.text = "Current Selection: \n" + "None";
+        }
+    }
+
+    private void SelectNewSelection()
+    {
+        newSelection.Selected(selectionMaterial);
+        currentSelection = newSelection;
+
+        selectionText.text = "Current Selection: \n" + newSelection.transform.gameObject.name;
+
+        newTransform = null;
+        currentTransform = null;
+    }
+
+    private void DeselectCurrentSelection()
+    {
+        if (currentSelection != null)
+            currentSelection.Deselected();
     }
 
     public void AddSpawnAndTarget()
